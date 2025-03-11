@@ -1,6 +1,10 @@
 package com.coderdan.codercraft;
 
+import com.coderdan.codercraft.block.ModBlocks;
+import com.coderdan.codercraft.item.ModItems;
+import com.coderdan.codercraft.item.creativetabs.ModCreativeTabs;
 import com.mojang.logging.LogUtils;
+import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
@@ -31,6 +35,10 @@ public class CoderCraft
         // Register ourselves for server and other game events we are interested in
         MinecraftForge.EVENT_BUS.register(this);
 
+        ModCreativeTabs.register(modEventBus);
+
+        ModItems.register(modEventBus);
+        ModBlocks.register(modEventBus);
 
 
 
@@ -48,7 +56,16 @@ public class CoderCraft
     // Add the example block item to the building blocks tab
     private void addCreative(BuildCreativeModeTabContentsEvent event)
     {
+        if(event.getTabKey() == CreativeModeTabs.INGREDIENTS)
+        {
+            event.accept(ModItems.TITANIUM);
+            event.accept(ModItems.TITANIUM_INGOT);
+        }
 
+        if(event.getTabKey() == CreativeModeTabs.BUILDING_BLOCKS)
+        {
+            event.accept(ModBlocks.TITANIUM_BLOCK);
+        }
     }
 
     // You can use SubscribeEvent and let the Event Bus discover methods to call

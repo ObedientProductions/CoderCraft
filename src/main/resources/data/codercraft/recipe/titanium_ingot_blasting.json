@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:blasting",
+  "ingredient": {
+    "item": "codercraft:titanium"
+  },
+  "result": {
+    "id": "codercraft:titanium_ingot"
+  },
+  "group": "titanium",
+  "experience": 0.2,
+  "cookingtime": 100
+}
