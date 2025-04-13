@@ -1,9 +1,12 @@
 {
   "item.codercraft.titanium": "Raw Titanium",
   "item.codercraft.titanium_ingot": "Titanium Ingot",
+  "item.codercraft.special_item": "Special Item",
 
   "block.codercraft.titanium_block": "Titanium Block",
   "block.codercraft.raw_titanium_block": "Block of Raw Titanium",
+  "block.codercraft.transmuter_block": "Transmuter Block",
+  "block.codercraft.crafter": "Crafter",
 
   "creativetab.codercraft.codercraft_tab": "CoderCraft"
 }

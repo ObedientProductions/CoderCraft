@@ -25,6 +25,10 @@ public class ModCreativeTabs {
                             output.accept(ModItems.TITANIUM_INGOT.get());
                             output.accept(ModBlocks.TITANIUM_BLOCK.get());
                             output.accept(ModBlocks.RAW_TITANIUM_BLOCK.get());
+                            output.accept(ModItems.SPECIAL_ITEM.get());
+                            output.accept(ModBlocks.TRANSMUTER_BLOCK.get());
+                            output.accept(ModBlocks.CRAFTER.get());
+                            output.accept(ModBlocks.CRAFTER.get());
                         })
 
                     .build());

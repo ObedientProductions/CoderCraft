@@ -1,6 +1,8 @@
 package com.coderdan.codercraft.block;
 
 import com.coderdan.codercraft.CoderCraft;
+import com.coderdan.codercraft.block.custom.CrafterBlock;
+import com.coderdan.codercraft.block.custom.TransmuterBlock;
 import com.coderdan.codercraft.item.ModItems;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
@@ -30,6 +32,21 @@ public class ModBlocks {
                     .strength(3f)
                     .requiresCorrectToolForDrops()
                     .sound(SoundType.STONE)));
+
+    public static final RegistryObject<Block> TRANSMUTER_BLOCK = registerBlock("transmuter_block",
+            () -> new TransmuterBlock(BlockBehaviour.Properties.of()
+                    .strength(3f)
+                    .requiresCorrectToolForDrops()
+                    .sound(SoundType.BASALT)
+                    .lightLevel(state -> state.getValue(TransmuterBlock.CLICKED) ? 15 : 0)));
+
+    public static final RegistryObject<Block> CRAFTER = registerBlock("crafter",
+            () -> new CrafterBlock(BlockBehaviour.Properties.of()
+                    .strength(3f)
+                    .requiresCorrectToolForDrops()
+                    .sound(SoundType.BASALT)
+                    .noOcclusion()
+                    ));
 
 
 

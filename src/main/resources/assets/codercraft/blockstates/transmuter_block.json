@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "clicked=false": {
+      "model": "codercraft:block/transmuter_block_off"
+    },
+    "clicked=true": {
+      "model": "codercraft:block/transmuter_block_on"
+    }
+  }
+}

@@ -1,11 +1,15 @@
 package com.coderdan.codercraft;
 
 import com.coderdan.codercraft.block.ModBlocks;
+import com.coderdan.codercraft.entity.ModBlockEntities;
+import com.coderdan.codercraft.entity.renderer.CrafterEntityRenderer;
 import com.coderdan.codercraft.item.ModItems;
 import com.coderdan.codercraft.item.creativetabs.ModCreativeTabs;
+import com.coderdan.codercraft.sound.ModSounds;
 import com.mojang.logging.LogUtils;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
 import net.minecraftforge.event.server.ServerStartingEvent;
@@ -39,6 +43,8 @@ public class CoderCraft
 
         ModItems.register(modEventBus);
         ModBlocks.register(modEventBus);
+        ModBlockEntities.register(modEventBus);
+        ModSounds.register(modEventBus);
 
 
 
@@ -84,5 +90,12 @@ public class CoderCraft
         {
 
         }
+
+        @SubscribeEvent
+        public static void registerBER(EntityRenderersEvent.RegisterRenderers event)
+        {
+            event.registerBlockEntityRenderer(ModBlockEntities.CRAFTER.get(), CrafterEntityRenderer::new);
+        }
     }
+
 }
