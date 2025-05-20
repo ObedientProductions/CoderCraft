@@ -1,7 +1,7 @@
 {
   "replace": false,
   "values":[
-    "codercraft:titanium_block",
-    "codercraft:raw_titanium_block"
+    "avaritia:titanium_block",
+    "avaritia:raw_titanium_block"
   ]
 }

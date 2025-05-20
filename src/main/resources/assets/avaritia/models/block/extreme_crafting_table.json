@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/orientable",
+  "textures": {
+    "front": "avaritia:block/crafting/extreme_side",
+    "side": "avaritia:block/crafting/extreme_side",
+    "top": "avaritia:block/crafting/extreme_top"
+  }
+}

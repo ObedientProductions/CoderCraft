@@ -1,0 +1,44 @@
+{
+  "type": "avaritia:extreme",
+  "pattern": [
+    "abbccddee",
+    "ffgghh   ",
+    "         ",
+    "         ",
+    "         ",
+    "         ",
+    "         ",
+    "         ",
+    "         "
+  ],
+  "key": {
+    "a": {
+      "item": "avaritia:pile_of_neutrons"
+    },
+    "b": {
+      "tag": "c:crops/wheat"
+    },
+    "c": {
+      "item": "minecraft:carrot"
+    },
+    "d": {
+      "tag": "c:crops/potato"
+    },
+    "e": {
+      "tag": "c:crops/cactus"
+    },
+    "f": {
+      "item": "minecraft:red_mushroom"
+    },
+    "g": {
+      "item": "minecraft:brown_mushroom"
+    },
+    "h": {
+      "tag": "c:crops/nether_wart"
+    }
+  },
+  "result": {
+    "id": "avaritia:ultimate_stew",
+    "count": 1
+  }
+}

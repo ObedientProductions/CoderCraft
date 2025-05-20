@@ -1,0 +1,11 @@
+{
+  "type": "avaritia:compressor",
+  "ingredient": {
+    "tag": "forge:storage_blocks/nickel"
+  },
+  "result": {
+    "id": "avaritia:nickel_singularity"
+  },
+  "required": 200,
+  "processDuration": 4
+}

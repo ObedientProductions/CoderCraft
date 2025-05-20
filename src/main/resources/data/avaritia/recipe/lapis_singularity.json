@@ -1,0 +1,11 @@
+{
+  "type": "avaritia:compressor",
+  "ingredient": {
+    "tag": "forge:storage_blocks/lapis"
+  },
+  "result": {
+    "id": "avaritia:lapis_singularity"
+  },
+  "required": 200,
+  "processDuration": 4
+}

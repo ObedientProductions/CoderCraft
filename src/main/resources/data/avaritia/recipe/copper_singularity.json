@@ -1,0 +1,11 @@
+{
+  "type": "avaritia:compressor",
+  "ingredient": {
+    "tag": "forge:storage_blocks/copper"
+  },
+  "result": {
+    "id": "avaritia:copper_singularity"
+  },
+  "required": 200,
+  "processDuration": 4
+}

@@ -1,8 +1,0 @@
-{
-  "parent": "minecraft:block/orientable",
-  "textures": {
-    "front": "codercraft:block/crafter_front_open",
-    "side": "codercraft:block/crafter_side",
-    "top": "codercraft:block/crafter_top"
-  }
-}

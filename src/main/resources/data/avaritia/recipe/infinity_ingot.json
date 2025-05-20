@@ -1,0 +1,23 @@
+{
+  "type": "avaritia:extreme",
+  "pattern": [
+    "EEEEEEEEE",
+    "EFBBFBBFE",
+    "EBFFBFFBE",
+    "EFBBFBBFE",
+    "EEEEEEEEE",
+    "         ",
+    "         ",
+    "         ",
+    "         "
+  ],
+  "key": {
+    "E": { "item": "avaritia:neutronium_ingot" },
+    "B": { "item": "avaritia:infinity_catalyst" },
+    "F": { "item": "avaritia:crystal_matrix_ingot" }
+  },
+  "result": {
+    "id": "avaritia:infinity_ingot",
+    "count": 1
+  }
+}

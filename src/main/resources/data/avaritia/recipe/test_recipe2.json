@@ -1,0 +1,28 @@
+{
+  "type": "avaritia:extreme",
+  "pattern": [
+    "AAAAAAAAA",
+    "AAAAAAAAA",
+    "AAAAAAAAA",
+    "AAAAAAAAA",
+    "AAAAAAAAA",
+    "AAAAAAAAA",
+    "AAAAAAAAA",
+    "AAAAAAAAA",
+    "AAAAAAAB "
+  ],
+  "key": {
+    "A": {
+      "item": "avaritia:pile_of_neutrons"
+    },
+    "B": {
+      "item": "minecraft:diamond"
+    }
+  },
+
+  "result": {
+    "id": "minecraft:emerald",
+    "count": 1
+  }
+}
+

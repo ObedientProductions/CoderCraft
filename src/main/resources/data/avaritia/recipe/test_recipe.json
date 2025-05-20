@@ -1,0 +1,24 @@
+{
+  "type": "avaritia:extreme",
+  "pattern": [
+    "AAAAAAAAA",
+    "AAAAAAAAA",
+    "AAAAAAAAA",
+    "AAAAAAAAA",
+    "AAAAAAAAA",
+    "AAAAAAAAA",
+    "AAAAAAAAA",
+    "AAAAAAAAA",
+    "AAAAAAAAA"
+  ],
+  "key": {
+    "A": {
+      "item": "avaritia:pile_of_neutrons"
+    }
+  },
+  "result": {
+    "id": "minecraft:beacon",
+    "count": 1
+  }
+}
+

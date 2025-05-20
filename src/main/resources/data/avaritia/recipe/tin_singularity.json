@@ -1,0 +1,11 @@
+{
+  "type": "avaritia:compressor",
+  "ingredient": {
+    "tag": "forge:storage_blocks/tin"
+  },
+  "result": {
+    "id": "avaritia:tin_singularity"
+  },
+  "required": 200,
+  "processDuration": 4
+}

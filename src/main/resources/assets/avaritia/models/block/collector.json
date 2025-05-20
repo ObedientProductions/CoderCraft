@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/orientable",
+  "textures": {
+    "front": "avaritia:block/collector/inactive",
+    "side": "avaritia:block/collector/side",
+    "top": "avaritia:block/collector/top"
+  }
+}

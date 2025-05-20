@@ -1,0 +1,62 @@
+{
+  "item.avaritia.titanium": "Raw Titanium",
+  "item.avaritia.titanium_ingot": "Titanium Ingot",
+
+  "item.avaritia.special_item": "Special Item",
+  "item.avaritia.singularity": "Singularity",
+
+  "item.avaritia.iron_singularity": "Iron Singularity",
+  "item.avaritia.gold_singularity": "Golden Singularity",
+  "item.avaritia.lapis_singularity": "Lapis Singularity",
+  "item.avaritia.redstone_singularity": "Redstone Singularity",
+  "item.avaritia.nether_quartz_singularity": "Nether Quartz Singularity",
+  "item.avaritia.copper_singularity": "Copper Singularity",
+  "item.avaritia.tin_singularity": "Tin Singularity",
+  "item.avaritia.lead_singularity": "Lead Singularity",
+  "item.avaritia.silver_singularity": "Silver Singularity",
+  "item.avaritia.nickel_singularity": "Nickel Singularity",
+  "item.avaritia.diamond_singularity": "Diamond Singularity",
+  "item.avaritia.emerald_singularity": "Emerald Singularity",
+  "item.avaritia.netherite_singularity": "Netherite Singularity",
+  "item.avaritia.fluxed_singularity": "Fluxed Singularity",
+  "item.avaritia.platinum_singularity": "Platinum Singularity",
+  "item.avaritia.iridium_singularity": "Iridium Singularity",
+
+  "item.avaritia.infinity_ingot": "Infinity Ingot",
+  "item.avaritia.infinity_catalyst": "Infinity Catalyst",
+  "item.avaritia.endest_pearl": "Endest Pearl",
+  "item.avaritia.ultimate_stew": "Ultimate Stew",
+  "item.avaritia.cosmic_meatballs": "Cosmic Meatballs",
+  "item.avaritia.record_fragment": "Record Fragment",
+  "item.avaritia.pile_of_neutrons": "Pile Of Neutrons",
+  "item.avaritia.neutronium_nugget": "Neutronium Nugget",
+  "item.avaritia.neutronium_ingot": "Neutronium Ingot",
+  "item.avaritia.diamond_lattice": "Diamond Lattice",
+  "item.avaritia.crystal_matrix_ingot": "Crystal Matrix Ingot",
+
+  "item.avaritia.infinity_helmet": "Infinity Helmet",
+  "item.avaritia.infinity_breastplate": "Infinity Breastplate",
+  "item.avaritia.infinity_leggings": "Infinity Leggings",
+  "item.avaritia.infinity_boots": "Infinity Boots",
+
+  "block.avaritia.titanium_block": "Titanium Block",
+  "block.avaritia.raw_titanium_block": "Block of Raw Titanium",
+  "block.avaritia.transmuter_block": "Transmuter Block",
+  "block.avaritia.crafter": "Crafter",
+  "block.avaritia.compressor": "Neutronium Compressor",
+  "block.avaritia.collector": "Neutron Collector",
+  "block.avaritia.crystal_matrix": "Crystal Matrix",
+  "block.avaritia.infinity_block": "Infinity Block",
+  "block.avaritia.neutronium_block": "Neutronium Block",
+  "block.avaritia.compressed_crafting_table": "Compressed Crafting Table",
+  "block.avaritia.double_compressed_crafting_table": "Double Compressed Crafting Table",
+  "block.avaritia.extreme_crafting_table": "Extreme Crafting Table",
+
+  "block.avaritia.extreme_crafting_table": "Extreme Crafting Table",
+
+  "creativetab.avaritia.avaritia_tab": "Avaritia",
+
+  "jei.avaritia.neutronium_compression": "Neutronium Compression",
+  "jei.avaritia.extreme_crafting": "Extreme Crafting",
+  "jei.avaritia.neutronium_collection" : "Neutronium Collection"
+}

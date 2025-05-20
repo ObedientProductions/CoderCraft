@@ -1,0 +1,32 @@
+{
+  "type": "avaritia:extreme",
+  "pattern": [
+    "   ###   ",
+    " ##qqq## ",
+    " #qqqqq# ",
+    "#qqqwqqq#",
+    "#qqwjwqq#",
+    "#qqqwqqq#",
+    " #qqqqq# ",
+    " ##qqq## ",
+    "   ###   "
+  ],
+  "key": {
+    "#": {
+      "tag": "forge:end_stones"
+    },
+    "q": {
+      "tag": "c:ender_pearls"
+    },
+    "w": {
+      "item": "avaritia:neutronium_ingot"
+    },
+    "j": {
+      "tag": "forge:nether_stars"
+    }
+  },
+  "result": {
+    "id": "avaritia:endest_pearl",
+    "count": 1
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "type": "avaritia:extreme",
+  "pattern": [
+    "AABBBBBAA",
+    "A BBBBB A",
+    "A  CCC  A",
+    "D CCCCC D",
+    "A CCDCC A",
+    "D CCCCC D",
+    "A  CCC  A",
+    "A       A",
+    "AAADADAAA"
+  ],
+  "key": {
+    "A": { "tag": "forge:storage_blocks/iron" },
+    "B": { "tag": "forge:storage_blocks/quartz" },
+    "C": { "tag": "forge:storage_blocks/redstone" },
+    "D": { "item": "avaritia:crystal_matrix_ingot" }
+  },
+  "result": {
+    "id": "avaritia:collector",
+    "count": 1
+  }
+}
+

@@ -1,0 +1,11 @@
+{
+  "type": "avaritia:compressor",
+  "ingredient": {
+    "tag": "forge:storage_blocks/redstone"
+  },
+  "result": {
+    "id": "avaritia:redstone_singularity"
+  },
+  "required": 200,
+  "processDuration": 4
+}

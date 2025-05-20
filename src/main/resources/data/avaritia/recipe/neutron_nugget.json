@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "###",
+    "###",
+    "###"
+  ],
+  "key": {
+    "#": {
+      "item": "avaritia:pile_of_neutrons"
+    }
+  },
+  "result": {
+    "id": "avaritia:neutronium_nugget",
+    "count": 1
+  }
+}

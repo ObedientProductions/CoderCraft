@@ -1,0 +1,8 @@
+{
+  "transmuter_block_use": {
+    "subtitle": "sounds.avaritia.transmuter_block_use",
+    "sounds": [
+      "avaritia:transmuter_block_use"
+    ]
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "clicked=false": {
+      "model": "avaritia:block/transmuter_block_off"
+    },
+    "clicked=true": {
+      "model": "avaritia:block/transmuter_block_on"
+    }
+  }
+}

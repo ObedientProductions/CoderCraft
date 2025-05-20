@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "tag": "c:music_discs"
+    }
+  ],
+  "result": {
+    "id": "avaritia:record_fragment",
+    "count": 9
+  }
+}

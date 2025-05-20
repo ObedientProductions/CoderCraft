@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "###",
+    "###",
+    "###"
+  ],
+  "key": {
+    "#": {
+      "item": "minecraft:crafting_table"
+    }
+  },
+  "result": {
+    "id": "avaritia:compressed_crafting_table",
+    "count": 1
+  }
+}

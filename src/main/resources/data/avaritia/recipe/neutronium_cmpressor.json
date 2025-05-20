@@ -1,0 +1,27 @@
+{
+  "type": "avaritia:extreme",
+  "pattern": [
+    "AAABBBAAA",
+    "D F   F D",
+    "A F   F A",
+    "D F   F D",
+    "CFF E FFC",
+    "D F   F D",
+    "A F   F A",
+    "D F   F D",
+    "AAADADAAA"
+  ],
+  "key": {
+    "A": { "tag": "forge:storage_blocks/iron" },
+    "B": { "item": "minecraft:hopper" },
+    "C": { "tag": "forge:storage_blocks/redstone" },
+    "D": { "item": "avaritia:crystal_matrix_ingot" },
+    "E": { "item": "avaritia:neutronium_block" },
+    "F": { "item": "avaritia:neutronium_ingot" }
+  },
+  "result": {
+    "id": "avaritia:compressor",
+    "count": 1
+  }
+}
+

@@ -1,0 +1,11 @@
+{
+  "type": "avaritia:compressor",
+  "ingredient": {
+    "tag": "forge:storage_blocks/emerald"
+  },
+  "result": {
+    "id": "avaritia:emerald_singularity"
+  },
+  "required": 200,
+  "processDuration": 4
+}

@@ -1,0 +1,38 @@
+{
+  "type": "avaritia:extreme",
+  "pattern": [
+    "ABCDEFGHI",
+    "JKLMNOPQ ",
+    "         ",
+    "         ",
+    "         ",
+    "         ",
+    "         ",
+    "         ",
+    "         "
+  ],
+  "key": {
+    "A": { "item": "avaritia:diamond_lattice" },
+    "B": { "item": "avaritia:crystal_matrix_ingot" },
+    "C": { "item": "avaritia:pile_of_neutrons" },
+    "D": { "item": "avaritia:neutronium_nugget" },
+    "E": { "item": "avaritia:neutronium_ingot" },
+    "F": { "item": "avaritia:ultimate_stew" },
+    "G": { "item": "avaritia:cosmic_meatballs" },
+    "H": { "item": "avaritia:endest_pearl" },
+    "I": { "item": "avaritia:record_fragment" },
+    "J": { "item": "avaritia:iron_singularity" },
+    "K": { "item": "avaritia:gold_singularity" },
+    "L": { "item": "avaritia:lapis_singularity" },
+    "M": { "item": "avaritia:redstone_singularity" },
+    "N": { "item": "avaritia:nether_quartz_singularity" },
+    "O": { "item": "avaritia:diamond_singularity" },
+    "P": { "item": "avaritia:emerald_singularity" },
+    "Q": { "item": "avaritia:netherite_singularity" }
+  },
+  "result": {
+    "id": "avaritia:infinity_catalyst",
+    "count": 1
+  }
+}
+

@@ -1,0 +1,38 @@
+{
+  "type": "avaritia:extreme",
+  "pattern": [
+    "abbccddee",
+    "ff       ",
+    "         ",
+    "         ",
+    "         ",
+    "         ",
+    "         ",
+    "         ",
+    "         "
+  ],
+  "key": {
+    "a": {
+      "item": "avaritia:pile_of_neutrons"
+    },
+    "b": {
+      "item": "minecraft:beef"
+    },
+    "c": {
+      "item": "minecraft:chicken"
+    },
+    "d": {
+      "item": "minecraft:porkchop"
+    },
+    "e": {
+      "item": "minecraft:rabbit"
+    },
+    "f": {
+      "tag": "c:foods/raw_fish"
+    }
+  },
+  "result": {
+    "id": "avaritia:cosmic_meatballs",
+    "count": 1
+  }
+}

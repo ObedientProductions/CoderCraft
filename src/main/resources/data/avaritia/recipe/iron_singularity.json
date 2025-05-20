@@ -1,0 +1,11 @@
+{
+  "type": "avaritia:compressor",
+  "ingredient": {
+    "tag": "forge:storage_blocks/iron"
+  },
+  "result": {
+    "id": "avaritia:iron_singularity"
+  },
+  "required": 200,
+  "processDuration": 4
+}
