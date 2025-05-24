@@ -1,0 +1,29 @@
+{
+  "type": "avaritia:extreme",
+  "pattern": [
+    "  wwwww  ",
+    " w#####w ",
+    " w q#q w ",
+    " w#####w ",
+    " w#####w ",
+    " w# # #w ",
+    "         ",
+    "         ",
+    "         "
+  ],
+  "key": {
+    "#": {
+      "item": "avaritia:infinity_ingot"
+    },
+    "q": {
+      "item": "avaritia:infinity_catalyst"
+    },
+    "w": {
+      "item": "avaritia:neutronium_ingot"
+    }
+  },
+  "result": {
+    "id": "avaritia:infinity_helmet",
+    "count": 1
+  }
+}

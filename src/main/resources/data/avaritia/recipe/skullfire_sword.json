@@ -1,0 +1,35 @@
+{
+  "type": "avaritia:extreme",
+  "pattern": [
+    "       er",
+    "      ere",
+    "     ere ",
+    "    ere  ",
+    " q ere   ",
+    "  qre    ",
+    "  wq     ",
+    " w  q    ",
+    "n        "
+  ],
+  "key": {
+    "q": {
+      "item": "minecraft:bone"
+    },
+    "w": {
+      "tag": "minecraft:logs_that_burn"
+    },
+    "r": {
+      "item": "minecraft:blaze_powder"
+    },
+    "n": {
+      "item": "minecraft:nether_star"
+    },
+    "e": {
+      "item": "avaritia:crystal_matrix_ingot"
+    }
+  },
+  "result": {
+    "id": "avaritia:skullfire_sword",
+    "count": 1
+  }
+}

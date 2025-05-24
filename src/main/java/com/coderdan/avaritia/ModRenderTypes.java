@@ -19,6 +19,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.valueproviders.UniformFloat;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RegisterShadersEvent;
+import net.minecraftforge.client.event.ScreenEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import org.joml.Matrix4f;
@@ -140,6 +141,18 @@ public class ModRenderTypes {
         Uniform currentFrameUniform = Objects.requireNonNull(shader.getUniform("currentFrame"), "Missing Uniform 'currentFrame'!");
         currentFrameUniform.set(0);
 
+        // Set the time uniform in the shader
+        Uniform zoomScaleUniform = Objects.requireNonNull(shader.getUniform("ZoomScale"), "Missing Uniform 'currentFrame'!");
+        zoomScaleUniform.set(1.0f);
+
+        // Set the time uniform in the shader
+        Uniform cameraYawUniform = Objects.requireNonNull(shader.getUniform("CameraYaw"), "Missing Uniform 'currentFrame'!");
+        cameraYawUniform.set(0f);
+
+        // Set the time uniform in the shader
+        Uniform cameraPitchUniform = Objects.requireNonNull(shader.getUniform("CameraPitch"), "Missing Uniform 'currentFrame'!");
+        cameraPitchUniform.set(0f);
+
 
 
         System.out.println("Default uniform 'time' set!");
@@ -198,17 +211,15 @@ public class ModRenderTypes {
                     .setShaderState(INFINITY_VOID_SHADER_STATE)
 
                     .setTextureState(new TextureStateShard(baseTexture, false, false))
-                    .setTransparencyState(TRANSLUCENT_TRANSPARENCY)
-                    .setCullState(NO_CULL)
+                    .setTransparencyState(RenderStateShard.ADDITIVE_TRANSPARENCY)
                     .setLightmapState(LIGHTMAP)
                     .setOverlayState(OVERLAY)
-                    .setWriteMaskState(RenderStateShard.COLOR_DEPTH_WRITE)
-                    .createCompositeState(false);
+                    .createCompositeState(true);
 
 
             return RenderType.create(
                     "infinity_void",
-                    DefaultVertexFormat.POSITION,
+                    DefaultVertexFormat.POSITION_TEX,
                     VertexFormat.Mode.QUADS,
                     1536,
                     true,

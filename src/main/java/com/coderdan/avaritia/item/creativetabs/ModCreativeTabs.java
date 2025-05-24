@@ -53,10 +53,19 @@ public class ModCreativeTabs {
                             output.accept(ModItems.PLATINUM_SINGULARITY.get());
                             output.accept(ModItems.IRIDIUM_SINGULARITY.get());
 
+                            output.accept(ModItems.INFINITY_SWORD.get());
+                            output.accept(ModItems.INFINITY_BOW.get());
+                            output.accept(ModItems.INFINITY_PICKAXE.get());
+                            output.accept(ModItems.INFINITY_SHOVEL.get());
+                            output.accept(ModItems.INFINITY_AXE.get());
+                            output.accept(ModItems.INFINITY_HOE.get());
+
                             output.accept(ModItems.INFINITY_HELMET.get());
                             output.accept(ModItems.INFINITY_BREASTPLATE.get());
                             output.accept(ModItems.INFINITY_LEGGINGS.get());
                             output.accept(ModItems.INFINITY_BOOTS.get());
+
+                            output.accept(ModItems.SKULLFIRE_SWORD.get());
 
 
 
@@ -82,7 +91,10 @@ public class ModCreativeTabs {
                             output.accept(ModBlocks.COLLECTOR.get());
                             output.accept(ModBlocks.COMPRESSOR.get());
 
+                            output.accept(ModItems.HEAVENS_MARK_SMITHING_TEMPLATE.get());
+
                             output.accept(ModItems.SPECIAL_ITEM.get());
+                            output.accept(ModItems.MATTER_CLUSTER.get());
                         })
 
                     .build());

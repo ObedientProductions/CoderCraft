@@ -3,7 +3,6 @@ package com.coderdan.avaritia.screen.custom;
 import com.coderdan.avaritia.block.ModBlocks;
 import com.coderdan.avaritia.block.custom.CompressedCraftingTableBlock;
 import com.coderdan.avaritia.block.entity.custom.CompressedCraftingTableBlockEntity;
-import com.coderdan.avaritia.block.entity.custom.CrafterBlockEntity;
 import com.coderdan.avaritia.block.entity.custom.ExtremeCraftingTableBlockEntity;
 import com.coderdan.avaritia.item.ModItems;
 import com.coderdan.avaritia.screen.ModMenuTypes;

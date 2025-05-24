@@ -13,7 +13,6 @@ public class ModMenuTypes {
 
     public static final DeferredRegister<MenuType<?>> MENUS = DeferredRegister.create(Registries.MENU, Avaritia.MOD_ID);
 
-    public static final RegistryObject<MenuType<CrafterMenu>> CRAFTER_MENU = MENUS.register("crafter_name", () -> IForgeMenuType.create(CrafterMenu::new));
     public static final RegistryObject<MenuType<CompressorMenu>> COMPRESSOR = MENUS.register("compressor_name", () -> IForgeMenuType.create(CompressorMenu::new));
     public static final RegistryObject<MenuType<CollectorMenu>> COLLECTOR = MENUS.register("collector_name", () -> IForgeMenuType.create(CollectorMenu::new));
     public static final RegistryObject<MenuType<ExtremeCraftingMenu>> EXTREME_CRAFTING = MENUS.register("extreme_name", () -> IForgeMenuType.create(ExtremeCraftingMenu::new));

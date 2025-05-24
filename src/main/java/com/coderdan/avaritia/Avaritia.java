@@ -2,10 +2,16 @@ package com.coderdan.avaritia;
 
 import com.coderdan.avaritia.block.ModBlocks;
 import com.coderdan.avaritia.entity.ModBlockEntities;
-import com.coderdan.avaritia.entity.renderer.CrafterEntityRenderer;
+import com.coderdan.avaritia.entity.ModEntities;
+import com.coderdan.avaritia.entity.renderer.InfinityArrowRenderer;
+import com.coderdan.avaritia.events.CommandInterceptor;
+import com.coderdan.avaritia.item.ModDataComponentTypes;
+import com.coderdan.avaritia.item.ModItemProperties;
 import com.coderdan.avaritia.item.ModItems;
 import com.coderdan.avaritia.item.armor.ArmorModelLayers;
 import com.coderdan.avaritia.item.creativetabs.ModCreativeTabs;
+import com.coderdan.avaritia.item.render.InfinitySwordModel;
+import com.coderdan.avaritia.item.render.InfinitySwordRenderer;
 import com.coderdan.avaritia.recipe.ModRecipies;
 import com.coderdan.avaritia.screen.ModMenuTypes;
 import com.coderdan.avaritia.screen.custom.*;
@@ -13,10 +19,16 @@ import com.coderdan.avaritia.sound.ModSounds;
 import com.mojang.logging.LogUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.MenuScreens;
+import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
+import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.client.resources.model.ModelResourceLocation;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.EntityRenderersEvent;
+import net.minecraftforge.client.event.ModelEvent;
+import net.minecraftforge.client.event.RenderTooltipEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
 import net.minecraftforge.event.TickEvent;
@@ -50,7 +62,8 @@ public class Avaritia
 
         ModCreativeTabs.register(modEventBus);
 
-        ModMenuTypes.register(modEventBus); // ← you’re missing this line
+        ModEntities.register(modEventBus);
+        ModMenuTypes.register(modEventBus);
         ModItems.register(modEventBus);
         ModBlocks.register(modEventBus);
         ModBlockEntities.register(modEventBus);
@@ -58,6 +71,8 @@ public class Avaritia
 
         ModRecipies.register(modEventBus);
 
+        MinecraftForge.EVENT_BUS.register(CommandInterceptor.class);
+        ModDataComponentTypes.register(modEventBus);
 
 
 
@@ -86,28 +101,24 @@ public class Avaritia
 
     }
 
-    // You can use EventBusSubscriber to automatically register all static methods in the class annotated with @SubscribeEvent
     @Mod.EventBusSubscriber(modid = MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
     public static class ClientModEvents
     {
         @SubscribeEvent
         public static void onClientSetup(FMLClientSetupEvent event)
         {
-            MenuScreens.register(ModMenuTypes.CRAFTER_MENU.get(), CrafterScreen::new);
             MenuScreens.register(ModMenuTypes.COMPRESSOR.get(), CompressorScreen::new);
             MenuScreens.register(ModMenuTypes.COLLECTOR.get(), CollectorScreen::new);
             MenuScreens.register(ModMenuTypes.EXTREME_CRAFTING.get(), ExtremeCraftingScreen::new);
 
-
-
-
-
+            ModItemProperties.addCustomItemProperties();
         }
+
 
         @SubscribeEvent
         public static void registerBER(EntityRenderersEvent.RegisterRenderers event)
         {
-            event.registerBlockEntityRenderer(ModBlockEntities.CRAFTER.get(), CrafterEntityRenderer::new);
+            event.registerEntityRenderer(ModEntities.INFINITY_ARROW.get(), InfinityArrowRenderer::new);
         }
 
 
@@ -117,8 +128,27 @@ public class Avaritia
         }
 
 
+        @SubscribeEvent
+        public static void onModelBake(ModelEvent.ModifyBakingResult event) {
+            ResourceLocation baseLoc = ResourceLocation.fromNamespaceAndPath("avaritia", "infinity_sword");
+            ModelResourceLocation modelLoc = new ModelResourceLocation(baseLoc, "inventory");
+
+            BakedModel base = event.getModels().get(modelLoc);
+            if (base != null) {
+                event.getModels().put(modelLoc, new InfinitySwordModel(base));
+                System.out.println("[INFINITY SWORD] Custom model baked!");
+            } else {
+                System.out.println("[INFINITY SWORD] Failed to find base model!");
+            }
+        }
+
+
+
 
     }
+
+
+
 
 
     @Mod.EventBusSubscriber(modid = Avaritia.MOD_ID) // Not limited to client

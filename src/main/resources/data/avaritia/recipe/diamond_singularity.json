@@ -6,6 +6,6 @@
   "result": {
     "id": "avaritia:diamond_singularity"
   },
-  "required": 200,
-  "processDuration": 4
+  "required": 128,
+  "processDuration": 5
 }

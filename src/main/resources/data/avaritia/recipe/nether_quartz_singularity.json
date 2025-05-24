@@ -6,6 +6,6 @@
   "result": {
     "id": "avaritia:nether_quartz_singularity"
   },
-  "required": 200,
-  "processDuration": 4
+  "required": 384,
+  "processDuration": 6
 }

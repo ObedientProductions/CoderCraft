@@ -2,6 +2,7 @@ package com.coderdan.avaritia.mixin;
 
 import com.coderdan.avaritia.Avaritia;
 import com.coderdan.avaritia.ModRenderTypes;
+import com.coderdan.avaritia.events.ForgeClientEvents;
 import com.coderdan.avaritia.item.ModItems;
 import com.coderdan.avaritia.item.custom.ModInfinityArmorItem;
 import com.mojang.blaze3d.shaders.Shader;
@@ -24,6 +25,7 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
@@ -74,68 +76,45 @@ public abstract class ArmorRendererMixin <T extends LivingEntity, M extends Huma
     float time = 0;
 
 
-    @Inject(method = "renderArmorPiece", at = @At("HEAD"))
+    @Inject(method = "renderArmorPiece", at = @At("TAIL"))
     private void onRender(PoseStack pPoseStack, MultiBufferSource pBufferSource, T pLivingEntity, EquipmentSlot pSlot, int pPackedLight, A pModel, CallbackInfo ci) {
 
-        ItemStack helmetStack = pLivingEntity.getItemBySlot(EquipmentSlot.HEAD);
-        ItemStack chestStack = pLivingEntity.getItemBySlot(EquipmentSlot.CHEST);
-        ItemStack pantsStack = pLivingEntity.getItemBySlot(EquipmentSlot.LEGS);
-        ItemStack bootsStack = pLivingEntity.getItemBySlot(EquipmentSlot.FEET);
+        if (ModRenderTypes.infinityVoidShader != null) {
+            ShaderInstance shader = ModRenderTypes.infinityVoidShader;
 
-        if (pSlot == EquipmentSlot.CHEST) {
+            float partialTicks = Minecraft.getInstance().getFrameTimeNs();
+            float gameTime = Minecraft.getInstance().level.getGameTime() + partialTicks;
 
-            if (hasInfinityArmor(pLivingEntity)) {
-                if(chestStack.getItem() instanceof ModInfinityArmorItem)
-                {
-                    renderWings(pPoseStack, pModel, pBufferSource);
-                    //renderWingsVoidEffect(pPoseStack, pModel, pBufferSource);
+            int frameCount = 8;
+            int frameDuration = 75; // ms per frame
+            int currentFrame = (int)((System.currentTimeMillis() / frameDuration) % frameCount);
 
-                    //renderArmorEffects(pPoseStack, pModel, pBufferSource);
-
-
-                    if (ModRenderTypes.infinityVoidShader(VOIDSTARSTXT) != null)
-                    {
-                        time += 0.05f;
-
-                        //Objects.requireNonNull(ModRenderTypes.infinityVoidShader.getUniform("time")).set(time);
-
-                        VertexConsumer vc = pBufferSource.getBuffer(ModRenderTypes.infinityVoidShader(VOIDSTARSTXT));
-
-                        ModelPart body = pModel.body;
-
-
-                        if (ModRenderTypes.infinityVoidShader != null) {
-                            ShaderInstance shader = ModRenderTypes.infinityVoidShader;
-
-                            float partialTicks = Minecraft.getInstance().getFrameTimeNs();
-                            float gameTime = Minecraft.getInstance().level.getGameTime() + partialTicks;
-
-                            int frameCount = 8;
-                            int frameDuration = 75; // ms per frame
-                            int currentFrame = (int)((System.currentTimeMillis() / frameDuration) % frameCount);
-
-                            Objects.requireNonNull(shader.getUniform("GameTime")).set(gameTime);
-                            Objects.requireNonNull(shader.getUniform("currentFrame")).set((int) currentFrame);
-                            Objects.requireNonNull(shader.getUniform("frameCount")).set((int) frameCount);
-                        }
-                    }
-
-                }
-
-
-                //VertexConsumer vc = pBufferSource.getBuffer(ModRenderTypes.babyShader(TESTTXT, TESTTXT));
-                //pModel.renderToBuffer(pPoseStack, vc,pPackedLight,1,1);
-            }
-
+            Objects.requireNonNull(shader.getUniform("GameTime")).set(gameTime);
+            Objects.requireNonNull(shader.getUniform("currentFrame")).set((int) currentFrame);
+            Objects.requireNonNull(shader.getUniform("frameCount")).set((int) frameCount);
         }
 
 
 
+        if (pSlot != EquipmentSlot.CHEST) return;
+
+        ItemStack chestStack = pLivingEntity.getItemBySlot(EquipmentSlot.CHEST);
 
 
+        //renderArmorEffects(pPoseStack, pModel, pBufferSource); //for testing
 
+        if (!(pLivingEntity instanceof Player player)) return;
+
+        if (chestStack.getItem() instanceof ModInfinityArmorItem && hasInfinityArmor((T) player)) {
+            if (player.getAbilities().flying || player.isFallFlying()) {
+                renderWings(pPoseStack, pModel, pBufferSource);
+            }
+
+            renderArmorEffects(pPoseStack, pModel, pBufferSource);
+        }
 
     }
+
 
 
 
@@ -194,20 +173,7 @@ public abstract class ArmorRendererMixin <T extends LivingEntity, M extends Huma
         ModelPart body = pModel.body;
 
 
-        if (ModRenderTypes.infinityVoidShader != null) {
-            ShaderInstance shader = ModRenderTypes.infinityVoidShader;
 
-            float partialTicks = Minecraft.getInstance().getFrameTimeNs();
-            float gameTime = Minecraft.getInstance().level.getGameTime() + partialTicks;
-
-            int frameCount = 8;
-            int frameDuration = 75; // ms per frame
-            int currentFrame = (int)((System.currentTimeMillis() / frameDuration) % frameCount);
-
-            Objects.requireNonNull(shader.getUniform("GameTime")).set(gameTime);
-            Objects.requireNonNull(shader.getUniform("currentFrame")).set((int) currentFrame);
-            Objects.requireNonNull(shader.getUniform("frameCount")).set((int) frameCount);
-        }
 
 
 
@@ -239,24 +205,7 @@ public abstract class ArmorRendererMixin <T extends LivingEntity, M extends Huma
 
     void renderArmorEffects(PoseStack pPoseStack, A pModel, MultiBufferSource pBufferSource)
     {
-        float size = 0.155f;
         VertexConsumer vc = pBufferSource.getBuffer(ModRenderTypes.infinityVoidShader(VOIDSTARSTXT));
-
-
-        if (ModRenderTypes.infinityVoidShader != null) {
-            ShaderInstance shader = ModRenderTypes.infinityVoidShader;
-
-            float partialTicks = Minecraft.getInstance().getFrameTimeNs();
-            float gameTime = Minecraft.getInstance().level.getGameTime() + partialTicks;
-
-            int frameCount = 8;
-            int frameDuration = 75; // ms per frame
-            int currentFrame = (int)((System.currentTimeMillis() / frameDuration) % frameCount);
-
-            Objects.requireNonNull(shader.getUniform("GameTime")).set(gameTime);
-            Objects.requireNonNull(shader.getUniform("currentFrame")).set((int) currentFrame);
-            Objects.requireNonNull(shader.getUniform("frameCount")).set((int) frameCount);
-        }
 
 
 
@@ -278,9 +227,30 @@ public abstract class ArmorRendererMixin <T extends LivingEntity, M extends Huma
 
         pPoseStack.pushPose();
         body.translateAndRotate(pPoseStack);
-        //renderQuad(pPoseStack, vc, size * 10, new Vec3(0.0f, 0.23f, 0.189f), 34, 22, 4,7, 64, 64); // head
-        renderWingQuad(pPoseStack, vc, size * 10);
+
+        float dsize = 0.0362f;
+        Vec3 doffset = new Vec3(0.1170f, 0.1204f, 0.189f);
+
+        renderQuadStrip(pPoseStack, vc, dsize, 7, doffset, 34, 22, 4, 7, 64, 64);
+        // Compute the horizontal spacing: one strip width * 3 (2 gaps + 1 strip width)
+        float spacing = dsize * 2.14f * 3.0f;
+
+        // New offset 2 pixels away from original strip
+        Vec3 nextOffset = doffset.add(-spacing, 0.0f, 0.0f);
+
+        renderQuadStrip(pPoseStack, vc, dsize, 7, nextOffset, 34, 22, 4, 7, 64, 64);
+
+
+
+
+
+
         pPoseStack.popPose();
+
+
+
+
+
 
     }
 
@@ -340,6 +310,84 @@ public abstract class ArmorRendererMixin <T extends LivingEntity, M extends Huma
         RenderSystem.disableBlend();
         poseStack.popPose();
     }
+
+    private void renderQuadStrip(PoseStack poseStack, VertexConsumer vc, float size, int length, Vec3 offset,
+                                 float u, float v, float regionWidth, float regionHeight,
+                                 float textureWidth, float textureHeight) {
+        poseStack.pushPose();
+        poseStack.translate(offset.x, offset.y, offset.z);
+        Matrix4f matrix = poseStack.last().pose();
+
+        RenderSystem.enableBlend();
+
+        float minU = u / textureWidth;
+        float maxU = (u + regionWidth) / textureWidth;
+        float minV = v / textureHeight;
+        float maxV = (v + regionHeight * length) / textureHeight;
+
+        float totalHeight = size * 2 * length;
+
+        float width = size * 1.07f;
+
+
+        vc.addVertex(matrix, -width, -size, 0.0f)
+                .setUv(minU, maxV).setColor(255, 255, 255, 255)
+                .setUv2(240, 240).setOverlay(OverlayTexture.NO_OVERLAY).setNormal(0, 0, 1);
+        vc.addVertex(matrix, width, -size, 0.0f)
+                .setUv(maxU, maxV).setColor(255, 255, 255, 255)
+                .setUv2(240, 240).setOverlay(OverlayTexture.NO_OVERLAY).setNormal(0, 0, 1);
+        vc.addVertex(matrix, width, -size + totalHeight, 0.0f)
+                .setUv(maxU, minV).setColor(255, 255, 255, 255)
+                .setUv2(240, 240).setOverlay(OverlayTexture.NO_OVERLAY).setNormal(0, 0, 1);
+        vc.addVertex(matrix, -width, -size + totalHeight, 0.0f)
+                .setUv(minU, minV).setColor(255, 255, 255, 255)
+                .setUv2(240, 240).setOverlay(OverlayTexture.NO_OVERLAY).setNormal(0, 0, 1);
+
+
+        RenderSystem.disableBlend();
+        poseStack.popPose();
+    }
+
+    private void renderQuadStripReversed(PoseStack poseStack, VertexConsumer vc, float size, int length, Vec3 offset,
+                                 float u, float v, float regionWidth, float regionHeight,
+                                 float textureWidth, float textureHeight) {
+        poseStack.pushPose();
+        poseStack.translate(offset.x, offset.y, offset.z);
+        Matrix4f matrix = poseStack.last().pose();
+
+        RenderSystem.enableBlend();
+
+        float minU = u / textureWidth;
+        float maxU = (u + regionWidth) / textureWidth;
+        float minV = v / textureHeight;
+        float maxV = (v + regionHeight * length) / textureHeight;
+
+        float totalHeight = size * 2 * length;
+
+        float width = size * 1.07f;
+
+        vc.addVertex(matrix, -width, -size + totalHeight, 0.0f)
+                .setUv(minU, minV).setColor(255, 255, 255, 255)
+                .setUv2(240, 240).setOverlay(OverlayTexture.NO_OVERLAY).setNormal(0, 0, 1);
+        vc.addVertex(matrix, width, -size + totalHeight, 0.0f)
+                .setUv(maxU, minV).setColor(255, 255, 255, 255)
+                .setUv2(240, 240).setOverlay(OverlayTexture.NO_OVERLAY).setNormal(0, 0, 1);
+        vc.addVertex(matrix, width, -size, 0.0f)
+                .setUv(maxU, maxV).setColor(255, 255, 255, 255)
+                .setUv2(240, 240).setOverlay(OverlayTexture.NO_OVERLAY).setNormal(0, 0, 1);
+        vc.addVertex(matrix, -width, -size, 0.0f)
+                .setUv(minU, maxV).setColor(255, 255, 255, 255)
+                .setUv2(240, 240).setOverlay(OverlayTexture.NO_OVERLAY).setNormal(0, 0, 1);
+
+
+
+
+        RenderSystem.disableBlend();
+        poseStack.popPose();
+    }
+
+
+
 
     private void renderWingQuadAnimated(PoseStack pPoseStack, VertexConsumer vc, float size, float width, float height, float frameDuration) {
         Matrix4f matrix = pPoseStack.last().pose();

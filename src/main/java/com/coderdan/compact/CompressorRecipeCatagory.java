@@ -15,6 +15,7 @@ import mezz.jei.api.recipe.IFocusGroup;
 import mezz.jei.api.recipe.RecipeIngredientRole;
 import mezz.jei.api.recipe.RecipeType;
 import mezz.jei.api.recipe.category.IRecipeCategory;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -39,7 +40,7 @@ public class CompressorRecipeCatagory implements IRecipeCategory<CompressorRecip
 
 
     public CompressorRecipeCatagory(IGuiHelper helper) {
-        this.background = helper.createDrawable(TEXTURE, 38,30,100,26);
+        this.background = helper.createDrawable(TEXTURE, 36,26,104,44);
         this.icon = helper.createDrawableIngredient(VanillaTypes.ITEM_STACK, new ItemStack(ModBlocks.COMPRESSOR.get()));
 
         this.arrowStatic = helper.createDrawable(TEXTURE, 176, 0, 22, 16);
@@ -66,8 +67,8 @@ public class CompressorRecipeCatagory implements IRecipeCategory<CompressorRecip
 
     @Override
     public void setRecipe(IRecipeLayoutBuilder builder, CompressorRecipe recipe, IFocusGroup focuses) {
-        builder.addSlot(RecipeIngredientRole.INPUT, 1,5).addIngredients(recipe.getIngredients().get(0));
-        builder.addSlot(RecipeIngredientRole.OUTPUT, 79, 5).addItemStack(recipe.getResultItem(null));
+        builder.addSlot(RecipeIngredientRole.INPUT, 3,9).addIngredients(recipe.getIngredients().get(0));
+        builder.addSlot(RecipeIngredientRole.OUTPUT, 81, 9).addItemStack(recipe.getResultItem(null));
     }
 
     @Override
@@ -79,7 +80,13 @@ public class CompressorRecipeCatagory implements IRecipeCategory<CompressorRecip
     public void draw(CompressorRecipe recipe, IRecipeSlotsView recipeSlotsView, GuiGraphics guiGraphics, double mouseX, double mouseY) {
         IRecipeCategory.super.draw(recipe, recipeSlotsView, guiGraphics, mouseX, mouseY);
 
-        arrowAnimated.draw(guiGraphics, 24, 5);
-        vortexAnimated.draw(guiGraphics, 52,5);
+        arrowAnimated.draw(guiGraphics, 26, 9);
+        vortexAnimated.draw(guiGraphics, 54,9);
+
+        //draw required amount and duration
+
+        String required = "Input Amount: " + recipe.requiredCount();
+
+        guiGraphics.drawString(Minecraft.getInstance().font, required, 7, 34, 0x404040, false);
     }
 }

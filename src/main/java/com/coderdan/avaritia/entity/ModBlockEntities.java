@@ -14,8 +14,6 @@ public class ModBlockEntities {
     public static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITIES =
             DeferredRegister.create(ForgeRegistries.BLOCK_ENTITY_TYPES, Avaritia.MOD_ID);
 
-    public static final RegistryObject<BlockEntityType<CrafterBlockEntity>> CRAFTER = BLOCK_ENTITIES.register("crafter", () -> BlockEntityType.Builder.of(
-            CrafterBlockEntity::new, ModBlocks.CRAFTER.get()).build(null));
 
     public static final RegistryObject<BlockEntityType<CompressorBlockEntity>> COMPRESSOR = BLOCK_ENTITIES.register("compressor", () -> BlockEntityType.Builder.of(
             CompressorBlockEntity::new, ModBlocks.COMPRESSOR.get()).build(null));

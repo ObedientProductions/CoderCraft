@@ -1,0 +1,10 @@
+{
+  "parent": "minecraft:item/handheld",
+  "gui_light": "front",
+  "textures": {
+    "layer0": "avaritia:item/tools/infinity_sword/sword_layer_0",
+    "layer1": "avaritia:item/tools/infinity_sword/sword_layer_1",
+    "layer2": "avaritia:item/tools/infinity_sword/layer_1"
+  },
+  "override": []
+}

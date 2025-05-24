@@ -1,7 +1,10 @@
 {
   "replace": false,
   "values":[
-    "avaritia:titanium_block",
-    "avaritia:raw_titanium_block"
+    "avaritia:neutronium_block",
+    "avaritia:compressor",
+    "avaritia:collector",
+    "avaritia:extreme_crafting_table",
+    "avaritia:crystal_matrix"
   ]
 }

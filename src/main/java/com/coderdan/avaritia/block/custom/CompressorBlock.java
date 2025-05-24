@@ -1,7 +1,6 @@
 package com.coderdan.avaritia.block.custom;
 
 import com.coderdan.avaritia.block.entity.custom.CompressorBlockEntity;
-import com.coderdan.avaritia.block.entity.custom.CrafterBlockEntity;
 import com.coderdan.avaritia.entity.ModBlockEntities;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;

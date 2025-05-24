@@ -6,6 +6,6 @@
   "result": {
     "id": "avaritia:lapis_singularity"
   },
-  "required": 200,
-  "processDuration": 4
+  "required": 512,
+  "processDuration": 7
 }

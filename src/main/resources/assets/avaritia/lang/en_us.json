@@ -33,11 +33,24 @@
   "item.avaritia.neutronium_ingot": "Neutronium Ingot",
   "item.avaritia.diamond_lattice": "Diamond Lattice",
   "item.avaritia.crystal_matrix_ingot": "Crystal Matrix Ingot",
+  "item.avaritia.matter_cluster": "Matter Cluster",
 
   "item.avaritia.infinity_helmet": "Infinity Helmet",
   "item.avaritia.infinity_breastplate": "Infinity Breastplate",
   "item.avaritia.infinity_leggings": "Infinity Leggings",
   "item.avaritia.infinity_boots": "Infinity Boots",
+
+  "item.avaritia.infinity_sword": "Sword of the Cosmos",
+  "item.avaritia.infinity_axe": "Nature's Ruin",
+  "item.avaritia.infinity_pickaxe": "World Breaker",
+  "item.avaritia.infinity_shovel": "Planet Eater",
+  "item.avaritia.infinity_hoe": "Hoe of the Green Earth",
+  "item.avaritia.infinity_bow": "Longbow of the Heavens",
+  "item.avaritia.skullfire_sword": "Skullfire Sword",
+
+  "item.avaritia.heavensmark_armor_trim_smithing_template": "Heaven's Mark Trim Template",
+
+
 
   "block.avaritia.titanium_block": "Titanium Block",
   "block.avaritia.raw_titanium_block": "Block of Raw Titanium",
@@ -57,6 +70,10 @@
   "creativetab.avaritia.avaritia_tab": "Avaritia",
 
   "jei.avaritia.neutronium_compression": "Neutronium Compression",
-  "jei.avaritia.extreme_crafting": "Extreme Crafting",
-  "jei.avaritia.neutronium_collection" : "Neutronium Collection"
+  "jei.avaritia.extreme_crafting": "Xtreme Crafting",
+  "jei.avaritia.neutronium_collection" : "Neutronium Collection",
+
+
+  "trim_pattern.avaritia.heavens_mark": "Heaven's Mark Armor Trim",
+  "trim_material.avaritia.infinity": "Infinity Ingot Material"
 }

@@ -1,0 +1,29 @@
+{
+  "type": "avaritia:extreme",
+  "pattern": [
+    "   ee    ",
+    "  e w    ",
+    " e  w    ",
+    "e   w    ",
+    "q   w    ",
+    "e   w    ",
+    " e  w    ",
+    "  e w    ",
+    "   ee    "
+  ],
+  "key": {
+    "e": {
+      "item": "avaritia:infinity_ingot"
+    },
+    "w": {
+      "tag": "minecraft:wool"
+    },
+    "q": {
+      "item": "avaritia:crystal_matrix"
+    }
+  },
+  "result": {
+    "id": "avaritia:infinity_bow",
+    "count": 1
+  }
+}

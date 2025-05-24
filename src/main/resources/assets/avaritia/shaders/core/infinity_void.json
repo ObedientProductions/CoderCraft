@@ -40,7 +40,24 @@
       "type": "int",
       "count": 1,
       "values": [1]
+    },
+    {
+      "name": "ZoomScale",
+      "type": "float",
+      "count": 1,
+      "values": [0.0]
+    },
+    {
+      "name": "CameraYaw",
+      "type": "float",
+      "count": 1,
+      "values": [0.0]
+    },
+    {
+      "name": "CameraPitch",
+      "type": "float",
+      "count": 1,
+      "values": [0.0]
     }
-
   ]
 }

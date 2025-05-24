@@ -1,0 +1,29 @@
+{
+  "type": "avaritia:extreme",
+  "pattern": [
+    "         ",
+    "         ",
+    "  eeeee  ",
+    "  ewwwe  ",
+    "  ewqwe  ",
+    "  ewwwe  ",
+    "  ewwwe  ",
+    "  eeeee  ",
+    "         "
+  ],
+  "key": {
+    "e": {
+      "item": "avaritia:infinity_ingot"
+    },
+    "w": {
+      "item": "avaritia:infinity_block"
+    },
+    "q": {
+      "item": "avaritia:heavensmark_armor_trim_smithing_template"
+    }
+  },
+  "result": {
+    "id": "avaritia:heavensmark_armor_trim_smithing_template",
+    "count": 2
+  }
+}

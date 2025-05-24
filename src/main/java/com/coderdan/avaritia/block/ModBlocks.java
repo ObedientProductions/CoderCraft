@@ -27,36 +27,10 @@ public class ModBlocks {
     public static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS, Avaritia.MOD_ID);
 
 
-    public static final RegistryObject<Block> TITANIUM_BLOCK = registerBlock("titanium_block",
-            () -> new Block(BlockBehaviour.Properties.of()
-                    .strength(4f)
-                    .requiresCorrectToolForDrops()
-                    .sound(SoundType.METAL)));
-
-    public static final RegistryObject<Block> RAW_TITANIUM_BLOCK = registerBlock("raw_titanium_block",
-            () -> new Block(BlockBehaviour.Properties.of()
-                    .strength(3f)
-                    .requiresCorrectToolForDrops()
-                    .sound(SoundType.STONE)));
-
-    public static final RegistryObject<Block> TRANSMUTER_BLOCK = registerBlock("transmuter_block",
-            () -> new TransmuterBlock(BlockBehaviour.Properties.of()
-                    .strength(3f)
-                    .requiresCorrectToolForDrops()
-                    .sound(SoundType.BASALT)
-                    .lightLevel(state -> state.getValue(TransmuterBlock.CLICKED) ? 15 : 0)));
-
-    public static final RegistryObject<Block> CRAFTER = registerBlock("crafter",
-            () -> new CrafterBlock(BlockBehaviour.Properties.of()
-                    .strength(3f)
-                    .requiresCorrectToolForDrops()
-                    .sound(SoundType.BASALT)
-                    .noOcclusion()
-                    ));
 
     public static final RegistryObject<Block> COMPRESSOR = registerBlock("compressor",
             () -> new CompressorBlock(BlockBehaviour.Properties.of()
-                    .strength(3f)
+                    .strength(5f, 6f)
                     .requiresCorrectToolForDrops()
                     .sound(SoundType.METAL)
                     .noOcclusion()
@@ -64,7 +38,7 @@ public class ModBlocks {
 
     public static final RegistryObject<Block> COLLECTOR = registerBlock("collector",
             () -> new CollectorBlock(BlockBehaviour.Properties.of()
-                    .strength(3f)
+                    .strength(5f, 6f)
                     .requiresCorrectToolForDrops()
                     .sound(SoundType.METAL)
                     .noOcclusion()
@@ -72,25 +46,25 @@ public class ModBlocks {
 
     public static final RegistryObject<Block> CRYSTAL_MATRIX = registerBlock("crystal_matrix",
             () -> new Block(BlockBehaviour.Properties.of()
-                    .strength(4f)
+                    .strength(5f, 6f)
                     .requiresCorrectToolForDrops()
                     .sound(SoundType.METAL)));
 
     public static final RegistryObject<Block> INFINITY_BLOCK = registerBlock("infinity_block",
             () -> new Block(BlockBehaviour.Properties.of()
-                    .strength(4f)
+                    .strength(5f, 6f)
                     .requiresCorrectToolForDrops()
                     .sound(SoundType.METAL)));
 
     public static final RegistryObject<Block> NEUTRONIUM_BLOCK = registerBlock("neutronium_block",
             () -> new Block(BlockBehaviour.Properties.of()
-                    .strength(4f)
+                    .strength(5f, 6f)
                     .requiresCorrectToolForDrops()
                     .sound(SoundType.METAL)));
 
     public static final RegistryObject<Block> EXTREME_CRAFTING_TABLE = registerBlock("extreme_crafting_table",
             () -> new ExtremeCraftingTableBlock(BlockBehaviour.Properties.of()
-                    .strength(3f)
+                    .strength(5f, 6f)
                     .requiresCorrectToolForDrops()
                     .sound(SoundType.GLASS)
                     .noOcclusion()
@@ -98,7 +72,7 @@ public class ModBlocks {
 
     public static final RegistryObject<Block> COMPRESSED_CRAFTING_TABLE = registerBlock("compressed_crafting_table",
             () -> new CompressedCraftingTableBlock(BlockBehaviour.Properties.of()
-                    .strength(3f)
+                    .strength(5f, 6f)
                     .requiresCorrectToolForDrops()
                     .sound(SoundType.WOOD)
                     .noOcclusion()
@@ -106,7 +80,7 @@ public class ModBlocks {
 
     public static final RegistryObject<Block> DOUBLE_COMPRESSED_CRAFTING_TABLE = registerBlock("double_compressed_crafting_table",
             () -> new CompressedCraftingTableBlock(BlockBehaviour.Properties.of()
-                    .strength(3f)
+                    .strength(5f, 6f)
                     .requiresCorrectToolForDrops()
                     .sound(SoundType.WOOD)
                     .noOcclusion()

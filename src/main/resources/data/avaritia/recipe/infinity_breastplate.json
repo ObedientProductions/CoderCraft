@@ -1,0 +1,29 @@
+{
+  "type": "avaritia:extreme",
+  "pattern": [
+    " ww   ww ",
+    "www   www",
+    "www   www",
+    " w#####w ",
+    " w##q##w ",
+    " w#####w ",
+    " w#####w ",
+    " w#####w ",
+    "  wwwww  "
+  ],
+  "key": {
+    "#": {
+      "item": "avaritia:infinity_ingot"
+    },
+    "q": {
+      "item": "avaritia:crystal_matrix"
+    },
+    "w": {
+      "item": "avaritia:neutronium_ingot"
+    }
+  },
+  "result": {
+    "id": "avaritia:infinity_breastplate",
+    "count": 1
+  }
+}

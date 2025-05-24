@@ -6,6 +6,6 @@
   "result": {
     "id": "avaritia:redstone_singularity"
   },
-  "required": 200,
-  "processDuration": 4
+  "required": 1024,
+  "processDuration": 8
 }

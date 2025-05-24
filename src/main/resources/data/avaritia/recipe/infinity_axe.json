@@ -1,0 +1,26 @@
+{
+  "type": "avaritia:extreme",
+  "pattern": [
+    "   e     ",
+    "  eeeee  ",
+    "   eeee  ",
+    "     ew  ",
+    "      w  ",
+    "      w  ",
+    "      w  ",
+    "      w  ",
+    "      w  "
+  ],
+  "key": {
+    "e": {
+      "item": "avaritia:infinity_ingot"
+    },
+    "w": {
+      "item": "avaritia:neutronium_ingot"
+    }
+  },
+  "result": {
+    "id": "avaritia:infinity_axe",
+    "count": 1
+  }
+}

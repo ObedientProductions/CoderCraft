@@ -1,0 +1,15 @@
+{
+  "parent": "minecraft:item/handheld",
+  "textures":{
+    "layer0": "avaritia:item/matter_cluster/empty"
+  },
+
+  "overrides": [
+    {
+      "predicate": {
+        "avaritia:full" : 1
+      },
+      "model": "avaritia:item/matter_cluster_full"
+    }
+  ]
+}

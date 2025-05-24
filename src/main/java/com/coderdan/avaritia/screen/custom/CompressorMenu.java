@@ -2,7 +2,6 @@ package com.coderdan.avaritia.screen.custom;
 
 import com.coderdan.avaritia.block.ModBlocks;
 import com.coderdan.avaritia.block.entity.custom.CompressorBlockEntity;
-import com.coderdan.avaritia.block.entity.custom.CrafterBlockEntity;
 import com.coderdan.avaritia.item.ModItems;
 import com.coderdan.avaritia.screen.ModMenuTypes;
 import net.minecraft.network.FriendlyByteBuf;

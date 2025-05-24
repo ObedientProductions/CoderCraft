@@ -6,6 +6,6 @@
   "result": {
     "id": "avaritia:gold_singularity"
   },
-  "required": 200,
-  "processDuration": 4
+  "required": 2048,
+  "processDuration": 9
 }

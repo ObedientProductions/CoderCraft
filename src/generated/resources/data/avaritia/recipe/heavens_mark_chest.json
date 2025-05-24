@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:smithing_trim",
+  "addition": {
+    "item": "avaritia:infinity_ingot"
+  },
+  "base": {
+    "item": "avaritia:infinity_breastplate"
+  },
+  "template": {
+    "item": "avaritia:heavensmark_armor_trim_smithing_template"
+  }
+}

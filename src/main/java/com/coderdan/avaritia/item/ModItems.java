@@ -2,8 +2,10 @@ package com.coderdan.avaritia.item;
 
 import com.coderdan.avaritia.Avaritia;
 import com.coderdan.avaritia.item.custom.*;
-import net.minecraft.world.item.ArmorItem;
-import net.minecraft.world.item.Item;
+import com.coderdan.avaritia.item.render.InfinitySwordRenderer;
+import net.minecraft.client.renderer.item.ItemProperties;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.*;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -104,21 +106,72 @@ public class ModItems {
     public static final RegistryObject<Item> SPECIAL_ITEM = ITEMS.register("special_item",
             () -> new Specialitem(new Item.Properties().durability(32)));
 
+
     public static final RegistryObject<Item> INFINITY_HELMET = ITEMS.register("infinity_helmet",
             () -> new ModInfinityArmorItem(ModArmorMaterials.INFINITY_MATERIAL, ArmorItem.Type.HELMET,
-                    new Item.Properties().durability(ArmorItem.Type.HELMET.getDurability(Integer.MAX_VALUE))));
+                    new Item.Properties().durability(Integer.MAX_VALUE)));
 
     public static final RegistryObject<Item> INFINITY_BREASTPLATE = ITEMS.register("infinity_breastplate",
             () -> new ModInfinityArmorItem(ModArmorMaterials.INFINITY_MATERIAL, ArmorItem.Type.CHESTPLATE,
-                    new Item.Properties().durability(ArmorItem.Type.CHESTPLATE.getDurability(Integer.MAX_VALUE))));
+                    new Item.Properties().durability(Integer.MAX_VALUE)));
 
     public static final RegistryObject<Item> INFINITY_LEGGINGS = ITEMS.register("infinity_leggings",
             () -> new ModInfinityArmorItem(ModArmorMaterials.INFINITY_MATERIAL, ArmorItem.Type.LEGGINGS,
-                    new Item.Properties().durability(ArmorItem.Type.LEGGINGS.getDurability(Integer.MAX_VALUE))));
+                    new Item.Properties().durability(Integer.MAX_VALUE)));
 
     public static final RegistryObject<Item> INFINITY_BOOTS = ITEMS.register("infinity_boots",
             () -> new ModInfinityArmorItem(ModArmorMaterials.INFINITY_MATERIAL, ArmorItem.Type.BOOTS,
-                    new Item.Properties().durability(ArmorItem.Type.BOOTS.getDurability(Integer.MAX_VALUE))));
+                    new Item.Properties().durability(Integer.MAX_VALUE)));
+
+
+
+    public static final RegistryObject<Item> INFINITY_SWORD = ITEMS.register("infinity_sword",
+            () -> new InfinitySwordItem(ModToolTiers.INFINITY, new Item.Properties()
+                    .durability(Integer.MAX_VALUE)
+                    .attributes(InfinitySwordItem.createAttributes(ModToolTiers.INFINITY, 3,-2.4f))));
+
+    public static final RegistryObject<Item> SKULLFIRE_SWORD = ITEMS.register("skullfire_sword",
+            () -> new SkullFireSwordItem(ModToolTiers.INFINITY, new Item.Properties()
+                    .durability(1000)
+                    .attributes(SwordItem.createAttributes(Tiers.NETHERITE, 7,-2.4f))));
+
+
+    public static final RegistryObject<Item> INFINITY_PICKAXE = ITEMS.register("infinity_pickaxe",
+            () -> new InfinityPickaxeItem(ModToolTiers.INFINITY, new Item.Properties()
+                    .durability(Integer.MAX_VALUE)
+                    .attributes(PickaxeItem.createAttributes(ModToolTiers.INFINITY, 1,-2.8f))));
+
+    public static final RegistryObject<Item> INFINITY_SHOVEL = ITEMS.register("infinity_shovel",
+            () -> new InfinityShovelItem(ModToolTiers.INFINITY, new Item.Properties()
+                    .durability(Integer.MAX_VALUE)
+                    .attributes(ShovelItem.createAttributes(ModToolTiers.INFINITY, 1.5f,-3.0f))));
+
+    public static final RegistryObject<Item> INFINITY_AXE = ITEMS.register("infinity_axe",
+            () -> new InfinityAxeItem(ModToolTiers.INFINITY, new Item.Properties()
+                    .durability(Integer.MAX_VALUE)
+                    .attributes(AxeItem.createAttributes(ModToolTiers.INFINITY, 6,-3.2f))));
+
+    public static final RegistryObject<Item> INFINITY_HOE = ITEMS.register("infinity_hoe",
+            () -> new InfinityHoeItem(ModToolTiers.INFINITY, new Item.Properties()
+                    .durability(Integer.MAX_VALUE)
+                    .attributes(HoeItem.createAttributes(ModToolTiers.INFINITY, 0,-3.0f))));
+
+    public static final RegistryObject<Item> INFINITY_BOW = ITEMS.register("infinity_bow",
+            () -> new InfinityBowItem(new Item.Properties()
+                    .durability(Integer.MAX_VALUE)
+                    .attributes(HoeItem.createAttributes(ModToolTiers.INFINITY, 0,-3.0f))));
+
+    public static final RegistryObject<Item> MATTER_CLUSTER = ITEMS.register("matter_cluster",
+            () -> new MatterClusterItem(new Item.Properties().stacksTo(1)));
+
+    public static final RegistryObject<Item> INFINITY_ARROW = ITEMS.register("infinity_arrow", () ->
+            new InfinityArrowItem(new Item.Properties(),  Float.MAX_VALUE));
+
+    public static final RegistryObject<Item> HEAVENS_MARK_SMITHING_TEMPLATE = ITEMS.register("heavensmark_armor_trim_smithing_template",
+            () -> HeavensMarkTemplateItem.createArmorTrimTemplate(ResourceLocation.fromNamespaceAndPath(Avaritia.MOD_ID, "heavens_mark")));
+
+
+
 
 
 

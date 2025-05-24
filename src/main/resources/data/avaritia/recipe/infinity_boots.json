@@ -1,0 +1,26 @@
+{
+  "type": "avaritia:extreme",
+  "pattern": [
+    " www www ",
+    " wew wew ",
+    " wew wew ",
+    "wwew weww",
+    "weew weew",
+    "wwww wwww",
+    "         ",
+    "         ",
+    "         "
+  ],
+  "key": {
+    "e": {
+      "item": "avaritia:infinity_ingot"
+    },
+    "w": {
+      "item": "avaritia:neutronium_ingot"
+    }
+  },
+  "result": {
+    "id": "avaritia:infinity_boots",
+    "count": 1
+  }
+}

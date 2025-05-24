@@ -20,20 +20,33 @@ import java.util.function.Supplier;
 
 public class ModArmorMaterials {
 
+    int durabilityMultiplier = 9999;
+
+
+
     public static final Holder<ArmorMaterial> INFINITY_MATERIAL = register("infinity", Util.make(
-            new EnumMap<>(ArmorItem.Type.class), attribute -> {
-                attribute.put(ArmorItem.Type.BOOTS, Integer.MAX_VALUE);
-                attribute.put(ArmorItem.Type.LEGGINGS, Integer.MAX_VALUE);
-                attribute.put(ArmorItem.Type.CHESTPLATE, Integer.MAX_VALUE);
-                attribute.put(ArmorItem.Type.HELMET, Integer.MAX_VALUE);
-            }), Integer.MAX_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE, () -> ModItems.INFINITY_INGOT.get());
+                    new EnumMap<ArmorItem.Type, Integer>(ArmorItem.Type.class), attribute -> {
+                        attribute.put(ArmorItem.Type.BOOTS, 9999);
+                        attribute.put(ArmorItem.Type.LEGGINGS, 9999);
+                        attribute.put(ArmorItem.Type.CHESTPLATE, 9999);
+                        attribute.put(ArmorItem.Type.HELMET, 9999);
+                    }),
+            0, // enchantability
+            999.0f, // toughness
+            1.0f, // knockbackResistance
+            () -> ModItems.INFINITY_INGOT.get()
+    );
 
 
 
-    public static Holder<ArmorMaterial> register(String name, EnumMap<ArmorItem.Type, Integer> typeProtection,
-                                                 int enchantablity, float toughness, float knockbackResistance,
-                                                 Supplier<Item> ingredientItem){
 
+
+    public static Holder<ArmorMaterial> register(String name,
+                                                 EnumMap<ArmorItem.Type, Integer> typeProtection,
+                                                 int enchantability,
+                                                 float toughness,
+                                                 float knockbackResistance,
+                                                 Supplier<Item> ingredientItem) {
         ResourceLocation location = ResourceLocation.fromNamespaceAndPath(Avaritia.MOD_ID, name);
 
         Holder<SoundEvent> equipSound = SoundEvents.ARMOR_EQUIP_NETHERITE;
@@ -41,12 +54,9 @@ public class ModArmorMaterials {
 
         List<ArmorMaterial.Layer> layers = List.of(new ArmorMaterial.Layer(location));
 
-        EnumMap<ArmorItem.Type, Integer> typeMap = new EnumMap<>(ArmorItem.Type.class);
-
-        for (ArmorItem.Type type : ArmorItem.Type.values()){
-            typeMap.put(type, typeProtection.get(type));
-        }
-
-        return Registry.registerForHolder(BuiltInRegistries.ARMOR_MATERIAL, location, new ArmorMaterial(typeProtection, enchantablity, equipSound, ingredient, layers, toughness, knockbackResistance));
+        return Registry.registerForHolder(BuiltInRegistries.ARMOR_MATERIAL, location,
+                new ArmorMaterial(typeProtection, enchantability, equipSound, ingredient, layers, toughness, knockbackResistance));
     }
+
+
 }

@@ -131,7 +131,19 @@ repositories {
         url = "https://modmaven.dev"
     }
 
+
+
 }
+
+sourceSets {
+    main {
+        resources {
+            srcDir 'src/generated/resources'
+        }
+    }
+}
+
+
 
 dependencies {
     // Specify the version of Minecraft to use.
@@ -180,6 +192,7 @@ tasks.named('processResources', ProcessResources).configure {
             mod_authors: mod_authors, mod_description: mod_description,
     ]
     inputs.properties replaceProperties
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 
     filesMatching(['META-INF/mods.toml', 'pack.mcmeta']) {
         expand replaceProperties + [project: project]

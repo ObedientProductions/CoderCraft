@@ -1,0 +1,32 @@
+{
+  "type": "avaritia:extreme",
+  "pattern": [
+    "       ee",
+    "      eee",
+    "     eee ",
+    "    eee  ",
+    " q eee   ",
+    "  qee    ",
+    "  wq     ",
+    " w  q    ",
+    "r        "
+  ],
+  "key": {
+    "e": {
+      "item": "avaritia:infinity_ingot"
+    },
+    "w": {
+      "item": "avaritia:neutronium_ingot"
+    },
+    "r": {
+      "item": "avaritia:infinity_catalyst"
+    },
+    "q": {
+      "item": "avaritia:crystal_matrix_ingot"
+    }
+  },
+  "result": {
+    "id": "avaritia:infinity_sword",
+    "count": 1
+  }
+}

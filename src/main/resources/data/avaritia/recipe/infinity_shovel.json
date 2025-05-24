@@ -1,0 +1,29 @@
+{
+  "type": "avaritia:extreme",
+  "pattern": [
+    "      eee",
+    "     eeqe",
+    "      eee",
+    "     w e ",
+    "    w    ",
+    "   w     ",
+    "  w      ",
+    " w       ",
+    "w        "
+  ],
+  "key": {
+    "e": {
+      "item": "avaritia:infinity_ingot"
+    },
+    "w": {
+      "item": "avaritia:neutronium_ingot"
+    },
+    "q": {
+      "item": "avaritia:infinity_block"
+    }
+  },
+  "result": {
+    "id": "avaritia:infinity_shovel",
+    "count": 1
+  }
+}

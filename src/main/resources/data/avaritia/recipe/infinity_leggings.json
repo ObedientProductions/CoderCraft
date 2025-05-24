@@ -1,0 +1,32 @@
+{
+  "type": "avaritia:extreme",
+  "pattern": [
+    "wwwwwwwww",
+    "w###e###w",
+    "w#wweww#w",
+    "w#w   w#w",
+    "wqw   wqw",
+    "w#w   w#w",
+    "w#w   w#w",
+    "w#w   w#w",
+    "www   www"
+  ],
+  "key": {
+    "#": {
+      "item": "avaritia:infinity_ingot"
+    },
+    "q": {
+      "item": "avaritia:crystal_matrix"
+    },
+    "e": {
+      "item": "avaritia:infinity_catalyst"
+    },
+    "w": {
+      "item": "avaritia:neutronium_ingot"
+    }
+  },
+  "result": {
+    "id": "avaritia:infinity_leggings",
+    "count": 1
+  }
+}

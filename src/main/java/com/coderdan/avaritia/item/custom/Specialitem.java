@@ -29,8 +29,7 @@ public class Specialitem extends Item {
             Blocks.STONE, Blocks.STONE_BRICKS,
             Blocks.END_STONE, Blocks.END_STONE_BRICKS,
             Blocks.DEEPSLATE, Blocks.DEEPSLATE_BRICKS,
-            Blocks.IRON_BLOCK, Blocks.DIAMOND_BLOCK,
-            Blocks.DIRT, ModBlocks.TITANIUM_BLOCK.get()
+            Blocks.IRON_BLOCK, Blocks.DIAMOND_BLOCK
     );
 
     @Override
