@@ -7,12 +7,18 @@ uniform int currentFrame;
 uniform int frameCount;
 uniform float ZoomScale; // default to 1.0
 
+uniform float PixelAlpha;
+
+
 uniform float CameraYaw;
 uniform float CameraPitch;
 
 
 
 in vec4 texProj;
+in vec4 vertexColor;
+in vec2 texCoord;
+
 out vec4 fragColor;
 
 float hash(float x) {
@@ -47,13 +53,22 @@ mat3 pitchRotation(float pitch) {
 
 
 void main() {
-    float yawScale = 0.25;   // smaller = slower parallax
+    float yawScale = 0.25;
     float pitchScale = 0.25;
 
     vec3 viewDir = normalize(texProj.xyz / texProj.w);
-    viewDir = yawRotation(CameraYaw * yawScale) * pitchRotation(-CameraPitch * pitchScale) * viewDir;
 
-    vec3 background = vec3(7 / 255, 13 / 255, 20 / 255); // #070d14
+    // Build safe screen-space vector
+    vec2 screenUV = viewDir.xy / max(0.01, 1.0 - abs(viewDir.z)); // Prevent horizon blow-up
+    screenUV *= 0.5; // Optional softening
+
+    // Apply subtle camera-based rotation
+    mat2 yawRot = rotate(radians(CameraYaw) * yawScale);
+    mat2 pitchRot = rotate(radians(CameraPitch) * pitchScale);
+    vec2 parallax = yawRot * pitchRot * screenUV * ZoomScale;
+
+
+    vec3 background = vec3(7.0 / 255.0, 13.0 / 255.0, 20.0 / 255.0);
     vec3 result = background;
     vec3 bloom = vec3(0.0);
 
@@ -64,8 +79,6 @@ void main() {
     int layers = 30;
     float minScale = 5.0;
     float maxScale = 30.0;
-
-    bool drewStar = false;
 
     for (int i = 0; i < layers; i++) {
         float t = float(i) / float(layers - 1);
@@ -81,24 +94,20 @@ void main() {
         );
 
         float angle = hash(depth * 5.0) * 6.2831;
-        vec2 uv = rotate(angle) * (viewDir.xy * scale + offset);
-        uv = mod(uv, 4.0); // or 8.0 if you want more stars repeating
+        vec2 uv = rotate(angle) * (parallax * scale + offset);
 
+        uv = fract(uv / 4.0); // Wrap UV tile
         uv.y = uv.y * frameHeight + vOffset;
 
         vec3 tex = texture(Sampler0, uv).rgb;
-        vec3 starTint = vec3(0.6, 0.85, 0.95); // brighter, cooler blue
+        vec3 starTint = vec3(0.6, 0.85, 0.95);
 
-        if (tex.r > 0.01 || tex.g > 0.01 || tex.b > 0.01) {
+        if (dot(tex, vec3(1.0)) > 0.03) {
             result = mix(result, starTint, alpha * 0.9);
             bloom += starTint * (alpha * 0.2);
-            drewStar = true;
         }
     }
 
     result += bloom * 0.5;
-
-    float finalAlpha = drewStar ? 1f : 0.2f;
-    fragColor = vec4(result, finalAlpha);
-
+    fragColor = vec4(result, PixelAlpha * vertexColor.a);
 }

@@ -1,0 +1,91 @@
+{
+  "item.avaritia.special_item": "特別なアイテム",
+  "item.avaritia.singularity": "特異点",
+
+  "item.avaritia.iron_singularity": "鉄の特異点",
+  "item.avaritia.gold_singularity": "金の特異点",
+  "item.avaritia.lapis_singularity": "ラピスラズリの特異点",
+  "item.avaritia.redstone_singularity": "レッドストーンの特異点",
+  "item.avaritia.nether_quartz_singularity": "ネザークォーツの特異点",
+  "item.avaritia.copper_singularity": "銅の特異点",
+  "item.avaritia.tin_singularity": "錫の特異点",
+  "item.avaritia.lead_singularity": "鉛の特異点",
+  "item.avaritia.silver_singularity": "銀の特異点",
+  "item.avaritia.nickel_singularity": "ニッケルの特異点",
+  "item.avaritia.diamond_singularity": "ダイヤモンドの特異点",
+  "item.avaritia.emerald_singularity": "エメラルドの特異点",
+  "item.avaritia.netherite_singularity": "ネザライトの特異点",
+  "item.avaritia.fluxed_singularity": "フラックスの特異点",
+  "item.avaritia.platinum_singularity": "プラチナの特異点",
+  "item.avaritia.iridium_singularity": "イリジウムの特異点",
+
+  "item.avaritia.infinity_ingot": "インフィニティインゴット",
+  "item.avaritia.infinity_ingot.desc": "宇宙の怒りが手のひらに集まる。",
+
+  "item.avaritia.infinity_catalyst": "インフィニティ触媒",
+  "item.avaritia.infinity_catalyst.desc": "一は全、全は無。",
+
+  "item.avaritia.endest_pearl": "エンデストパール",
+
+  "item.avaritia.ultimate_stew": "究極のシチュー",
+
+  "item.avaritia.cosmic_meatballs": "宇宙ミートボール",
+
+  "item.avaritia.record_fragment": "レコードの断片",
+  "item.avaritia.record_fragment.desc": "音楽の自由を信じたい気持ち～",
+
+  "item.avaritia.pile_of_neutrons": "中性子の山",
+  "item.avaritia.pile_of_neutrons.desc": "あまり考えない方がいい。",
+
+  "item.avaritia.neutronium_nugget": "ニュートロニウムナゲット",
+  "item.avaritia.neutronium_nugget.desc": "約3560万トン。",
+
+  "item.avaritia.neutronium_ingot": "ニュートロニウムインゴット",
+  "item.avaritia.neutronium_ingot.desc": "星の核のような密度を持つ便利な形。",
+
+  "item.avaritia.diamond_lattice": "ダイヤモンドラティス",
+
+  "item.avaritia.crystal_matrix_ingot": "クリスタルマトリックスインゴット",
+  "item.avaritia.crystal_matrix_ingot.desc": "これは最終形態ではない。",
+
+  "item.avaritia.matter_cluster": "物質クラスター",
+
+  "item.avaritia.infinity_helmet": "インフィニティヘルメット",
+  "item.avaritia.infinity_breastplate": "インフィニティチェストプレート",
+  "item.avaritia.infinity_leggings": "インフィニティレギンス",
+  "item.avaritia.infinity_boots": "インフィニティブーツ",
+
+  "item.avaritia.infinity_sword": "宇宙の剣",
+  "item.avaritia.infinity_axe": "自然の破壊者",
+  "item.avaritia.infinity_pickaxe": "世界を砕くもの",
+  "item.avaritia.infinity_shovel": "惑星を食らうもの",
+  "item.avaritia.infinity_hoe": "緑の大地のくわ",
+  "item.avaritia.infinity_bow": "天空の長弓",
+
+  "item.avaritia.skullfire_sword": "スカルファイアソード",
+  "item.avaritia.skullfire_sword.desc": "スケルトンを斬首し、黒く焦がす。",
+
+  "item.avaritia.heavensmark_armor_trim_smithing_template": "天印のトリムテンプレート",
+
+  "block.avaritia.compressor": "ニュートロニウムコンプレッサー",
+  "block.avaritia.collector": "中性子収集器",
+  "block.avaritia.crystal_matrix": "クリスタルマトリックス",
+  "block.avaritia.infinity_block": "インフィニティブロック",
+  "block.avaritia.neutronium_block": "ニュートロニウムブロック",
+  "block.avaritia.compressed_crafting_table": "圧縮作業台",
+  "block.avaritia.double_compressed_crafting_table": "二重圧縮作業台",
+  "block.avaritia.extreme_crafting_table": "超作業台",
+
+  "creativetab.avaritia.avaritia_tab": "Avaritia X",
+
+  "jei.avaritia.neutronium_compression": "ニュートロニウム圧縮",
+  "jei.avaritia.extreme_crafting": "超クラフティング",
+  "jei.avaritia.neutronium_collection": "ニュートロニウム収集",
+
+  "trim_pattern.avaritia.heavens_mark": "天印アーマートリム",
+  "trim_material.avaritia.infinity": "インフィニティインゴット素材",
+
+  "tooltip.avaritia.infinity_damage": "インフィニティ",
+  "tooltip.avaritia.projectile_damage": "投射物ダメージ",
+  "tooltip.avaritia.sanic_speed": "% スピード"
+}

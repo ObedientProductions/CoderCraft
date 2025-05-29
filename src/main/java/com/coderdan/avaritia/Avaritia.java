@@ -3,6 +3,7 @@ package com.coderdan.avaritia;
 import com.coderdan.avaritia.block.ModBlocks;
 import com.coderdan.avaritia.entity.ModBlockEntities;
 import com.coderdan.avaritia.entity.ModEntities;
+import com.coderdan.avaritia.entity.renderer.GapingVoidRenderer;
 import com.coderdan.avaritia.entity.renderer.InfinityArrowRenderer;
 import com.coderdan.avaritia.events.CommandInterceptor;
 import com.coderdan.avaritia.item.ModDataComponentTypes;
@@ -20,6 +21,7 @@ import com.mojang.logging.LogUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
+import net.minecraft.client.renderer.entity.NoopRenderer;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.resources.ResourceLocation;
@@ -119,6 +121,7 @@ public class Avaritia
         public static void registerBER(EntityRenderersEvent.RegisterRenderers event)
         {
             event.registerEntityRenderer(ModEntities.INFINITY_ARROW.get(), InfinityArrowRenderer::new);
+            event.registerEntityRenderer(ModEntities.GAPING_VOID.get(), GapingVoidRenderer::new);
         }
 
 
@@ -126,23 +129,6 @@ public class Avaritia
         public static void onRegisterLayerDefinitions(EntityRenderersEvent.RegisterLayerDefinitions event) {
             ArmorModelLayers.register(event);
         }
-
-
-        @SubscribeEvent
-        public static void onModelBake(ModelEvent.ModifyBakingResult event) {
-            ResourceLocation baseLoc = ResourceLocation.fromNamespaceAndPath("avaritia", "infinity_sword");
-            ModelResourceLocation modelLoc = new ModelResourceLocation(baseLoc, "inventory");
-
-            BakedModel base = event.getModels().get(modelLoc);
-            if (base != null) {
-                event.getModels().put(modelLoc, new InfinitySwordModel(base));
-                System.out.println("[INFINITY SWORD] Custom model baked!");
-            } else {
-                System.out.println("[INFINITY SWORD] Failed to find base model!");
-            }
-        }
-
-
 
 
     }

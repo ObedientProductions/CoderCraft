@@ -1,7 +1,4 @@
 {
-  "item.avaritia.titanium": "Raw Titanium",
-  "item.avaritia.titanium_ingot": "Titanium Ingot",
-
   "item.avaritia.special_item": "Special Item",
   "item.avaritia.singularity": "Singularity",
 
@@ -23,16 +20,34 @@
   "item.avaritia.iridium_singularity": "Iridium Singularity",
 
   "item.avaritia.infinity_ingot": "Infinity Ingot",
+  "item.avaritia.infinity_ingot.desc": "The fury of the universe in the palm of your hand.",
+
   "item.avaritia.infinity_catalyst": "Infinity Catalyst",
+  "item.avaritia.infinity_catalyst.desc": "One is all and all is none.",
+
   "item.avaritia.endest_pearl": "Endest Pearl",
+
   "item.avaritia.ultimate_stew": "Ultimate Stew",
+
   "item.avaritia.cosmic_meatballs": "Cosmic Meatballs",
+
   "item.avaritia.record_fragment": "Record Fragment",
+  "item.avaritia.record_fragment.desc": "One likes to believe in the freedom of music~",
+
   "item.avaritia.pile_of_neutrons": "Pile Of Neutrons",
+  "item.avaritia.pile_of_neutrons.desc": "Try not to think about it.",
+
   "item.avaritia.neutronium_nugget": "Neutronium Nugget",
+  "item.avaritia.neutronium_nugget.desc": "About 35.6 million metric tons.",
+
   "item.avaritia.neutronium_ingot": "Neutronium Ingot",
+  "item.avaritia.neutronium_ingot.desc": "The dense heart of a star in convenient ingot form.",
+
   "item.avaritia.diamond_lattice": "Diamond Lattice",
+
   "item.avaritia.crystal_matrix_ingot": "Crystal Matrix Ingot",
+  "item.avaritia.crystal_matrix_ingot.desc": "This isn't even its final form.",
+
   "item.avaritia.matter_cluster": "Matter Cluster",
 
   "item.avaritia.infinity_helmet": "Infinity Helmet",
@@ -46,16 +61,14 @@
   "item.avaritia.infinity_shovel": "Planet Eater",
   "item.avaritia.infinity_hoe": "Hoe of the Green Earth",
   "item.avaritia.infinity_bow": "Longbow of the Heavens",
+
   "item.avaritia.skullfire_sword": "Skullfire Sword",
+  "item.avaritia.skullfire_sword.desc": "Beheads skeletons and scorches them black.",
 
   "item.avaritia.heavensmark_armor_trim_smithing_template": "Heaven's Mark Trim Template",
 
 
 
-  "block.avaritia.titanium_block": "Titanium Block",
-  "block.avaritia.raw_titanium_block": "Block of Raw Titanium",
-  "block.avaritia.transmuter_block": "Transmuter Block",
-  "block.avaritia.crafter": "Crafter",
   "block.avaritia.compressor": "Neutronium Compressor",
   "block.avaritia.collector": "Neutron Collector",
   "block.avaritia.crystal_matrix": "Crystal Matrix",
@@ -67,6 +80,13 @@
 
   "block.avaritia.extreme_crafting_table": "Extreme Crafting Table",
 
+
+
+
+
+
+
+
   "creativetab.avaritia.avaritia_tab": "Avaritia X",
 
   "jei.avaritia.neutronium_compression": "Neutronium Compression",
@@ -75,5 +95,9 @@
 
 
   "trim_pattern.avaritia.heavens_mark": "Heaven's Mark Armor Trim",
-  "trim_material.avaritia.infinity": "Infinity Ingot Material"
+  "trim_material.avaritia.infinity": "Infinity Ingot Material",
+
+  "tooltip.avaritia.infinity_damage": "Infinity",
+  "tooltip.avaritia.projectile_damage": "Projectile Damage",
+  "tooltip.avaritia.sanic_speed": "% Speed"
 }

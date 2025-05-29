@@ -11,7 +11,7 @@ public class ModToolTiers {
             Integer.MAX_VALUE,
             100f, // speed
             10f, // attack bonus
-            0, // enchant
+            Integer.MAX_VALUE, // enchant
             ModTags.Blocks.NEEDS_INFINITY_TOOL,
             () -> Ingredient.of(ModItems.INFINITY_INGOT.get()),
             ModTags.Blocks.INCORRECT_FOR_INFINITY_TOOL

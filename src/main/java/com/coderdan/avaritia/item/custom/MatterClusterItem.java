@@ -43,6 +43,13 @@ public class MatterClusterItem extends Item {
         return InteractionResultHolder.sidedSuccess(stack, pLevel.isClientSide());
     }
 
+    @Override
+    public Component getName(ItemStack pStack) {
+
+        String translated = Component.translatable(this.getDescriptionId()).getString();
+        return Component.literal("§c" + translated);
+    }
+
 
 
     public static int getTotalStoredItems(ItemStack cluster) {

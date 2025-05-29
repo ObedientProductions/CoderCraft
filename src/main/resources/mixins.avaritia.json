@@ -1,10 +1,11 @@
 {
   "required": true,
+  "minVersion": "0.8",
   "package": "com.coderdan.avaritia.mixin",
-  "compatibilityLevel": "JAVA_17",
-  "refmap": "mystic.mixin-refmap.json",
+  "compatibilityLevel": "JAVA_21",
+  "refmap": "mixins.avaritia.refmap.json",
   "mixins": [
-    "SpecialItemMixin"
+
   ],
   "injectors": {
     "defaultRequire": 1
@@ -12,7 +13,6 @@
   "client": [
     "ArmorRendererMixin",
     "ArmorTrimRendererMixin",
-    "ModCreativeTabRendererMixin",
     "ModItemRendererMixin",
     "SwordRendererMixin"
   ]

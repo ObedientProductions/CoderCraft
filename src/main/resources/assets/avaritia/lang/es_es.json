@@ -1,0 +1,95 @@
+{
+  "item.avaritia.special_item": "Objeto Especial",
+  "item.avaritia.singularity": "Singularidad",
+
+  "item.avaritia.iron_singularity": "Singularidad de Hierro",
+  "item.avaritia.gold_singularity": "Singularidad de Oro",
+  "item.avaritia.lapis_singularity": "Singularidad de Lapislázuli",
+  "item.avaritia.redstone_singularity": "Singularidad de Redstone",
+  "item.avaritia.nether_quartz_singularity": "Singularidad de Cuarzo del Nether",
+  "item.avaritia.copper_singularity": "Singularidad de Cobre",
+  "item.avaritia.tin_singularity": "Singularidad de Estaño",
+  "item.avaritia.lead_singularity": "Singularidad de Plomo",
+  "item.avaritia.silver_singularity": "Singularidad de Plata",
+  "item.avaritia.nickel_singularity": "Singularidad de Níquel",
+  "item.avaritia.diamond_singularity": "Singularidad de Diamante",
+  "item.avaritia.emerald_singularity": "Singularidad de Esmeralda",
+  "item.avaritia.netherite_singularity": "Singularidad de Netherita",
+  "item.avaritia.fluxed_singularity": "Singularidad Fluxificada",
+  "item.avaritia.platinum_singularity": "Singularidad de Platino",
+  "item.avaritia.iridium_singularity": "Singularidad de Iridio",
+
+  "item.avaritia.infinity_ingot": "Lingote del Infinito",
+  "item.avaritia.infinity_ingot.desc": "La furia del universo en la palma de tu mano.",
+
+  "item.avaritia.infinity_catalyst": "Catalizador del Infinito",
+  "item.avaritia.infinity_catalyst.desc": "Uno es todo y todo es nada.",
+
+  "item.avaritia.endest_pearl": "Perla Finalísima",
+
+  "item.avaritia.ultimate_stew": "Estofado Supremo",
+
+  "item.avaritia.cosmic_meatballs": "Albóndigas Cósmicas",
+
+  "item.avaritia.record_fragment": "Fragmento de Disco",
+  "item.avaritia.record_fragment.desc": "A uno le gusta creer en la libertad de la música~",
+
+  "item.avaritia.pile_of_neutrons": "Montón de Neutrones",
+  "item.avaritia.pile_of_neutrons.desc": "Mejor no lo pienses mucho.",
+
+  "item.avaritia.neutronium_nugget": "Pepita de Neutronio",
+  "item.avaritia.neutronium_nugget.desc": "Unas 35.6 millones de toneladas métricas.",
+
+  "item.avaritia.neutronium_ingot": "Lingote de Neutronio",
+  "item.avaritia.neutronium_ingot.desc": "El denso corazón de una estrella en forma de lingote.",
+
+  "item.avaritia.diamond_lattice": "Celosía de Diamante",
+
+  "item.avaritia.crystal_matrix_ingot": "Lingote de Matriz de Cristal",
+  "item.avaritia.crystal_matrix_ingot.desc": "Esto ni siquiera es su forma final.",
+
+  "item.avaritia.matter_cluster": "Cluster de Materia",
+
+  "item.avaritia.infinity_helmet": "Casco del Infinito",
+  "item.avaritia.infinity_breastplate": "Peto del Infinito",
+  "item.avaritia.infinity_leggings": "Grebas del Infinito",
+  "item.avaritia.infinity_boots": "Botas del Infinito",
+
+  "item.avaritia.infinity_sword": "Espada del Cosmos",
+  "item.avaritia.infinity_axe": "Ruina de la Naturaleza",
+  "item.avaritia.infinity_pickaxe": "Rompe Mundos",
+  "item.avaritia.infinity_shovel": "Devorador de Planetas",
+  "item.avaritia.infinity_hoe": "Azada de la Tierra Verde",
+  "item.avaritia.infinity_bow": "Arco Largo de los Cielos",
+
+  "item.avaritia.skullfire_sword": "Espada de Fuego de Cráneo",
+  "item.avaritia.skullfire_sword.desc": "Decapita esqueletos y los chamusca hasta dejarlos negros.",
+
+  "item.avaritia.heavensmark_armor_trim_smithing_template": "Plantilla de Recorte Marca Celestial",
+
+
+  "block.avaritia.compressor": "Compresor de Neutronio",
+  "block.avaritia.collector": "Colector de Neutrones",
+  "block.avaritia.crystal_matrix": "Matriz de Cristal",
+  "block.avaritia.infinity_block": "Bloque del Infinito",
+  "block.avaritia.neutronium_block": "Bloque de Neutronio",
+  "block.avaritia.compressed_crafting_table": "Mesa de Crafteo Comprimida",
+  "block.avaritia.double_compressed_crafting_table": "Mesa de Crafteo Doble Comprimida",
+  "block.avaritia.extreme_crafting_table": "Mesa de Crafteo Extremo",
+
+  "creativetab.avaritia.avaritia_tab": "Avaritia X",
+
+  "jei.avaritia.neutronium_compression": "Compresión de Neutronio",
+  "jei.avaritia.extreme_crafting": "Crafteo Extremo",
+  "jei.avaritia.neutronium_collection": "Recolección de Neutronio",
+
+  "trim_pattern.avaritia.heavens_mark": "Recorte de Armadura Marca Celestial",
+  "trim_material.avaritia.infinity": "Material de Lingote del Infinito",
+
+  "tooltip.avaritia.infinity_damage": "Infinito",
+  "tooltip.avaritia.projectile_damage": "Daño de Proyectil",
+  "tooltip.avaritia.sanic_speed": "% Velocidad"
+
+
+
+}

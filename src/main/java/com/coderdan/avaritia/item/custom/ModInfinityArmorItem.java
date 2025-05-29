@@ -2,6 +2,7 @@ package com.coderdan.avaritia.item.custom;
 
 import com.google.common.collect.Multimap;
 import net.minecraft.core.Holder;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
@@ -32,5 +33,13 @@ public class ModInfinityArmorItem extends ArmorItem {
     @Override
     public boolean isBarVisible(ItemStack pStack) {
         return false;
+    }
+
+
+    @Override
+    public Component getName(ItemStack pStack) {
+
+        String translated = Component.translatable(this.getDescriptionId()).getString();
+        return Component.literal("§c" + translated);
     }
 }

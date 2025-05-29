@@ -21,4 +21,12 @@ public class HeavensMarkTemplateItem extends SmithingTemplateItem {
         super.appendHoverText(pStack, pContext, pTooltipComponents, pTooltipFlag);
         pTooltipComponents.add(0, Component.literal(pStack.getDisplayName().getString()).withStyle(ChatFormatting.GOLD));
     }
+
+
+    @Override
+    public Component getName(ItemStack pStack) {
+
+        String translated = Component.translatable(this.getDescriptionId()).getString();
+        return Component.literal("§e" + translated);
+    }
 }

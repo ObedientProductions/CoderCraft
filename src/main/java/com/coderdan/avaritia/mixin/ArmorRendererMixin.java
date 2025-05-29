@@ -3,26 +3,25 @@ package com.coderdan.avaritia.mixin;
 import com.coderdan.avaritia.Avaritia;
 import com.coderdan.avaritia.ModRenderTypes;
 import com.coderdan.avaritia.events.ForgeClientEvents;
-import com.coderdan.avaritia.item.ModItems;
 import com.coderdan.avaritia.item.custom.ModInfinityArmorItem;
-import com.mojang.blaze3d.shaders.Shader;
+import com.coderdan.avaritia.util.AnimatedMask;
+import com.mojang.blaze3d.platform.NativeImage;
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.blaze3d.vertex.VertexFormat;
 import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.Model;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.renderer.*;
-import net.minecraft.client.renderer.blockentity.TheEndPortalRenderer;
 import net.minecraft.client.renderer.entity.RenderLayerParent;
 import net.minecraft.client.renderer.entity.layers.HumanoidArmorLayer;
 import net.minecraft.client.renderer.entity.layers.RenderLayer;
+import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -31,24 +30,27 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Matrix4f;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import javax.annotation.Nullable;
+import java.io.IOException;
 import java.util.Objects;
-import java.util.TimeZone;
-
-import static org.openjdk.nashorn.api.tree.Parser.create;
 
 @Mixin(HumanoidArmorLayer.class)
 public abstract class ArmorRendererMixin <T extends LivingEntity, M extends HumanoidModel<T>, A extends HumanoidModel<T>> extends RenderLayer<T, M> {
 
-    private static ResourceLocation TXT = ResourceLocation.fromNamespaceAndPath(Avaritia.MOD_ID, "textures/models/armor/infinity_armor_wing.png");
-    private static ResourceLocation TXTMASK = ResourceLocation.fromNamespaceAndPath(Avaritia.MOD_ID, "textures/models/armor/infinity_armor_mask_wings.png");
+    private static ResourceLocation WINGTXT = ResourceLocation.fromNamespaceAndPath(Avaritia.MOD_ID, "textures/models/armor/infinity_armor_wing.png");
+    private static ResourceLocation WINGTXT_TRIMMED = ResourceLocation.fromNamespaceAndPath(Avaritia.MOD_ID, "textures/models/armor/infinity_armor_wing.png");
+    private static ResourceLocation WINGTXT_MASK = ResourceLocation.fromNamespaceAndPath(Avaritia.MOD_ID, "textures/models/armor/infinity_armor_mask_wings.png");
 
     private static ResourceLocation VOIDTXT = ResourceLocation.fromNamespaceAndPath(Avaritia.MOD_ID, "textures/models/armor/infinity_armor_mask.png");
     private static ResourceLocation VOIDSTARSTXT = ResourceLocation.fromNamespaceAndPath(Avaritia.MOD_ID, "textures/models/armor/cosmic_0.png");
+    private static ResourceLocation EMPTY_COLORTXT = ResourceLocation.fromNamespaceAndPath(Avaritia.MOD_ID, "textures/other/empty_color.png");
+    private AnimatedMask wingMask;
+
+    int colorIndex = 0; // put this as a class-level field or cache it elsewhere
 
     public ArmorRendererMixin(RenderLayerParent<T, M> pRenderer) {
         super(pRenderer);
@@ -73,14 +75,33 @@ public abstract class ArmorRendererMixin <T extends LivingEntity, M extends Huma
     }
 
 
+    boolean hasFullInfinityArmor(T pLivingEntity)
+    {
+        ItemStack helmetStack = pLivingEntity.getItemBySlot(EquipmentSlot.HEAD);
+        ItemStack chestStack = pLivingEntity.getItemBySlot(EquipmentSlot.CHEST);
+        ItemStack pantsStack = pLivingEntity.getItemBySlot(EquipmentSlot.LEGS);
+        ItemStack bootsStack = pLivingEntity.getItemBySlot(EquipmentSlot.FEET);
+
+
+        boolean helm = helmetStack.getItem() instanceof ModInfinityArmorItem;
+        boolean chest = chestStack.getItem() instanceof ModInfinityArmorItem;
+        boolean legs = pantsStack.getItem() instanceof ModInfinityArmorItem;
+        boolean feet = bootsStack.getItem() instanceof ModInfinityArmorItem;
+
+        return helm && chest && legs && feet;
+    }
+
+
     float time = 0;
+    float shaderZoom = 2f;
 
 
     @Inject(method = "renderArmorPiece", at = @At("TAIL"))
-    private void onRender(PoseStack pPoseStack, MultiBufferSource pBufferSource, T pLivingEntity, EquipmentSlot pSlot, int pPackedLight, A pModel, CallbackInfo ci) {
+    private void onRender(PoseStack pPoseStack, MultiBufferSource pBufferSource, T pLivingEntity, EquipmentSlot pSlot, int pPackedLight, A pModel, CallbackInfo ci) throws IOException {
 
-        if (ModRenderTypes.infinityVoidShader != null) {
-            ShaderInstance shader = ModRenderTypes.infinityVoidShader;
+
+        if (ModRenderTypes.infinityVoidSolidShader != null) {
+            ShaderInstance shader = ModRenderTypes.infinityVoidSolidShader;
 
             float partialTicks = Minecraft.getInstance().getFrameTimeNs();
             float gameTime = Minecraft.getInstance().level.getGameTime() + partialTicks;
@@ -89,28 +110,159 @@ public abstract class ArmorRendererMixin <T extends LivingEntity, M extends Huma
             int frameDuration = 75; // ms per frame
             int currentFrame = (int)((System.currentTimeMillis() / frameDuration) % frameCount);
 
+
+            boolean isInventory = Minecraft.getInstance().screen != null;
+            boolean isMaxLight = pPackedLight == 15728880;
+
+            boolean isHUD = !isInventory && isMaxLight;
+            boolean isTrulyInventory = isInventory && isMaxLight;
+
+            shaderZoom = isTrulyInventory ? 10f :
+                    isHUD             ? 10f :
+                            Minecraft.getInstance().options.getCameraType().isFirstPerson() ? 2f : 3f;
+
+            Objects.requireNonNull(shader.getUniform("ZoomScale")).set((float) shaderZoom);
+
+
             Objects.requireNonNull(shader.getUniform("GameTime")).set(gameTime);
             Objects.requireNonNull(shader.getUniform("currentFrame")).set((int) currentFrame);
             Objects.requireNonNull(shader.getUniform("frameCount")).set((int) frameCount);
+            Objects.requireNonNull(shader.getUniform("ZoomScale")).set((float) shaderZoom);
+            Objects.requireNonNull(shader.getUniform("PixelAlpha")).set((float) 1);
         }
 
-
-
-        if (pSlot != EquipmentSlot.CHEST) return;
 
         ItemStack chestStack = pLivingEntity.getItemBySlot(EquipmentSlot.CHEST);
 
-
-        //renderArmorEffects(pPoseStack, pModel, pBufferSource); //for testing
-
-        if (!(pLivingEntity instanceof Player player)) return;
-
-        if (chestStack.getItem() instanceof ModInfinityArmorItem && hasInfinityArmor((T) player)) {
-            if (player.getAbilities().flying || player.isFallFlying()) {
-                renderWings(pPoseStack, pModel, pBufferSource);
-            }
+        if (pSlot == EquipmentSlot.CHEST && (chestStack.getItem() instanceof ModInfinityArmorItem)) {
 
             renderArmorEffects(pPoseStack, pModel, pBufferSource);
+
+            if ((pLivingEntity instanceof Player player))
+            {
+                if (hasInfinityArmor((T) player)) {
+                    if (player.getAbilities().flying || player.isFallFlying()) {
+                        MultiBufferSource.BufferSource yourBuffer = Minecraft.getInstance().renderBuffers().bufferSource();
+
+                        renderWings(pPoseStack, pModel, yourBuffer, EquipmentSlot.CHEST, player, yourBuffer::endBatch);
+
+                    }
+
+                }
+
+            }
+
+
+
+        }
+        else if(pSlot == EquipmentSlot.HEAD && pLivingEntity.getItemBySlot(EquipmentSlot.HEAD).getItem() instanceof ModInfinityArmorItem)
+        {
+            ModelPart head = pModel.head;
+            ModelPart body = pModel.body;
+            ModelPart leftLeg = pModel.leftLeg;
+            ModelPart rightLeg = pModel.rightLeg;
+            ModelPart leftArm = pModel.leftArm;
+            ModelPart rightArm = pModel.rightArm;
+
+
+            // Eye color options
+            float[][] COLORS = {
+                    {1.0f, 0.41f, 0.71f}, // Pink
+                    {0.0f, 1.0f, 0.0f},   // Lime Green
+                    {0.0f, 1.0f, 1.0f},   // Cyan
+                    {0.5f, 0.0f, 0.5f},   // Purple
+                    {1.0f, 0.0f, 0.0f},   // Red
+                    {1.0f, 0.65f, 0.0f},  // Orange
+            };
+
+            Minecraft mc = Minecraft.getInstance();
+            long ticks = mc.level.getGameTime();
+
+            if (ticks % 4 == 0) {
+                colorIndex = (int)(Math.random() * COLORS.length);
+            }
+
+            float[] color = COLORS[colorIndex];
+
+
+            float lsize = 0.125f;
+            Vec3 loffset = new Vec3(0.15800011f, -0.3f, -0.3);
+
+            float rsize = 0.125f;
+            Vec3 roffset = new Vec3(-0.15800011f, -0.3f, -0.3);
+
+
+
+            RenderType emptyRenderType = RenderType.armorCutoutNoCull(EMPTY_COLORTXT);
+            RenderType voidRenderType =ModRenderTypes.infinityVoidTrueSolid(VOIDSTARSTXT);
+
+            //more render stuff vv
+
+            RenderType renderType = (hasFullInfinityArmor((T) pLivingEntity)) ? emptyRenderType : voidRenderType;
+
+            VertexConsumer vc = pBufferSource.getBuffer(renderType);
+
+
+            if((hasFullInfinityArmor((T) pLivingEntity))) {
+                // Render LEFT eye
+                pPoseStack.pushPose();
+
+                head.translateAndRotate(pPoseStack); // attach to body
+                pPoseStack.translate(loffset.x, loffset.y, loffset.z); // right side
+                renderColoredReversedWingQuad(pPoseStack, vc, lsize, color[0], color[1], color[2]);
+                pPoseStack.popPose();
+
+                // Render RIGHT eye
+                pPoseStack.pushPose();
+
+                head.translateAndRotate(pPoseStack); // attach to body
+                pPoseStack.translate(roffset.x, roffset.y, roffset.z); // right side
+                renderColoredReversedWingQuad(pPoseStack, vc, rsize, color[0], color[1], color[2]);
+                pPoseStack.popPose();
+            }
+            else
+            {
+                // Render LEFT eye
+                pPoseStack.pushPose();
+
+                head.translateAndRotate(pPoseStack); // attach to body
+                pPoseStack.translate(loffset.x, loffset.y, loffset.z); // right side
+                renderReversedWingQuad(pPoseStack, vc, lsize);
+                pPoseStack.popPose();
+
+                // Render RIGHT eye
+                pPoseStack.pushPose();
+
+                head.translateAndRotate(pPoseStack); // attach to body
+                pPoseStack.translate(roffset.x, roffset.y, roffset.z); // right side
+                renderReversedWingQuad(pPoseStack, vc, rsize);
+                pPoseStack.popPose();
+            }
+
+        } else if(pSlot == EquipmentSlot.LEGS && pLivingEntity.getItemBySlot(EquipmentSlot.LEGS).getItem() instanceof ModInfinityArmorItem)
+        {
+            ModelPart head = pModel.head;
+            ModelPart body = pModel.body;
+            ModelPart leftLeg = pModel.leftLeg;
+            ModelPart rightLeg = pModel.rightLeg;
+            ModelPart leftArm = pModel.leftArm;
+            ModelPart rightArm = pModel.rightArm;
+
+            Vec3 legOffset = new Vec3(0f, 0.1754f, -0.152f);
+
+            VertexConsumer vc = pBufferSource.getBuffer(ModRenderTypes.infinityVoidSolidShader(VOIDSTARSTXT));
+
+            pPoseStack.pushPose();
+            leftLeg.translateAndRotate(pPoseStack);
+            renderQuadStripReversed(pPoseStack, vc, 0.075f, 0.1330f, 1, legOffset, 34, 22, 4, 7, 64, 64);
+            pPoseStack.popPose();
+
+            pPoseStack.pushPose();
+            rightLeg.translateAndRotate(pPoseStack);
+            renderQuadStripReversed(pPoseStack, vc, 0.075f, 0.1330f, 1, legOffset, 34, 22, 4, 7, 64, 64);
+            pPoseStack.popPose();
+
+
         }
 
     }
@@ -118,94 +270,133 @@ public abstract class ArmorRendererMixin <T extends LivingEntity, M extends Huma
 
 
 
-    void renderWings(PoseStack pPoseStack, A pModel, MultiBufferSource pBufferSource) {
-
-
-        if (ModRenderTypes.babyShader(TXT, TXTMASK) == null) return;
+    void renderWings(PoseStack poseStack, A model, MultiBufferSource bufferSource, EquipmentSlot slot, LivingEntity player, @Nullable Runnable flush) throws IOException {
+        if (ModRenderTypes.babyShader(WINGTXT, WINGTXT_MASK) == null) return;
 
         time += 0.05f;
-
         Objects.requireNonNull(ModRenderTypes.babyShader.getUniform("time")).set(time);
 
-        VertexConsumer vc = pBufferSource.getBuffer(ModRenderTypes.babyShader(TXT, TXTMASK));
+        ModelPart body = model.body;
 
-        ModelPart body = pModel.body;
-
-
-
-        float wingOffset = 0.0f; // spacing from body
+        float wingOffset = 0.0f;
         float zWingOffset = 0.12f;
-        float yWingOffset = 1.4f;
+        float yWingOffset = -0.74f;
         float size = 2f;
         float wingSpreadDegrees = 20f;
 
-        // Render RIGHT wing
-        pPoseStack.pushPose();
+        // Load the animated mask
+        if (wingMask == null) {
+            try {
+                wingMask = new AnimatedMask(WINGTXT_MASK);
+            } catch (IOException e) {
+                System.err.println("Failed to load animated mask: " + WINGTXT_MASK);
+                return;
+            }
+        }
 
-        body.translateAndRotate(pPoseStack); // attach to body
-        pPoseStack.translate(-wingOffset, yWingOffset, zWingOffset); // right side
-        pPoseStack.mulPose(Axis.YP.rotationDegrees(wingSpreadDegrees)); // Rotate outward
-        renderWingQuad(pPoseStack, vc, size);
-        pPoseStack.popPose();
 
-        // Render LEFT wing
-        pPoseStack.pushPose();
-        body.translateAndRotate(pPoseStack); // attach to body
-        pPoseStack.translate(wingOffset, yWingOffset, zWingOffset); // left side
-        pPoseStack.mulPose(Axis.YP.rotationDegrees(-wingSpreadDegrees)); // Rotate outward
-        pPoseStack.scale(-1.0f, 1.0f, 1.0f); // mirror the quad
-        renderWingQuad(pPoseStack, vc, size);
-        pPoseStack.popPose();
+        // PASS 1
+        VertexConsumer vcWingLeft = bufferSource.getBuffer(ModRenderTypes.babyShader(WINGTXT, WINGTXT));
+        poseStack.pushPose();
+        body.translateAndRotate(poseStack);
+        poseStack.translate(-wingOffset, yWingOffset, zWingOffset);
+        poseStack.mulPose(Axis.YP.rotationDegrees(wingSpreadDegrees));
+        renderWingQuadFromAnimatedMaskWithShader(poseStack, vcWingLeft, size, wingMask, flush, false);
+        poseStack.popPose();
+
+        flush.run();
+
+
+        // PASS 2
+        VertexConsumer vcMaskLeft = bufferSource.getBuffer(ModRenderTypes.infinityVoidWings(VOIDSTARSTXT));
+        poseStack.pushPose();
+        body.translateAndRotate(poseStack);
+        poseStack.translate(-wingOffset, yWingOffset, zWingOffset + 0.001f);
+        poseStack.mulPose(Axis.YP.rotationDegrees(wingSpreadDegrees));
+        renderWingQuadFromAnimatedMaskWithShader(poseStack, vcMaskLeft, size, wingMask, flush, false);
+        poseStack.popPose();
+
+        flush.run();
+
+        VertexConsumer vcMaskLeftFront = bufferSource.getBuffer(ModRenderTypes.infinityVoidWings(VOIDSTARSTXT));
+        poseStack.pushPose();
+        body.translateAndRotate(poseStack);
+        poseStack.translate(-wingOffset, yWingOffset, zWingOffset - 0.001f);
+        poseStack.mulPose(Axis.YP.rotationDegrees(wingSpreadDegrees));
+        renderWingQuadFromAnimatedMaskWithShaderReversed(poseStack, vcMaskLeftFront, size, wingMask, flush, false);
+        poseStack.popPose();
+
+        flush.run();
+
+        // PASS 3
+        VertexConsumer vcWingLeft2 = bufferSource.getBuffer(ModRenderTypes.babyShader(WINGTXT, WINGTXT));
+        poseStack.pushPose();
+        body.translateAndRotate(poseStack);
+        poseStack.translate(-wingOffset, yWingOffset, zWingOffset);
+        poseStack.mulPose(Axis.YP.rotationDegrees(wingSpreadDegrees));
+        renderWingQuadFromAnimatedMaskWithShader(poseStack, vcWingLeft2, size, wingMask, flush, true);
+        poseStack.popPose();
+
+
+        // === RIGHT WING ===
+
+        // PASS 1
+        VertexConsumer vcWingRight = bufferSource.getBuffer(ModRenderTypes.babyShader(WINGTXT, WINGTXT));
+        poseStack.pushPose();
+        body.translateAndRotate(poseStack);
+        poseStack.translate(wingOffset, yWingOffset, zWingOffset);
+        poseStack.mulPose(Axis.YP.rotationDegrees(-wingSpreadDegrees));
+        poseStack.scale(-1.0f, 1.0f, 1.0f); // mirror X
+        renderWingQuadFromAnimatedMaskWithShaderReversed(poseStack, vcWingRight, size, wingMask, flush, false);
+        poseStack.popPose();
+
+        flush.run();
+
+        // PASS 2
+        VertexConsumer vcMaskRight = bufferSource.getBuffer(ModRenderTypes.infinityVoidWings(VOIDSTARSTXT));
+        poseStack.pushPose();
+        body.translateAndRotate(poseStack);
+        poseStack.translate(wingOffset, yWingOffset, zWingOffset + 0.001f);
+        poseStack.mulPose(Axis.YP.rotationDegrees(-wingSpreadDegrees));
+        poseStack.scale(-1.0f, 1.0f, 1.0f);
+        renderWingQuadFromAnimatedMaskWithShaderReversed(poseStack, vcMaskRight, size, wingMask, flush, false);
+        poseStack.popPose();
+
+        flush.run();
+
+        VertexConsumer vcMaskRightFront = bufferSource.getBuffer(ModRenderTypes.infinityVoidWings(VOIDSTARSTXT));
+        poseStack.pushPose();
+        body.translateAndRotate(poseStack);
+        poseStack.translate(wingOffset, yWingOffset, zWingOffset - 0.001f);
+        poseStack.mulPose(Axis.YP.rotationDegrees(-wingSpreadDegrees));
+        poseStack.scale(-1.0f, 1.0f, 1.0f);
+        renderWingQuadFromAnimatedMaskWithShader(poseStack, vcMaskRightFront, size, wingMask, flush, false);
+        poseStack.popPose();
+
+        flush.run();
+
+        // PASS 3
+        VertexConsumer vcWingRight2 = bufferSource.getBuffer(ModRenderTypes.babyShader(WINGTXT, WINGTXT));
+        poseStack.pushPose();
+        body.translateAndRotate(poseStack);
+        poseStack.translate(wingOffset, yWingOffset, zWingOffset);
+        poseStack.mulPose(Axis.YP.rotationDegrees(-wingSpreadDegrees));
+        poseStack.scale(-1.0f, 1.0f, 1.0f);
+        renderWingQuadFromAnimatedMaskWithShaderReversed(poseStack, vcWingRight2, size, wingMask, flush, true);
+        poseStack.popPose();
+
+        flush.run();
+
+
+
     }
 
 
-    void renderWingsVoidEffect(PoseStack pPoseStack, A pModel, MultiBufferSource pBufferSource) {
-
-
-        if (ModRenderTypes.infinityVoidShader(VOIDSTARSTXT) == null) return;
-
-        time += 0.05f;
-
-        //Objects.requireNonNull(ModRenderTypes.infinityVoidShader.getUniform("time")).set(time);
-
-        VertexConsumer vc = pBufferSource.getBuffer(ModRenderTypes.infinityVoidShader(VOIDSTARSTXT));
-
-        ModelPart body = pModel.body;
-
-
-
-
-
-
-        float wingOffset = 0.0f; // spacing from body
-        float zWingOffset = 0.12f;
-        float yWingOffset = 1.4f;
-        float size = 2f;
-        float wingSpreadDegrees = 20f;
-
-        // Render RIGHT wing
-        pPoseStack.pushPose();
-
-        body.translateAndRotate(pPoseStack); // attach to body
-        pPoseStack.translate(-wingOffset, yWingOffset, zWingOffset); // right side
-        pPoseStack.mulPose(Axis.YP.rotationDegrees(wingSpreadDegrees)); // Rotate outward
-        renderWingQuad(pPoseStack, vc, size);
-        pPoseStack.popPose();
-
-        // Render LEFT wing
-        pPoseStack.pushPose();
-        body.translateAndRotate(pPoseStack); // attach to body
-        pPoseStack.translate(wingOffset, yWingOffset, zWingOffset); // left side
-        pPoseStack.mulPose(Axis.YP.rotationDegrees(-wingSpreadDegrees)); // Rotate outward
-        pPoseStack.scale(-1.0f, 1.0f, 1.0f); // mirror the quad
-        renderWingQuad(pPoseStack, vc, size);
-        pPoseStack.popPose();
-    }
 
 
     void renderArmorEffects(PoseStack pPoseStack, A pModel, MultiBufferSource pBufferSource)
     {
-        VertexConsumer vc = pBufferSource.getBuffer(ModRenderTypes.infinityVoidShader(VOIDSTARSTXT));
+        VertexConsumer vc = pBufferSource.getBuffer(ModRenderTypes.infinityVoidSolidShader(VOIDSTARSTXT));
 
 
 
@@ -232,15 +423,28 @@ public abstract class ArmorRendererMixin <T extends LivingEntity, M extends Huma
         Vec3 doffset = new Vec3(0.1170f, 0.1204f, 0.189f);
 
         renderQuadStrip(pPoseStack, vc, dsize, 7, doffset, 34, 22, 4, 7, 64, 64);
-        // Compute the horizontal spacing: one strip width * 3 (2 gaps + 1 strip width)
         float spacing = dsize * 2.14f * 3.0f;
-
-        // New offset 2 pixels away from original strip
         Vec3 nextOffset = doffset.add(-spacing, 0.0f, 0.0f);
-
         renderQuadStrip(pPoseStack, vc, dsize, 7, nextOffset, 34, 22, 4, 7, 64, 64);
 
+        Vec3 centerOffset = new Vec3(0.0000, 0.2294, -0.1890);
+        renderQuadStripReversed(pPoseStack, vc, 0.08f, 0.1450f, 1, centerOffset, 34, 22, 4, 7, 64, 64);
 
+        // Left Arm
+        pPoseStack.pushPose();
+        leftArm.translateAndRotate(pPoseStack);
+        pPoseStack.mulPose(Axis.YP.rotationDegrees(90));
+        Vec3 leftArmOffset = new Vec3(0.0000, -0.1146, 0.2510);
+        renderQuadStrip(pPoseStack, vc, 0.0930f, 0.1450f, 1, leftArmOffset, 34, 22, 4, 7, 64, 64);
+        pPoseStack.popPose();
+
+        // Right Arm
+        pPoseStack.pushPose();
+        rightArm.translateAndRotate(pPoseStack);
+        pPoseStack.mulPose(Axis.YP.rotationDegrees(90));
+        Vec3 rightArmOffset = new Vec3(0.0000, -0.1146, -0.2510);
+        renderQuadStripReversed(pPoseStack, vc, 0.0930f, 0.1450f, 1, rightArmOffset, 34, 22, 4, 7, 64, 64);
+        pPoseStack.popPose();
 
 
 
@@ -261,20 +465,304 @@ public abstract class ArmorRendererMixin <T extends LivingEntity, M extends Huma
 
         RenderSystem.enableBlend();
 
+        int texSize = 64;
+        float pixelSize = (2f * size) / texSize;
+
+        for (int y = 0; y < texSize; y++) {
+            for (int x = 0; x < texSize; x++) {
+                float x0 = -size + x * pixelSize;
+                float y0 = -size + y * pixelSize;
+                float x1 = x0 + pixelSize;
+                float y1 = y0 + pixelSize;
+
+                float u0 = x / 64f;
+                float v0 = y / 64f;
+                float u1 = (x + 1) / 64f;
+                float v1 = (y + 1) / 64f;
+
+                vc.addVertex(matrix, x0, y0, 0.0f).setUv(u0, v1).setColor(255, 255, 255, 255).setUv2(240, 240).setOverlay(OverlayTexture.NO_OVERLAY).setNormal(0, 0, 1);
+                vc.addVertex(matrix, x1, y0, 0.0f).setUv(u1, v1).setColor(255, 255, 255, 255).setUv2(240, 240).setOverlay(OverlayTexture.NO_OVERLAY).setNormal(0, 0, 1);
+                vc.addVertex(matrix, x1, y1, 0.0f).setUv(u1, v0).setColor(255, 255, 255, 255).setUv2(240, 240).setOverlay(OverlayTexture.NO_OVERLAY).setNormal(0, 0, 1);
+                vc.addVertex(matrix, x0, y1, 0.0f).setUv(u0, v0).setColor(255, 255, 255, 255).setUv2(240, 240).setOverlay(OverlayTexture.NO_OVERLAY).setNormal(0, 0, 1);
+            }
+        }
+
+        RenderSystem.disableBlend();
+    }
+
+    private void renderWingQuadFromAnimatedMask(PoseStack pPoseStack, VertexConsumer vc, float size, AnimatedMask mask, @Nullable Runnable flush, boolean invert) {
+        Matrix4f matrix = pPoseStack.last().pose();
+
+        RenderSystem.enableBlend();
+
+        int texSize = 64;
+        float pixelSize = (2f * size) / texSize;
+        NativeImage frame = mask.getCurrentFrameFromHeight(texSize);
+        boolean drewAnything = false;
+
+        for (int y = 0; y < texSize; y++) {
+            for (int x = 0; x < texSize; x++) {
+                int color = frame.getPixelRGBA(x, y);
+                int a = (color >> 24) & 0xFF;
+                int r = (color >> 16) & 0xFF;
+                int g = (color >> 8) & 0xFF;
+                int b = color & 0xFF;
+
+                float brightness = (r + g + b) * 2 / (3f * 255f); // normalize to 0–1
+                boolean shouldRender = invert ? brightness <= 0.1f : brightness > 0.1f;
+                if (!shouldRender) continue;
+
+                float x0 = -size + x * pixelSize;
+                float y0 = -size + y * pixelSize;
+                float x1 = x0 + pixelSize;
+                float y1 = y0 + pixelSize;
+
+                float u0 = x / 64f;
+                float v0 = y / 64f;
+                float u1 = (x + 1) / 64f;
+                float v1 = (y + 1) / 64f;
+
+                vc.addVertex(matrix, x0, y0, 0.0f).setUv(u0, v1).setColor(255, 255, 255, 255)
+                        .setUv2(240, 240).setOverlay(OverlayTexture.NO_OVERLAY).setNormal(0, 0, 1);
+                vc.addVertex(matrix, x1, y0, 0.0f).setUv(u1, v1).setColor(255, 255, 255, 255)
+                        .setUv2(240, 240).setOverlay(OverlayTexture.NO_OVERLAY).setNormal(0, 0, 1);
+                vc.addVertex(matrix, x1, y1, 0.0f).setUv(u1, v0).setColor(255, 255, 255, 255)
+                        .setUv2(240, 240).setOverlay(OverlayTexture.NO_OVERLAY).setNormal(0, 0, 1);
+                vc.addVertex(matrix, x0, y1, 0.0f).setUv(u0, v0).setColor(255, 255, 255, 255)
+                        .setUv2(240, 240).setOverlay(OverlayTexture.NO_OVERLAY).setNormal(0, 0, 1);
+
+                drewAnything = true;
+            }
+        }
+
+        if (flush != null && drewAnything) {
+            flush.run();
+        }
+
+        RenderSystem.disableBlend();
+    }
 
 
-        vc.addVertex(matrix, -size, -size, 0.0f)
-                .setUv(0.0f, 1.0f).setColor(255, 255, 255, 255)
-                .setUv2(240, 240).setOverlay(OverlayTexture.NO_OVERLAY).setNormal(0, 0, 1);
-        vc.addVertex(matrix, size, -size, 0.0f)
-                .setUv(1.0f, 1.0f).setColor(255, 255, 255, 255)
+    private void renderWingQuadFromAnimatedMaskWithShader(PoseStack pPoseStack, VertexConsumer vc, float size, AnimatedMask mask, @Nullable Runnable flush, boolean invert) {
+        Matrix4f matrix = pPoseStack.last().pose();
+
+        RenderSystem.enableBlend();
+
+        int texSize = 64;
+        float pixelSize = (2f * size) / texSize;
+        NativeImage frame = mask.getCurrentFrameFromHeight(texSize);
+        boolean drewAnything = false;
+
+        for (int y = 0; y < texSize; y++) {
+            for (int x = 0; x < texSize; x++) {
+                int color = frame.getPixelRGBA(x, y);
+                int a = (color >> 24) & 0xFF;
+                int r = (color >> 16) & 0xFF;
+                int g = (color >> 8) & 0xFF;
+                int b = color & 0xFF;
+
+                float brightness = (r + g + b) / (3f * 255f); // normalize to 0–1
+                boolean shouldRender = invert ? brightness <= 0.1f : brightness > 0.1f;
+
+                if (!shouldRender) continue;
+
+                float x0 = -size + x * pixelSize;
+                float y0 = -size + y * pixelSize;
+                float x1 = x0 + pixelSize;
+                float y1 = y0 + pixelSize;
+
+                float u0 = x / 64f;
+                float v0 = y / 64f;
+                float u1 = (x + 1) / 64f;
+                float v1 = (y + 1) / 64f;
+
+                if (ModRenderTypes.infinityVoidSolidShader != null) {
+                    ShaderInstance shader = ModRenderTypes.infinityVoidSolidShader;
+
+                    float boosted = Mth.clamp(brightness * 2.5f, 0f, 1f);
+
+                    Objects.requireNonNull(shader.getUniform("PixelAlpha")).set((float) boosted);
+                }
+
+                vc.addVertex(matrix, x0, y0, 0.0f).setUv(u0, v1).setColor(255, 255, 255, 255)
+                        .setUv2(240, 240).setOverlay(OverlayTexture.NO_OVERLAY).setNormal(0, 0, 1);
+                vc.addVertex(matrix, x1, y0, 0.0f).setUv(u1, v1).setColor(255, 255, 255, 255)
+                        .setUv2(240, 240).setOverlay(OverlayTexture.NO_OVERLAY).setNormal(0, 0, 1);
+                vc.addVertex(matrix, x1, y1, 0.0f).setUv(u1, v0).setColor(255, 255, 255, 255)
+                        .setUv2(240, 240).setOverlay(OverlayTexture.NO_OVERLAY).setNormal(0, 0, 1);
+                vc.addVertex(matrix, x0, y1, 0.0f).setUv(u0, v0).setColor(255, 255, 255, 255)
+                        .setUv2(240, 240).setOverlay(OverlayTexture.NO_OVERLAY).setNormal(0, 0, 1);
+
+                drewAnything = true;
+            }
+        }
+
+        if (flush != null && drewAnything) {
+            flush.run();
+        }
+
+        RenderSystem.disableBlend();
+    }
+
+
+    private void renderWingQuadFromAnimatedMaskWithShaderReversed(PoseStack pPoseStack, VertexConsumer vc, float size, AnimatedMask mask, @Nullable Runnable flush, boolean invert) {
+        Matrix4f matrix = pPoseStack.last().pose();
+
+        RenderSystem.enableBlend();
+
+        int texSize = 64;
+        float pixelSize = (2f * size) / texSize;
+        NativeImage frame = mask.getCurrentFrameFromHeight(texSize);
+        boolean drewAnything = false;
+
+        for (int y = 0; y < texSize; y++) {
+            for (int x = 0; x < texSize; x++) {
+                int color = frame.getPixelRGBA(x, y);
+                int a = (color >> 24) & 0xFF;
+                int r = (color >> 16) & 0xFF;
+                int g = (color >> 8) & 0xFF;
+                int b = color & 0xFF;
+
+                float brightness = (r + g + b) / (3f * 255f); // normalize to 0–1
+                boolean shouldRender = invert ? brightness <= 0.1f : brightness > 0.1f;
+                if (!shouldRender) continue;
+
+                float x0 = -size + x * pixelSize;
+                float y0 = -size + y * pixelSize;
+                float x1 = x0 + pixelSize;
+                float y1 = y0 + pixelSize;
+
+                float u0 = x / 64f;
+                float v0 = y / 64f;
+                float u1 = (x + 1) / 64f;
+                float v1 = (y + 1) / 64f;
+
+
+                float quadBrightness = Mth.clamp(brightness * 255f * 1.5f, 0f, 255f);
+
+                if (ModRenderTypes.infinityVoidSolidShader != null) {
+                    ShaderInstance shader = ModRenderTypes.infinityVoidSolidShader;
+                    float boosted = Mth.clamp(brightness * 2.5f, 0f, 1f);
+
+                    Objects.requireNonNull(shader.getUniform("PixelAlpha")).set((float) boosted);
+                }
+
+                vc.addVertex(matrix, x0, y1, 0.0f).setUv(u0, v0).setColor(255, 255, 255, 255)
+                        .setUv2(240, 240).setOverlay(OverlayTexture.NO_OVERLAY).setNormal(0, 0, 1);
+                vc.addVertex(matrix, x1, y1, 0.0f).setUv(u1, v0).setColor(255, 255, 255, 255)
+                        .setUv2(240, 240).setOverlay(OverlayTexture.NO_OVERLAY).setNormal(0, 0, 1);
+                vc.addVertex(matrix, x1, y0, 0.0f).setUv(u1, v1).setColor(255, 255, 255, 255)
+                        .setUv2(240, 240).setOverlay(OverlayTexture.NO_OVERLAY).setNormal(0, 0, 1);
+                vc.addVertex(matrix, x0, y0, 0.0f).setUv(u0, v1).setColor(255, 255, 255, 255)
+                        .setUv2(240, 240).setOverlay(OverlayTexture.NO_OVERLAY).setNormal(0, 0, 1);
+
+
+                drewAnything = true;
+            }
+        }
+
+        if (flush != null && drewAnything) {
+            flush.run();
+        }
+
+        RenderSystem.disableBlend();
+    }
+
+
+
+
+    private void renderWingAnimatedQuad(PoseStack pPoseStack, VertexConsumer vc, float size, int frameHeight, int imageWidth, int imageHeight, int frameDurationTicks) {
+        Matrix4f matrix = pPoseStack.last().pose();
+
+        RenderSystem.enableBlend();
+
+        int texSize = 64;
+        float pixelSize = (2f * size) / texSize;
+
+        // Get the current frame index based on system time
+        long ticks = System.currentTimeMillis() / 50; // 20 ticks per second
+        int totalFrames = imageHeight / frameHeight;
+        int currentFrame = (int) (ticks / frameDurationTicks) % totalFrames;
+
+        float frameVStart = (frameHeight * currentFrame) / (float) imageHeight;
+        float frameVEnd = (frameHeight * (currentFrame + 1)) / (float) imageHeight;
+
+        for (int y = 0; y < texSize; y++) {
+            for (int x = 0; x < texSize; x++) {
+                float x0 = -size + x * pixelSize;
+                float y0 = -size + y * pixelSize;
+                float x1 = x0 + pixelSize;
+                float y1 = y0 + pixelSize;
+
+                float u0 = x / (float) imageWidth;
+                float u1 = (x + 1) / (float) imageWidth;
+
+                float v0 = frameVStart + (y / (float) texSize) * (frameVEnd - frameVStart);
+                float v1 = frameVStart + ((y + 1) / (float) texSize) * (frameVEnd - frameVStart);
+
+                vc.addVertex(matrix, x0, y0, 0.0f).setUv(u0, v1).setColor(255, 255, 255, 255).setUv2(240, 240).setOverlay(OverlayTexture.NO_OVERLAY).setNormal(0, 0, 1);
+                vc.addVertex(matrix, x1, y0, 0.0f).setUv(u1, v1).setColor(255, 255, 255, 255).setUv2(240, 240).setOverlay(OverlayTexture.NO_OVERLAY).setNormal(0, 0, 1);
+                vc.addVertex(matrix, x1, y1, 0.0f).setUv(u1, v0).setColor(255, 255, 255, 255).setUv2(240, 240).setOverlay(OverlayTexture.NO_OVERLAY).setNormal(0, 0, 1);
+                vc.addVertex(matrix, x0, y1, 0.0f).setUv(u0, v0).setColor(255, 255, 255, 255).setUv2(240, 240).setOverlay(OverlayTexture.NO_OVERLAY).setNormal(0, 0, 1);
+            }
+        }
+
+        RenderSystem.disableBlend();
+    }
+
+
+
+    private void renderReversedWingQuad(PoseStack pPoseStack, VertexConsumer vc, float size) {
+        Matrix4f matrix = pPoseStack.last().pose();
+
+        RenderSystem.enableBlend();
+
+        int texSize = 64;
+        float pixelSize = (2f * size) / texSize;
+
+        for (int y = 0; y < texSize; y++) {
+            for (int x = 0; x < texSize; x++) {
+                float x0 = -size + x * pixelSize;
+                float y0 = -size + y * pixelSize;
+                float x1 = x0 + pixelSize;
+                float y1 = y0 + pixelSize;
+
+                float u0 = x / 64f;
+                float v0 = y / 64f;
+                float u1 = (x + 1) / 64f;
+                float v1 = (y + 1) / 64f;
+
+                vc.addVertex(matrix, x0, y1, 0.0f).setUv(u0, v0).setColor(255, 255, 255, 255).setUv2(240, 240).setOverlay(OverlayTexture.NO_OVERLAY).setNormal(0, 0, 1);
+                vc.addVertex(matrix, x1, y1, 0.0f).setUv(u1, v0).setColor(255, 255, 255, 255).setUv2(240, 240).setOverlay(OverlayTexture.NO_OVERLAY).setNormal(0, 0, 1);
+                vc.addVertex(matrix, x1, y0, 0.0f).setUv(u1, v1).setColor(255, 255, 255, 255).setUv2(240, 240).setOverlay(OverlayTexture.NO_OVERLAY).setNormal(0, 0, 1);
+                vc.addVertex(matrix, x0, y0, 0.0f).setUv(u0, v1).setColor(255, 255, 255, 255).setUv2(240, 240).setOverlay(OverlayTexture.NO_OVERLAY).setNormal(0, 0, 1);
+            }
+        }
+
+        RenderSystem.disableBlend();
+
+    }
+
+    private void renderColoredReversedWingQuad(PoseStack pPoseStack, VertexConsumer vc, float size, float r, float g, float b) {
+        Matrix4f matrix = pPoseStack.last().pose();
+
+        RenderSystem.enableBlend();
+
+
+        vc.addVertex(matrix, -size, size, 0.0f)
+                .setUv(0.0f, 0.0f).setColor((int)(r * 255), (int)(g * 255), (int)(b * 255), 255)
                 .setUv2(240, 240).setOverlay(OverlayTexture.NO_OVERLAY).setNormal(0, 0, 1);
         vc.addVertex(matrix, size, size, 0.0f)
-                .setUv(1.0f, 0.0f).setColor(255, 255, 255, 255)
+                .setUv(1.0f, 0.0f).setColor((int)(r * 255), (int)(g * 255), (int)(b * 255), 255)
                 .setUv2(240, 240).setOverlay(OverlayTexture.NO_OVERLAY).setNormal(0, 0, 1);
-        vc.addVertex(matrix, -size, size, 0.0f)
-                .setUv(0.0f, 0.0f).setColor(255, 255, 255, 255)
+        vc.addVertex(matrix, size, -size, 0.0f)
+                .setUv(1.0f, 1.0f).setColor((int)(r * 255), (int)(g * 255), (int)(b * 255), 255)
                 .setUv2(240, 240).setOverlay(OverlayTexture.NO_OVERLAY).setNormal(0, 0, 1);
+        vc.addVertex(matrix, -size, -size, 0.0f)
+                .setUv(0.0f, 1.0f).setColor((int)(r * 255), (int)(g * 255), (int)(b * 255), 255)
+                .setUv2(240, 240).setOverlay(OverlayTexture.NO_OVERLAY).setNormal(0, 0, 1);
+
+
 
         RenderSystem.disableBlend();
 
@@ -348,7 +836,8 @@ public abstract class ArmorRendererMixin <T extends LivingEntity, M extends Huma
         poseStack.popPose();
     }
 
-    private void renderQuadStripReversed(PoseStack poseStack, VertexConsumer vc, float size, int length, Vec3 offset,
+    private void renderQuadStrip(PoseStack poseStack, VertexConsumer vc,
+                                 float width, float heightPerSegment, int length, Vec3 offset,
                                  float u, float v, float regionWidth, float regionHeight,
                                  float textureWidth, float textureHeight) {
         poseStack.pushPose();
@@ -362,79 +851,59 @@ public abstract class ArmorRendererMixin <T extends LivingEntity, M extends Huma
         float minV = v / textureHeight;
         float maxV = (v + regionHeight * length) / textureHeight;
 
-        float totalHeight = size * 2 * length;
+        float totalHeight = heightPerSegment * length;
 
-        float width = size * 1.07f;
-
-        vc.addVertex(matrix, -width, -size + totalHeight, 0.0f)
-                .setUv(minU, minV).setColor(255, 255, 255, 255)
-                .setUv2(240, 240).setOverlay(OverlayTexture.NO_OVERLAY).setNormal(0, 0, 1);
-        vc.addVertex(matrix, width, -size + totalHeight, 0.0f)
-                .setUv(maxU, minV).setColor(255, 255, 255, 255)
-                .setUv2(240, 240).setOverlay(OverlayTexture.NO_OVERLAY).setNormal(0, 0, 1);
-        vc.addVertex(matrix, width, -size, 0.0f)
-                .setUv(maxU, maxV).setColor(255, 255, 255, 255)
-                .setUv2(240, 240).setOverlay(OverlayTexture.NO_OVERLAY).setNormal(0, 0, 1);
-        vc.addVertex(matrix, -width, -size, 0.0f)
+        vc.addVertex(matrix, -width, 0.0f, 0.0f)
                 .setUv(minU, maxV).setColor(255, 255, 255, 255)
                 .setUv2(240, 240).setOverlay(OverlayTexture.NO_OVERLAY).setNormal(0, 0, 1);
-
-
-
+        vc.addVertex(matrix, width, 0.0f, 0.0f)
+                .setUv(maxU, maxV).setColor(255, 255, 255, 255)
+                .setUv2(240, 240).setOverlay(OverlayTexture.NO_OVERLAY).setNormal(0, 0, 1);
+        vc.addVertex(matrix, width, totalHeight, 0.0f)
+                .setUv(maxU, minV).setColor(255, 255, 255, 255)
+                .setUv2(240, 240).setOverlay(OverlayTexture.NO_OVERLAY).setNormal(0, 0, 1);
+        vc.addVertex(matrix, -width, totalHeight, 0.0f)
+                .setUv(minU, minV).setColor(255, 255, 255, 255)
+                .setUv2(240, 240).setOverlay(OverlayTexture.NO_OVERLAY).setNormal(0, 0, 1);
 
         RenderSystem.disableBlend();
         poseStack.popPose();
     }
 
+    private void renderQuadStripReversed(PoseStack poseStack, VertexConsumer vc,
+                                 float width, float heightPerSegment, int length, Vec3 offset,
+                                 float u, float v, float regionWidth, float regionHeight,
+                                 float textureWidth, float textureHeight) {
+        poseStack.pushPose();
+        poseStack.translate(offset.x, offset.y, offset.z);
+        Matrix4f matrix = poseStack.last().pose();
 
-
-
-    private void renderWingQuadAnimated(PoseStack pPoseStack, VertexConsumer vc, float size, float width, float height, float frameDuration) {
-        Matrix4f matrix = pPoseStack.last().pose();
         RenderSystem.enableBlend();
 
-        float frameHeight = width / height; // 0.125
-        int totalFrames = (int) (height / width); // 256 / 32 = 8 frames
+        float minU = u / textureWidth;
+        float maxU = (u + regionWidth) / textureWidth;
+        float minV = v / textureHeight;
+        float maxV = (v + regionHeight * length) / textureHeight;
 
-        long time = System.currentTimeMillis();
-        int currentFrame = (int)((time / frameDuration) % totalFrames);
+        float totalHeight = heightPerSegment * length;
 
-        float vOffset = currentFrame * frameHeight;
+        vc.addVertex(matrix, -width, totalHeight, 0.0f)
+                .setUv(minU, minV).setColor(255, 255, 255, 255)
+                .setUv2(240, 240).setOverlay(OverlayTexture.NO_OVERLAY).setNormal(0, 0, 1);
+        vc.addVertex(matrix, width, totalHeight, 0.0f)
+                .setUv(maxU, minV).setColor(255, 255, 255, 255)
+                .setUv2(240, 240).setOverlay(OverlayTexture.NO_OVERLAY).setNormal(0, 0, 1);
+        vc.addVertex(matrix, width, 0.0f, 0.0f)
+                .setUv(maxU, maxV).setColor(255, 255, 255, 255)
+                .setUv2(240, 240).setOverlay(OverlayTexture.NO_OVERLAY).setNormal(0, 0, 1);
+        vc.addVertex(matrix, -width, 0.0f, 0.0f)
+                .setUv(minU, maxV).setColor(255, 255, 255, 255)
+                .setUv2(240, 240).setOverlay(OverlayTexture.NO_OVERLAY).setNormal(0, 0, 1);
 
-        int alpha = (int)(255);
 
-
-
-
-        vc.addVertex(matrix, -size, -size, -0.5f)
-                .setUv(0f, vOffset + frameHeight)
-                .setColor(255, 255, 255, alpha)
-                .setUv2(240, 240)
-                .setOverlay(OverlayTexture.NO_OVERLAY)
-                .setNormal(0, 0, -1);
-
-        vc.addVertex(matrix, size, -size, -0.5f)
-                .setUv(1f, vOffset + frameHeight)
-                .setColor(255, 255, 255, alpha)
-                .setUv2(240, 240)
-                .setOverlay(OverlayTexture.NO_OVERLAY)
-                .setNormal(0, 0, -1);
-
-        vc.addVertex(matrix, size, size, -0.5f)
-                .setUv(1f, vOffset)
-                .setColor(255, 255, 255, alpha)
-                .setUv2(240,240)
-                .setOverlay(OverlayTexture.NO_OVERLAY)
-                .setNormal(0, 0, -1);
-
-        vc.addVertex(matrix, -size, size, -0.5f)
-                .setUv(0f, vOffset)
-                .setColor(255, 255, 255, alpha)
-                .setUv2(240, 240)
-                .setOverlay(OverlayTexture.NO_OVERLAY)
-                .setNormal(0, 0, -1);
 
         RenderSystem.disableBlend();
+        poseStack.popPose();
     }
 
 

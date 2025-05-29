@@ -3,10 +3,14 @@ package com.coderdan.avaritia.item.creativetabs;
 import com.coderdan.avaritia.Avaritia;
 import com.coderdan.avaritia.block.ModBlocks;
 import com.coderdan.avaritia.item.ModItems;
+import net.minecraft.client.Minecraft;
+import net.minecraft.core.Holder;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.RegistryObject;
@@ -55,7 +59,13 @@ public class ModCreativeTabs {
 
                             output.accept(ModItems.INFINITY_SWORD.get());
                             output.accept(ModItems.INFINITY_BOW.get());
-                            output.accept(ModItems.INFINITY_PICKAXE.get());
+
+                            ItemStack stack = new ItemStack(ModItems.INFINITY_PICKAXE.get());
+                            Holder<Enchantment> fortune = Enchantments.FORTUNE.getOrThrow(Minecraft.getInstance().level);
+                            stack.enchant(fortune, 10);
+                            output.accept(stack);
+
+
                             output.accept(ModItems.INFINITY_SHOVEL.get());
                             output.accept(ModItems.INFINITY_AXE.get());
                             output.accept(ModItems.INFINITY_HOE.get());

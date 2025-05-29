@@ -3,6 +3,7 @@ package com.coderdan.avaritia.item.custom;
 import com.coderdan.avaritia.item.render.InfinitySwordRenderer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.LivingEntity;
@@ -57,6 +58,13 @@ public class InfinitySwordItem extends SwordItem {
     @Override
     public boolean isBarVisible(ItemStack pStack) {
         return false;
+    }
+
+    @Override
+    public Component getName(ItemStack pStack) {
+
+        String translated = Component.translatable(this.getDescriptionId()).getString();
+        return Component.literal("§c" + translated);
     }
 
 

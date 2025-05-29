@@ -43,6 +43,10 @@ authors="Coder Dan" #optional
 
 # The description text for the mod (multi line!) (#mandatory)
 description='''A Minecraft Modification by Coder Dan\nAvaritia remastered with a twist.\nThis version expands on the original with new visuals, refined mechanics, and a deeper sense of progression.\nIncludes new armor trims, unique crafting systems, and original content that blends heavenly aesthetics with absurd power.\nBuilt for modpacks that want a true endgame experience with style.\n\nOriginally created by SpitefulFox and TTFTCUTS (1.7.10), and maintained by brandon3055, covers1624, and TheRealp455w0rd for later versions.\n\nCredit to them for the original concept and inspiration.'''
+logoFile="assets/avaritia/logo.png"
+
+
+mixinConfigs = ["avaritia.mixins.json"]
 
 
 

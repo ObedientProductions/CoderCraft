@@ -130,13 +130,17 @@ repositories {
         name = "ModMaven"
         url = "https://modmaven.dev"
     }
-
-
-
+    maven {
+        // location of a maven mirror for JEI files, as a fallback
+        name = "SpongePowered"
+        url = "https://repo.spongepowered.org/repository/maven-public/"
+    }
 }
 
 sourceSets {
     main {
+        ext.refMap = "mixins.avaritia.refmap.json"
+
         resources {
             srcDir 'src/generated/resources'
         }
@@ -155,6 +159,7 @@ dependencies {
 
     // Apply Mixin AP
     annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
+
 
     // compile against the JEI API but do not include it at runtime
     compileOnly("mezz.jei:jei-${minecraft_version}-forge-api:${jei_version}")
@@ -183,6 +188,17 @@ dependencies {
 // A missing property will result in an error. Properties are expanded using ${} Groovy notation.
 // When "copyIdeResources" is enabled, this will also run before the game launches in IDE environments.
 // See https://docs.gradle.org/current/dsl/org.gradle.language.jvm.tasks.ProcessResources.html
+
+mixin {
+    add sourceSets.main, 'mixins.avaritia.refmap.json'
+    config 'mixins.avaritia.json'
+
+    debug.verbose = true
+    debug.export = true
+}
+
+
+
 tasks.named('processResources', ProcessResources).configure {
     var replaceProperties = [
             minecraft_version: minecraft_version, minecraft_version_range: minecraft_version_range,
@@ -208,7 +224,8 @@ tasks.named('jar', Jar).configure {
             'Specification-Version'   : '1', // We are version 1 of ourselves
             'Implementation-Title'    : project.name,
             'Implementation-Version'  : project.jar.archiveVersion,
-            'Implementation-Vendor'   : mod_authors
+            'Implementation-Vendor'   : mod_authors,
+            'MixinConfigs'            : "mixins.avaritia.json" // <-- THIS is the key!
         ])
     }
 }
@@ -251,11 +268,9 @@ sourceSets.each {
     it.output.resourcesDir = dir
     it.java.destinationDirectory = dir
 }
-mixin {
-    // MixinGradle Settings
-    add sourceSets.main, 'mixins.avaritia.refmap.json'
-    config 'mixins.avaritia.json'
 
-    debug.verbos = true
-    debug.export = true
-}
+
+
+
+
+

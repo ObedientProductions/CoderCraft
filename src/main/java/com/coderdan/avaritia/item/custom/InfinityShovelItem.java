@@ -6,6 +6,7 @@ import com.coderdan.avaritia.item.utils.ModItemUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.InteractionHand;
@@ -102,6 +103,14 @@ public class InfinityShovelItem extends ShovelItem {
 
 
         return super.mineBlock(pStack, pLevel, pState, pPos, pMiningEntity);
+    }
+
+
+    @Override
+    public Component getName(ItemStack pStack) {
+
+        String translated = Component.translatable(this.getDescriptionId()).getString();
+        return Component.literal("§c" + translated);
     }
 }
 

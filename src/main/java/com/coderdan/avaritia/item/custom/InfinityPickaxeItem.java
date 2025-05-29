@@ -9,6 +9,8 @@ import com.coderdan.avaritia.item.utils.ModItemUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
@@ -21,6 +23,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.PickaxeItem;
 import net.minecraft.world.item.SwordItem;
 import net.minecraft.world.item.Tier;
+import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -28,6 +32,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.client.extensions.common.IClientItemExtensions;
 import net.minecraftforge.common.ToolAction;
 import net.minecraftforge.common.ToolActions;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.function.Consumer;
@@ -93,6 +98,9 @@ public class InfinityPickaxeItem extends PickaxeItem {
 
     @Override
     public boolean mineBlock(ItemStack pStack, Level pLevel, BlockState pState, BlockPos pPos, LivingEntity pMiningEntity) {
+
+
+
         if (pLevel.isClientSide()) return false;
         if (!(pMiningEntity instanceof Player player)) return false;
 
@@ -121,6 +129,8 @@ public class InfinityPickaxeItem extends PickaxeItem {
 
             // Only drop a Matter Cluster if anything was collected
             ModItemUtils.dropMatterCluster(pLevel, player, collected);
+
+
             return true;
         }
 
@@ -128,7 +138,25 @@ public class InfinityPickaxeItem extends PickaxeItem {
     }
 
 
+    @Override
+    public Component getName(ItemStack pStack) {
 
+        String translated = Component.translatable(this.getDescriptionId()).getString();
+        return Component.literal("§c" + translated);
+    }
+
+    @Override
+    public void onCraftedBy(ItemStack pStack, Level pLevel, Player pPlayer) {
+        super.onCraftedBy(pStack, pLevel, pPlayer);
+
+        Holder<Enchantment> fortune = Enchantments.FORTUNE.getOrThrow(Minecraft.getInstance().level);
+        pStack.enchant(fortune, 10);
+    }
+
+    @Override
+    public boolean isFoil(ItemStack pStack) {
+        return false;
+    }
 }
 
 

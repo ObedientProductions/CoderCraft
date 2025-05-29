@@ -26,13 +26,13 @@ public class ModArmorMaterials {
 
     public static final Holder<ArmorMaterial> INFINITY_MATERIAL = register("infinity", Util.make(
                     new EnumMap<ArmorItem.Type, Integer>(ArmorItem.Type.class), attribute -> {
-                        attribute.put(ArmorItem.Type.BOOTS, 9999);
-                        attribute.put(ArmorItem.Type.LEGGINGS, 9999);
-                        attribute.put(ArmorItem.Type.CHESTPLATE, 9999);
-                        attribute.put(ArmorItem.Type.HELMET, 9999);
+                        attribute.put(ArmorItem.Type.BOOTS, 99999);
+                        attribute.put(ArmorItem.Type.LEGGINGS, 99999);
+                        attribute.put(ArmorItem.Type.CHESTPLATE, 99999);
+                        attribute.put(ArmorItem.Type.HELMET, 99999);
                     }),
             0, // enchantability
-            999.0f, // toughness
+            99999.0f, // toughness
             1.0f, // knockbackResistance
             () -> ModItems.INFINITY_INGOT.get()
     );

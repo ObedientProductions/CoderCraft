@@ -4,5 +4,10 @@
     "sounds": [
       "avaritia:transmuter_block_use"
     ]
+  },
+  "gaping_void": {
+    "sounds": [
+      "avaritia:gaping_void"
+    ]
   }
 }

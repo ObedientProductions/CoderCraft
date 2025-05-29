@@ -106,6 +106,14 @@ public class InfinityHoeItem extends HoeItem {
         return InteractionResult.PASS;
     }
 
+    @Override
+    public Component getName(ItemStack pStack) {
+
+        String translated = Component.translatable(this.getDescriptionId()).getString();
+        return Component.literal("§c" + translated);
+    }
+
+
 }
 
 

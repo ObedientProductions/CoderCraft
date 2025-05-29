@@ -13,13 +13,13 @@ import org.lwjgl.glfw.GLFW;
 
 @Mod.EventBusSubscriber(modid = Avaritia.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE, value = Dist.CLIENT)
 public class ForgeClientEvents {
-    public static float DEBUG_SIZE = 0.17f; // starts smaller
-    public static Vec3 DEBUG_OFFSET = new Vec3(0.1170f, 0.1204f, 0.189f);
-    public static float DEBUG_WIDTH_MULTIPLIER = -0.0760f;
+    public static float DEBUG_SIZE = 1f; // starts smaller
+    public static Vec3 DEBUG_OFFSET = new Vec3(0f, 0.1754f, -0.1510f);
+    public static float DEBUG_WIDTH_MULTIPLIER = 0.07f;
 
 
-    private static final float OFFSET_STEP = 0.00005f;
-    private static final float SIZE_STEP = 0.001f;
+    private static final float OFFSET_STEP = 0.001f;
+    private static final float SIZE_STEP = 0.01f;
     private static final float WIDTH_STEP = 0.001f;
 
     @SubscribeEvent

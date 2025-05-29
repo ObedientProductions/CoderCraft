@@ -6,6 +6,7 @@ import com.coderdan.avaritia.item.render.InfinitySwordRenderer;
 import net.minecraft.client.renderer.item.ItemProperties;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.*;
+import net.minecraftforge.client.event.RenderTooltipEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -17,10 +18,10 @@ public class ModItems {
             DeferredRegister.create(ForgeRegistries.ITEMS, Avaritia.MOD_ID);
 
     public static final RegistryObject<Item> DIAMOND_LATTICE = ITEMS.register("diamond_lattice",
-            () -> new Item(new Item.Properties()));
+            () -> new DiamondLatticeItem(new Item.Properties()));
 
     public static final RegistryObject<Item> CRYSTAL_MATRIX_INGOT = ITEMS.register("crystal_matrix_ingot",
-            () -> new Item(new Item.Properties()));
+            () -> new CrystalMatrixIngotItem(new Item.Properties()));
 
     public static final RegistryObject<Item> PILE_OF_NEUTRONS = ITEMS.register("pile_of_neutrons",
             () -> new NeutronPileItem(new Item.Properties()));
@@ -32,14 +33,14 @@ public class ModItems {
             () -> new NeutronIngotItem(new Item.Properties()));
 
     public static final RegistryObject<Item> INFINITY_CATALYST = ITEMS.register("infinity_catalyst",
-            () -> new UltimateItem(new Item.Properties()));
+            () -> new InfinityCatalystItem(new Item.Properties()));
 
     public static final RegistryObject<Item> INFINITY_INGOT = ITEMS.register("infinity_ingot",
-            () -> new UltimateItem(new Item.Properties()));
+            () -> new InfinityIngotItem(new Item.Properties()));
 
 
     public static final RegistryObject<Item> RECORD_FRAGMENT = ITEMS.register("record_fragment",
-            () -> new Item(new Item.Properties()));
+            () -> new RecordFragmentItem(new Item.Properties()));
 
 
 
@@ -94,7 +95,7 @@ public class ModItems {
 
 
     public static final RegistryObject<Item> ENDEST_PEARL = ITEMS.register("endest_pearl",
-            () -> new EndestPearlItem(new Item.Properties()));
+            () -> new EndestPearlItem(new Item.Properties().stacksTo(16)));
 
     public static final RegistryObject<Item> ULTIMATE_STEW = ITEMS.register("ultimate_stew",
             () -> new Item(new Item.Properties()));
@@ -120,7 +121,7 @@ public class ModItems {
                     new Item.Properties().durability(Integer.MAX_VALUE)));
 
     public static final RegistryObject<Item> INFINITY_BOOTS = ITEMS.register("infinity_boots",
-            () -> new ModInfinityArmorItem(ModArmorMaterials.INFINITY_MATERIAL, ArmorItem.Type.BOOTS,
+            () -> new InfinityBootsItem(ModArmorMaterials.INFINITY_MATERIAL, ArmorItem.Type.BOOTS,
                     new Item.Properties().durability(Integer.MAX_VALUE)));
 
 
@@ -134,6 +135,8 @@ public class ModItems {
             () -> new SkullFireSwordItem(ModToolTiers.INFINITY, new Item.Properties()
                     .durability(1000)
                     .attributes(SwordItem.createAttributes(Tiers.NETHERITE, 7,-2.4f))));
+
+
 
 
     public static final RegistryObject<Item> INFINITY_PICKAXE = ITEMS.register("infinity_pickaxe",

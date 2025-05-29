@@ -20,7 +20,7 @@ import net.minecraftforge.client.extensions.common.IClientItemExtensions;
 import java.util.Map;
 import java.util.function.Consumer;
 
-public class Specialitem extends Item {
+public class Specialitem extends TranslatableItem {
     public Specialitem(Properties pProperties) {
         super(pProperties);
     }

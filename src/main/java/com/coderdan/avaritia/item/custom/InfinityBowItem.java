@@ -97,5 +97,14 @@ public class InfinityBowItem extends BowItem {
 
 
 
+    @Override
+    public Component getName(ItemStack pStack) {
+
+        String translated = Component.translatable(this.getDescriptionId()).getString();
+        return Component.literal("§c" + translated);
+    }
+
+
+
 
 }

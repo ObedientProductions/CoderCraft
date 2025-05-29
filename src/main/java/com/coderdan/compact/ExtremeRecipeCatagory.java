@@ -2,6 +2,8 @@ package com.coderdan.compact;
 
 import com.coderdan.avaritia.Avaritia;
 import com.coderdan.avaritia.block.ModBlocks;
+import com.coderdan.avaritia.item.ModItems;
+import com.coderdan.avaritia.item.custom.InfinityPickaxeItem;
 import com.coderdan.avaritia.recipe.ExtremeCraftingRecipe;
 import mezz.jei.api.constants.VanillaTypes;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
@@ -11,10 +13,14 @@ import mezz.jei.api.recipe.IFocusGroup;
 import mezz.jei.api.recipe.RecipeIngredientRole;
 import mezz.jei.api.recipe.RecipeType;
 import mezz.jei.api.recipe.category.IRecipeCategory;
+import net.minecraft.client.Minecraft;
+import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.item.enchantment.Enchantments;
 import org.jetbrains.annotations.Nullable;
 
 public class ExtremeRecipeCatagory implements IRecipeCategory<ExtremeCraftingRecipe> {
@@ -60,9 +66,6 @@ public class ExtremeRecipeCatagory implements IRecipeCategory<ExtremeCraftingRec
         int startX = 2;
         int startY = 2;
 
-        System.out.println(recipe + "TEST 12345");
-        System.out.println(recipe + " has " + ingredients.size() + " ingredients");
-
         // Add input grid
         for (int row = 0; row < 9; row++) {
             for (int col = 0; col < 9; col++) {
@@ -75,17 +78,30 @@ public class ExtremeRecipeCatagory implements IRecipeCategory<ExtremeCraftingRec
                 builder.addSlot(RecipeIngredientRole.INPUT, x, y)
                         .addIngredients(ingredient);
 
-                if (ingredient.isEmpty()) {
-                    System.out.println("Added blank JEI slot " + index + " at (" + x + "," + y + ")");
-                } else {
-                    System.out.println("Added JEI input slot " + index + " at (" + x + "," + y + ")");
-                }
             }
         }
 
         // Add output slot
+
+        ItemStack outputToDisplay = null;
+
+        if(recipe.getResultItem(null).getItem() instanceof InfinityPickaxeItem)
+        {
+            ItemStack displayStack = new ItemStack(ModItems.INFINITY_PICKAXE.get());
+            Holder<Enchantment> fortune = Enchantments.FORTUNE.getOrThrow(Minecraft.getInstance().level);
+            displayStack.enchant(fortune, 10);
+
+            outputToDisplay = displayStack;
+        }
+        else
+        {
+            outputToDisplay = recipe.getResultItem(null);
+        }
+
+
         builder.addSlot(RecipeIngredientRole.OUTPUT, 168, 74)
-                .addItemStack(recipe.getResultItem(null));
+                .addItemStack(outputToDisplay);
+
     }
 
 }
