@@ -2,5 +2,13 @@
   "parent": "minecraft:item/generated",
   "textures":{
     "layer0": "avaritia:item/armor/legs/layer_0"
-  }
+  },
+  "overrides": [
+    {
+      "predicate": {
+        "avaritia:infinity_trimmed": 1.0
+      },
+      "model": "avaritia:item/infinity_leggings_trimmed"
+    }
+  ]
 }

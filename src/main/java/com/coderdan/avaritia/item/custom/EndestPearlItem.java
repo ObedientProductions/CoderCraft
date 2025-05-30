@@ -52,7 +52,7 @@ public class EndestPearlItem extends UltimateItem {
                 0.5F,
                 0.4F / (pLevel.getRandom().nextFloat() * 0.4F + 0.8F)
         );
-        pPlayer.getCooldowns().addCooldown(this, 20);
+        pPlayer.getCooldowns().addCooldown(this, 1);
         if (!pLevel.isClientSide) {
             ThrownEndestpearlProjectile thrownPearl = new ThrownEndestpearlProjectile(pLevel, pPlayer);
             thrownPearl.setItem(itemstack);

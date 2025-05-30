@@ -1,5 +1,6 @@
 {
   "item.avaritia.special_item": "Special Item",
+  "item.avaritia.special_item.desc": "No one knows what makes him so special.\nHe's pretty fun to throw tho.",
   "item.avaritia.singularity": "Singularity",
 
   "item.avaritia.iron_singularity": "Iron Singularity",
@@ -65,7 +66,10 @@
   "item.avaritia.skullfire_sword": "Skullfire Sword",
   "item.avaritia.skullfire_sword.desc": "Beheads skeletons and scorches them black.",
 
-  "item.avaritia.heavensmark_armor_trim_smithing_template": "Heaven's Mark Trim Template",
+  "item.avaritia.heavensmark_armor_trim_smithing_template": "Heaven's Mark",
+  "item.avaritia.dnb_musicdisc": "Music Disc",
+  "item.avaritia.dnb_musicdisc.desc" : "Sadiquecat - DNB Beatbox",
+  "item.avaritia.dnb_musicdisc.info": "Why would you craft this.",
 
 
 

@@ -155,7 +155,7 @@ public class AnimatedMask {
 
         int frameIndex = Math.min(frames.get(index), totalFrames - 1);
 
-        System.out.println(index + " frame index");
+        //System.out.println(index + " frame index");
 
         int yOffset = frameIndex * height;
 

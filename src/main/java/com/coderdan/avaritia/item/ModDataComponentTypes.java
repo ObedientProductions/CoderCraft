@@ -2,6 +2,7 @@ package com.coderdan.avaritia.item;
 
 
 import com.coderdan.avaritia.Avaritia;
+import com.mojang.serialization.Codec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.registries.Registries;
@@ -25,6 +26,10 @@ public class ModDataComponentTypes {
 
     public static final RegistryObject<DataComponentType<List<ItemStack>>> STORED_LOOT =
             register("stored_loot", builder -> builder.persistent(ItemStack.CODEC.listOf()));
+
+    public static final RegistryObject<DataComponentType<Float>> IS_INFINITY_TRIMMED =
+            register("infinity_trimmed", builder -> builder.persistent(Codec.FLOAT));
+
 
 
 

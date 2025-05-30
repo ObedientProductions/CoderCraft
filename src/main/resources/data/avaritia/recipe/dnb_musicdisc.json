@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "###",
+    "#i#",
+    "###"
+  ],
+  "key": {
+    "#": {
+      "item": "avaritia:record_fragment"
+    },
+    "i": {
+      "item": "avaritia:infinity_ingot"
+    }
+  },
+
+  "result": {
+    "id": "avaritia:dnb_musicdisc",
+    "count": 1
+  }
+}

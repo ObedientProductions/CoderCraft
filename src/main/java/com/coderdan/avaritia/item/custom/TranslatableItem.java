@@ -21,8 +21,12 @@ public class TranslatableItem extends Item {
         String key = pStack.getItem().getDescriptionId() + ".desc";
 
         if (I18n.exists(key)) {
-            String desc = I18n.get(key); // gets raw translated string
-            pTooltipComponents.add(Component.literal("§8" + desc));
+            String raw = I18n.get(key); // gets raw translated string
+
+            for (String line : raw.split("\n")) {
+                pTooltipComponents.add(Component.literal("§8" + line));
+            }
         }
     }
+
 }

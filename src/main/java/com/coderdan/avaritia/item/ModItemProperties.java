@@ -28,6 +28,19 @@ public class ModItemProperties {
                 });
 
         makeCustomBowProperties(ModItems.INFINITY_BOW.get());
+
+        ItemProperties.register(ModItems.INFINITY_HELMET.get(), ResourceLocation.fromNamespaceAndPath(Avaritia.MOD_ID, "infinity_trimmed"),
+                (itemStack, clientLevel, livingEntity, i) -> itemStack.get(ModDataComponentTypes.IS_INFINITY_TRIMMED.get()) != null ? 1f : 0f);
+
+        ItemProperties.register(ModItems.INFINITY_BREASTPLATE.get(), ResourceLocation.fromNamespaceAndPath(Avaritia.MOD_ID, "infinity_trimmed"),
+                (itemStack, clientLevel, livingEntity, i) -> itemStack.get(ModDataComponentTypes.IS_INFINITY_TRIMMED.get()) != null ? 1f : 0f);
+
+        ItemProperties.register(ModItems.INFINITY_LEGGINGS.get(), ResourceLocation.fromNamespaceAndPath(Avaritia.MOD_ID, "infinity_trimmed"),
+                (itemStack, clientLevel, livingEntity, i) -> itemStack.get(ModDataComponentTypes.IS_INFINITY_TRIMMED.get()) != null ? 1f : 0f);
+
+        ItemProperties.register(ModItems.INFINITY_BOOTS.get(), ResourceLocation.fromNamespaceAndPath(Avaritia.MOD_ID, "infinity_trimmed"),
+                (itemStack, clientLevel, livingEntity, i) -> itemStack.get(ModDataComponentTypes.IS_INFINITY_TRIMMED.get()) != null ? 1f : 0f);
+
     }
 
     private static void makeCustomBowProperties(Item item)

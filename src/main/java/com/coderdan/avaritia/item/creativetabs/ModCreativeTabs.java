@@ -39,6 +39,7 @@ public class ModCreativeTabs {
                             output.accept(ModItems.INFINITY_CATALYST.get());
                             output.accept(ModItems.INFINITY_INGOT.get());
                             output.accept(ModItems.RECORD_FRAGMENT.get());
+                            output.accept(ModItems.DNB_MUSIC_DISC.get());
 
                             output.accept(ModItems.IRON_SINGULARITY.get());
                             output.accept(ModItems.GOLD_SINGULARITY.get());
@@ -82,6 +83,7 @@ public class ModCreativeTabs {
 
 
                             output.accept(ModItems.ENDEST_PEARL.get());
+                            output.accept(ModItems.SPECIAL_ITEM.get());
                             output.accept(ModItems.ULTIMATE_STEW.get());
                             output.accept(ModItems.COSMIC_MEATBALLS.get());
 
@@ -102,9 +104,6 @@ public class ModCreativeTabs {
                             output.accept(ModBlocks.COMPRESSOR.get());
 
                             output.accept(ModItems.HEAVENS_MARK_SMITHING_TEMPLATE.get());
-
-                            output.accept(ModItems.SPECIAL_ITEM.get());
-                            output.accept(ModItems.MATTER_CLUSTER.get());
                         })
 
                     .build());

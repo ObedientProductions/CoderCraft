@@ -4,6 +4,7 @@ import com.coderdan.avaritia.Avaritia;
 import com.coderdan.avaritia.item.ModItems;
 import com.mojang.datafixers.util.Either;
 import net.minecraft.ChatFormatting;
+import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.FormattedText;
 import net.minecraft.world.inventory.tooltip.TooltipComponent;
@@ -28,8 +29,9 @@ public class TooltipEventHandler {
         ItemStack stack = event.getItemStack();
         boolean removedStats = false;
 
+        List<Either<FormattedText, TooltipComponent>> tooltips = event.getTooltipElements();
+
         if (Objects.equals(stack.getItem().getCreatorModId(stack), Avaritia.MOD_ID)) {
-            List<Either<FormattedText, TooltipComponent>> tooltips = event.getTooltipElements();
 
             String damage = null;
             String speed = null;
@@ -82,6 +84,15 @@ public class TooltipEventHandler {
                     }
                 }
             }
+        }
+
+        String key = event.getItemStack().getItem().getDescriptionId() + ".info";
+
+        if (I18n.exists(key)) {
+            String desc = I18n.get(key); // gets raw translated string
+            //tooltips.add(Component.literal("§8" + desc));
+            tooltips.add((Either.left(Component.translatable(desc).withStyle(ChatFormatting.DARK_GRAY))));
+
         }
     }
 

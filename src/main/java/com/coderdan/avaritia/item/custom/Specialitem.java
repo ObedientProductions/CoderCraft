@@ -1,14 +1,25 @@
 package com.coderdan.avaritia.item.custom;
 
 import com.coderdan.avaritia.block.ModBlocks;
+import com.coderdan.avaritia.item.projectiles.ThrownEndestpearlProjectile;
+import com.coderdan.avaritia.item.projectiles.ThrownSpecialItemProjectile;
+import com.coderdan.avaritia.sound.ModSounds;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
+import net.minecraft.core.Holder;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.stats.Stats;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -33,35 +44,37 @@ public class Specialitem extends TranslatableItem {
     );
 
     @Override
-    public InteractionResult useOn(UseOnContext pContext) {
-
-        Level level = pContext.getLevel();
-        Block clickedBlock = level.getBlockState(pContext.getClickedPos()).getBlock();
-
-        if(SPECIAL_MAP.containsKey(clickedBlock))
-        {
-            if(!level.isClientSide())
-            {
-                level.setBlockAndUpdate(pContext.getClickedPos(), SPECIAL_MAP.get(clickedBlock).defaultBlockState());
-                
-                pContext.getItemInHand().hurtAndBreak(1, ((ServerLevel) level), (ServerPlayer) pContext.getPlayer(),
-                        item -> pContext.getPlayer().onEquippedItemBroken(item, EquipmentSlot.MAINHAND));
-
-                level.playSound(null, pContext.getClickedPos(), SoundEvents.GRINDSTONE_USE, SoundSource.BLOCKS);
-
-
-            }
+    public InteractionResultHolder<ItemStack> use(Level pLevel, Player pPlayer, InteractionHand pUsedHand) {
+        ItemStack itemstack = pPlayer.getItemInHand(pUsedHand);
+        pLevel.playSound(
+                null,
+                pPlayer.getX(),
+                pPlayer.getY(),
+                pPlayer.getZ(),
+                ModSounds.QUACK.get(),
+                SoundSource.NEUTRAL,
+                0.5F,
+                1f
+        );
+        pPlayer.getCooldowns().addCooldown(this, 1);
+        if (!pLevel.isClientSide) {
+            ThrownSpecialItemProjectile thrownPearl = new ThrownSpecialItemProjectile(pLevel, pPlayer);
+            thrownPearl.setItem(itemstack);
+            thrownPearl.setInvulnerable(true);
+            thrownPearl.shootFromRotation(pPlayer, pPlayer.getXRot(), pPlayer.getYRot(), 0.0F, 1.5F, 1.0F);
+            pLevel.addFreshEntity(thrownPearl);
         }
 
-        return super.useOn(pContext);
+        pPlayer.awardStat(Stats.ITEM_USED.get(this));
+        itemstack.consume(1, pPlayer);
+        return InteractionResultHolder.sidedSuccess(itemstack, pLevel.isClientSide());
     }
 
 
+    @Override
+    public Component getName(ItemStack pStack) {
 
-
-
-
-
-
-
+        String translated = Component.translatable(this.getDescriptionId()).getString();
+        return Component.literal("§6" + translated);
+    }
 }

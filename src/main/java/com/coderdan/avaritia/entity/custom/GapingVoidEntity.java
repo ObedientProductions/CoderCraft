@@ -49,7 +49,15 @@ public class GapingVoidEntity extends Entity {
 
         age++;
         if (age >= MAX_AGE) {
-            level().explode(this, getX(), getY(), getZ(), 4.0f, Level.ExplosionInteraction.MOB);
+            level().explode(
+                    this,
+                    getX(),
+                    getY(),
+                    getZ(),
+                    RADIUS,
+                    false, // fire
+                    Level.ExplosionInteraction.TNT
+            );
             discard();
             return;
         }
@@ -64,7 +72,7 @@ public class GapingVoidEntity extends Entity {
             Vec3 pull = center.subtract(entity.position()).normalize().scale(0.2);
             entity.setDeltaMovement(entity.getDeltaMovement().add(pull));
             if (entity instanceof LivingEntity le) {
-                le.hurt(damageSources().magic(), 1f);
+                le.hurt(damageSources().magic(), 8f);
             }
         }
 
@@ -89,11 +97,30 @@ public class GapingVoidEntity extends Entity {
                     float hardness = state.getDestroySpeed(level(), pos);
 
                     if (!state.isAir() && hardness >= 0f && hardness < 10f){
-                        level().destroyBlock(pos, false);
+                        level().destroyBlock(pos, true);
                     }
                 }
             });
         }
+
+
+        if (level().isClientSide) {
+            for (int i = 0; i < 8; i++) {
+                double px = getX() + (random.nextDouble() - 0.5) * RADIUS * 2;
+                double py = getY() + (random.nextDouble() - 0.5) * RADIUS * 2;
+                double pz = getZ() + (random.nextDouble() - 0.5) * RADIUS * 2;
+
+                Vec3 pos = new Vec3(px, py, pz);
+                Vec3 dir = position().subtract(pos).normalize().scale(0.1 + random.nextDouble() * 0.05);
+
+                level().addParticle(
+                        net.minecraft.core.particles.ParticleTypes.PORTAL, // or END_ROD
+                        px, py, pz,
+                        dir.x, dir.y, dir.z
+                );
+            }
+        }
+
 
 
     }

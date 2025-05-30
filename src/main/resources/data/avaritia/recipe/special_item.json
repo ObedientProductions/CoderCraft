@@ -1,0 +1,26 @@
+{
+  "type": "avaritia:extreme",
+  "pattern": [
+    "         ",
+    "   eee   ",
+    "  eeeee  ",
+    "  ewewe  ",
+    " eeeeeee ",
+    "   eee   ",
+    "  eeeee  ",
+    "  eeeee  ",
+    "   e e   "
+  ],
+  "key": {
+    "e": {
+      "tag": "forge:storage_blocks/gold"
+    },
+    "w": {
+      "item": "avaritia:gold_singularity"
+    }
+  },
+  "result": {
+    "id": "avaritia:special_item",
+    "count": 1
+  }
+}

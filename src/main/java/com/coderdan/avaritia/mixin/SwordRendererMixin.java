@@ -2,22 +2,33 @@ package com.coderdan.avaritia.mixin;
 
 import com.coderdan.avaritia.Avaritia;
 import com.coderdan.avaritia.ModRenderTypes;
+import com.coderdan.avaritia.events.ForgeClientEvents;
 import com.coderdan.avaritia.item.ModItems;
 import com.coderdan.avaritia.util.AnimatedMask;
 import com.mojang.blaze3d.platform.NativeImage;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.ShaderInstance;
 import net.minecraft.client.renderer.entity.ItemRenderer;
+import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.client.RenderTypeHelper;
+import org.joml.Matrix4f;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import javax.annotation.Nullable;
 import java.io.IOException;
 import java.util.Objects;
 
@@ -27,18 +38,28 @@ public class SwordRendererMixin {
     private static ResourceLocation VOIDSTARSTXT = ResourceLocation.fromNamespaceAndPath(Avaritia.MOD_ID, "textures/models/armor/cosmic_0.png");
 
     float shaderZoom = 1;
-    @Redirect(
+    @Inject(
             method = "render(Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/item/ItemDisplayContext;ZLcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;IILnet/minecraft/client/resources/model/BakedModel;)V",
             at = @At(
                     value = "INVOKE",
                     target = "Lnet/minecraft/client/renderer/entity/ItemRenderer;renderModelLists(Lnet/minecraft/client/resources/model/BakedModel;Lnet/minecraft/world/item/ItemStack;IILcom/mojang/blaze3d/vertex/PoseStack;Lcom/mojang/blaze3d/vertex/VertexConsumer;)V"
             )
     )
-    private void renderSwordWithOverlay(ItemRenderer instance, BakedModel model, ItemStack stack, int light, int overlay, PoseStack poseStack, VertexConsumer defaultBuffer) {
+
+    private void renderSwordWithOverlay(ItemStack stack, ItemDisplayContext pDisplayContext, boolean pLeftHand, PoseStack poseStack, MultiBufferSource pBufferSource, int light, int overlay, BakedModel model, CallbackInfo ci) {
+
         if (stack.getItem() == ModItems.INFINITY_SWORD.get()) {
+
             // Render base sword
+
+            ItemRenderer instance = (ItemRenderer)(Object)this;
+
+            RenderType renderType = RenderTypeHelper.getFallbackItemRenderType(stack, model, false);
+            VertexConsumer defaultBuffer = pBufferSource.getBuffer(renderType);
+
+
             instance.renderModelLists(model, stack, light, overlay, poseStack, defaultBuffer);
-            Minecraft.getInstance().renderBuffers().bufferSource().endBatch();
+
 
             ShaderInstance shader = ModRenderTypes.infinityVoidSolidShader;
 
@@ -47,13 +68,14 @@ public class SwordRendererMixin {
             {
                 boolean isInventory = Minecraft.getInstance().screen != null;
                 boolean isMaxLight = light == 15728880;
-
                 boolean isHUD = !isInventory && isMaxLight;
                 boolean isTrulyInventory = isInventory && isMaxLight;
+                boolean isGround = pDisplayContext == ItemDisplayContext.GROUND;
 
                 shaderZoom = isTrulyInventory ? 25f :
                         isHUD             ? 25f :
-                                Minecraft.getInstance().options.getCameraType().isFirstPerson() ? 0.8f : 1.25f;
+                                isGround          ? 2f:
+                                        Minecraft.getInstance().options.getCameraType().isFirstPerson() ? 0.9f : 1.25f;
 
                 Objects.requireNonNull(shader.getUniform("ZoomScale")).set((float) shaderZoom);
 
@@ -134,24 +156,58 @@ public class SwordRendererMixin {
 
 
                         // Front face
+
+                        float x0 = fx;
+                        float x1 = fx + 1f / 16f;
+                        float y0 = fy;
+                        float y1 = fy + 1f / 16f;
+
+                        // UV coords assuming full texture space, adjust if you need per-frame offsets
+                        float u0 = x / (float)width;
+                        float u1 = (x + 1) / (float)width;
+                        float v0 = y / (float)height;
+                        float v1 = (y + 1) / (float)height;
+
                         poseStack.pushPose();
-                        poseStack.scale(1.0f / 16f, 1f / 16f, 1.0f);
-                        poseStack.translate(fx * 16f, fy * 16f, fz * 16f);
-                        instance.renderQuadList(poseStack, vc, model.getQuads(null, null, RandomSource.create()), stack, light, overlay);
+                        Matrix4f matrix = poseStack.last().pose();
+
+                        poseStack.translate(0,0,0.5320f);
+
+                        // Render quad
+                        vc.addVertex(matrix, x0, y0, 0.0f).setUv(u0, v1).setColor(255, 255, 255, 255)
+                                .setUv2(240, 240).setOverlay(OverlayTexture.NO_OVERLAY).setNormal(0, 0, 1);
+                        vc.addVertex(matrix, x1, y0, 0.0f).setUv(u1, v1).setColor(255, 255, 255, 255)
+                                .setUv2(240, 240).setOverlay(OverlayTexture.NO_OVERLAY).setNormal(0, 0, 1);
+                        vc.addVertex(matrix, x1, y1, 0.0f).setUv(u1, v0).setColor(255, 255, 255, 255)
+                                .setUv2(240, 240).setOverlay(OverlayTexture.NO_OVERLAY).setNormal(0, 0, 1);
+                        vc.addVertex(matrix, x0, y1, 0.0f).setUv(u0, v0).setColor(255, 255, 255, 255)
+                                .setUv2(240, 240).setOverlay(OverlayTexture.NO_OVERLAY).setNormal(0, 0, 1);
+
                         poseStack.popPose();
 
-                        // Back face (mirrored Z)
                         poseStack.pushPose();
-                        poseStack.scale(1.0f / 16f, 1f / 16f, 1.0f);
-                        poseStack.translate(fx * 16f, fy * 16f, -fz * 16f); // flip Z
-                        instance.renderQuadList(poseStack, vc, model.getQuads(null, null, RandomSource.create()), stack, light, overlay);
+                        Matrix4f matrix2 = poseStack.last().pose();
+
+                        poseStack.translate(0,0,0.4680f);
+
+                        // Render quad
+                        vc.addVertex(matrix2, x0, y1, 0.0f).setUv(u0, v0).setColor(255, 255, 255, 255)
+                                .setUv2(240, 240).setOverlay(OverlayTexture.NO_OVERLAY).setNormal(0, 0, 1);
+                        vc.addVertex(matrix2, x1, y1, 0.0f).setUv(u1, v0).setColor(255, 255, 255, 255)
+                                .setUv2(240, 240).setOverlay(OverlayTexture.NO_OVERLAY).setNormal(0, 0, 1);
+                        vc.addVertex(matrix2, x1, y0, 0.0f).setUv(u1, v1).setColor(255, 255, 255, 255)
+                                .setUv2(240, 240).setOverlay(OverlayTexture.NO_OVERLAY).setNormal(0, 0, 1);
+                        vc.addVertex(matrix2, x0, y0, 0.0f).setUv(u0, v1).setColor(255, 255, 255, 255)
+                                .setUv2(240, 240).setOverlay(OverlayTexture.NO_OVERLAY).setNormal(0, 0, 1);
+
                         poseStack.popPose();
+
 
 
 
                         if (shader != null)
                         {
-                            Objects.requireNonNull(shader.getUniform("PixelAlpha")).set(whiteness); // e.g. 0.0f to fade out completely
+                            Objects.requireNonNull(shader.getUniform("PixelAlpha")).set(1f); // e.g. 0.0f to fade out completely
                             //System.out.println(whiteness + " Whiteness");
                         }
 
@@ -160,11 +216,18 @@ public class SwordRendererMixin {
             }
 
             animatedMask.close(); // clean up
+
+
         } else if(stack.getItem() == ModItems.INFINITY_BOW.get())
         {
+
+            ItemRenderer instance = (ItemRenderer)(Object)this;
+
+            RenderType renderType = RenderTypeHelper.getFallbackItemRenderType(stack, model, false);
+            VertexConsumer defaultBuffer = pBufferSource.getBuffer(renderType);
             // Render base sword
             instance.renderModelLists(model, stack, light, overlay, poseStack, defaultBuffer);
-            Minecraft.getInstance().renderBuffers().bufferSource().endBatch();
+
 
             ShaderInstance shader = ModRenderTypes.infinityVoidSolidShader;
 
@@ -282,19 +345,52 @@ public class SwordRendererMixin {
                         float fz = 0.0001f;
 
                         // Front face
+
+                        float x0 = fx;
+                        float x1 = fx + 1f / 16f;
+                        float y0 = fy;
+                        float y1 = fy + 1f / 16f;
+
+                        // UV coords assuming full texture space, adjust if you need per-frame offsets
+                        float u0 = x / (float)width;
+                        float u1 = (x + 1) / (float)width;
+                        float v0 = y / (float)height;
+                        float v1 = (y + 1) / (float)height;
+
                         poseStack.pushPose();
-                        poseStack.scale(1.0f / 16f, 1f / 16f, 1.0f);
-                        poseStack.translate(fx * 16f, fy * 16f, fz * 16f);
-                        instance.renderQuadList(poseStack, vc, model.getQuads(null, null, RandomSource.create()), stack, light, overlay);
+                        Matrix4f matrix = poseStack.last().pose();
+
+                        poseStack.translate(0,0,0.5320f);
+
+                        // Render quad
+                        vc.addVertex(matrix, x0, y0, 0.0f).setUv(u0, v1).setColor(255, 255, 255, 255)
+                                .setUv2(240, 240).setOverlay(OverlayTexture.NO_OVERLAY).setNormal(0, 0, 1);
+                        vc.addVertex(matrix, x1, y0, 0.0f).setUv(u1, v1).setColor(255, 255, 255, 255)
+                                .setUv2(240, 240).setOverlay(OverlayTexture.NO_OVERLAY).setNormal(0, 0, 1);
+                        vc.addVertex(matrix, x1, y1, 0.0f).setUv(u1, v0).setColor(255, 255, 255, 255)
+                                .setUv2(240, 240).setOverlay(OverlayTexture.NO_OVERLAY).setNormal(0, 0, 1);
+                        vc.addVertex(matrix, x0, y1, 0.0f).setUv(u0, v0).setColor(255, 255, 255, 255)
+                                .setUv2(240, 240).setOverlay(OverlayTexture.NO_OVERLAY).setNormal(0, 0, 1);
+
                         poseStack.popPose();
 
-                        // Back face (mirrored Z)
                         poseStack.pushPose();
-                        poseStack.scale(1.0f / 16f, 1f / 16f, 1.0f);
-                        poseStack.translate(fx * 16f, fy * 16f, -fz * 16f); // flip Z
+                        Matrix4f matrix2 = poseStack.last().pose();
 
-                        instance.renderQuadList(poseStack, vc, model.getQuads(null, null, RandomSource.create()), stack, light, overlay);
+                        poseStack.translate(0,0,0.4680f);
+
+                        // Render quad
+                        vc.addVertex(matrix2, x0, y1, 0.0f).setUv(u0, v0).setColor(255, 255, 255, 255)
+                                .setUv2(240, 240).setOverlay(OverlayTexture.NO_OVERLAY).setNormal(0, 0, 1);
+                        vc.addVertex(matrix2, x1, y1, 0.0f).setUv(u1, v0).setColor(255, 255, 255, 255)
+                                .setUv2(240, 240).setOverlay(OverlayTexture.NO_OVERLAY).setNormal(0, 0, 1);
+                        vc.addVertex(matrix2, x1, y0, 0.0f).setUv(u1, v1).setColor(255, 255, 255, 255)
+                                .setUv2(240, 240).setOverlay(OverlayTexture.NO_OVERLAY).setNormal(0, 0, 1);
+                        vc.addVertex(matrix2, x0, y0, 0.0f).setUv(u0, v1).setColor(255, 255, 255, 255)
+                                .setUv2(240, 240).setOverlay(OverlayTexture.NO_OVERLAY).setNormal(0, 0, 1);
+
                         poseStack.popPose();
+
 
                         if (shader != null)
                         {
@@ -307,10 +403,7 @@ public class SwordRendererMixin {
             }
 
             animatedMask.close(); // clean up
-        }
-
-        else {
-            instance.renderModelLists(model, stack, light, overlay, poseStack, defaultBuffer);
+            return;
         }
     }
 

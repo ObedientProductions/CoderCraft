@@ -1,6 +1,14 @@
 {
   "parent": "minecraft:item/generated",
-  "textures":{
+  "textures": {
     "layer0": "avaritia:item/armor/chestplate/layer_0"
-  }
+  },
+  "overrides": [
+    {
+      "predicate": {
+        "avaritia:infinity_trimmed": 1.0
+      },
+      "model": "avaritia:item/infinity_breastplate_trimmed"
+    }
+  ]
 }

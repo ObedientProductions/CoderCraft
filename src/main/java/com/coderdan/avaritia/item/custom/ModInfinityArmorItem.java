@@ -1,7 +1,12 @@
 package com.coderdan.avaritia.item.custom;
 
+import com.coderdan.avaritia.Avaritia;
+import com.coderdan.avaritia.item.ModDataComponentTypes;
+import com.coderdan.avaritia.item.ModItemProperties;
 import com.google.common.collect.Multimap;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -13,6 +18,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ArmorMaterial;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.armortrim.ArmorTrim;
 import net.minecraft.world.item.component.ItemAttributeModifiers;
 import net.minecraft.world.level.Level;
 
@@ -42,4 +48,12 @@ public class ModInfinityArmorItem extends ArmorItem {
         String translated = Component.translatable(this.getDescriptionId()).getString();
         return Component.literal("§c" + translated);
     }
+
+
+
+
+
+
+
+
 }

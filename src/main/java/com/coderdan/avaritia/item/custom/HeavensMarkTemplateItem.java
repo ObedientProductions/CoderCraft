@@ -27,6 +27,6 @@ public class HeavensMarkTemplateItem extends SmithingTemplateItem {
     public Component getName(ItemStack pStack) {
 
         String translated = Component.translatable(this.getDescriptionId()).getString();
-        return Component.literal("§e" + translated);
+        return Component.literal("§6" + translated);
     }
 }

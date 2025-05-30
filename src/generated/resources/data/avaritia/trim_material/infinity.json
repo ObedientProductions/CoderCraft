@@ -1,7 +1,7 @@
 {
   "asset_name": "infinity",
   "description": {
-    "color": "#FFFFFF",
+    "color": "#FFAA00",
     "translate": "trim_material.avaritia.infinity"
   },
   "ingredient": "avaritia:infinity_ingot",

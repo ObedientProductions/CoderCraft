@@ -14,7 +14,7 @@ import org.lwjgl.glfw.GLFW;
 @Mod.EventBusSubscriber(modid = Avaritia.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE, value = Dist.CLIENT)
 public class ForgeClientEvents {
     public static float DEBUG_SIZE = 1f; // starts smaller
-    public static Vec3 DEBUG_OFFSET = new Vec3(0f, 0.1754f, -0.1510f);
+    public static Vec3 DEBUG_OFFSET = new Vec3(0f, 0f, 0.5320f);
     public static float DEBUG_WIDTH_MULTIPLIER = 0.07f;
 
 

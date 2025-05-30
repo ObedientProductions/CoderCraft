@@ -31,6 +31,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public abstract class ModItemRendererMixin {
 
     private static ResourceLocation HALO_TEXTURE = ResourceLocation.fromNamespaceAndPath(Avaritia.MOD_ID, "textures/gui/effects/items/halo.png");
+    private static ResourceLocation HALO_GOLD_TEXTURE = ResourceLocation.fromNamespaceAndPath(Avaritia.MOD_ID, "textures/gui/effects/items/gold_halo.png");
     private static ResourceLocation HALO128_TEXTURE = ResourceLocation.fromNamespaceAndPath(Avaritia.MOD_ID, "textures/gui/effects/items/halo128.png");
     private static ResourceLocation HALO_NOISE_INGOT_TEXTURE = ResourceLocation.fromNamespaceAndPath(Avaritia.MOD_ID, "textures/gui/effects/items/halo_noise.png");
     private static ResourceLocation HALO_NOISE_NUGGET_TEXTURE = ResourceLocation.fromNamespaceAndPath(Avaritia.MOD_ID, "textures/gui/effects/items/halo_noise_medium.png");
@@ -82,6 +83,12 @@ public abstract class ModItemRendererMixin {
                 renderHalo(pPoseStack, buffer, 1.1f);
             }
 
+            if(pItemStack.getItem() instanceof Specialitem)
+            {
+                VertexConsumer buffer = pBufferSource.getBuffer(ModRenderTypes.modGui(HALO_GOLD_TEXTURE));
+                renderHalo(pPoseStack, buffer, 1.1f);
+            }
+
         }
         else if (pItemStack.getItem() instanceof UltimateItem) {
             if (pDisplayContext == ItemDisplayContext.FIXED) {
@@ -96,13 +103,11 @@ public abstract class ModItemRendererMixin {
             else if (pDisplayContext == ItemDisplayContext.THIRD_PERSON_RIGHT_HAND || pDisplayContext == ItemDisplayContext.THIRD_PERSON_LEFT_HAND) {
                 animateGround(pPoseStack, pBufferSource.getBuffer(RenderType.entityTranslucentEmissive(HALO_TEXTURE)));
             }
+
         }
 
 
-        if(pItemStack.getItem() instanceof Specialitem)
-        {
-            //testRender(pBufferSource, pPoseStack);
-        }
+
     }
 
 
@@ -259,6 +264,47 @@ public abstract class ModItemRendererMixin {
 
 
         Matrix4f matrix = pPoseStack.last().pose();
+
+
+        float Opacity = 0.95f * 255;
+
+        buffer.addVertex(matrix, -size, -size, -0.5f).setUv(0, 1).setColor(0, 0, 0, Opacity).setUv2(240, 240).setOverlay(OverlayTexture.NO_OVERLAY).setNormal(0, 0, -1);
+        buffer.addVertex(matrix,  size, -size, -0.5f).setUv(1, 1).setColor(0, 0, 0, Opacity).setUv2(240, 240).setOverlay(OverlayTexture.NO_OVERLAY).setNormal(0, 0, -1);
+        buffer.addVertex(matrix,  size,  size, -0.5f).setUv(1, 0).setColor(0, 0, 0, Opacity).setUv2(240, 240).setOverlay(OverlayTexture.NO_OVERLAY).setNormal(0, 0, -1);
+        buffer.addVertex(matrix, -size,  size, -0.5f).setUv(0, 0).setColor(0, 0, 0, Opacity).setUv2(240, 240).setOverlay(OverlayTexture.NO_OVERLAY).setNormal(0, 0, -1);
+
+
+        pPoseStack.popPose();
+
+        // --- Clean up after blend ---
+        RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
+        RenderSystem.disableBlend();
+        RenderSystem.enableDepthTest();
+        RenderSystem.enableCull();
+        RenderSystem.defaultBlendFunc();
+    }
+
+
+    private void renderHaloFollow(PoseStack pPoseStack, VertexConsumer buffer, float size){
+
+        RenderSystem.enableBlend();
+        RenderSystem.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
+        RenderSystem.disableDepthTest();
+        RenderSystem.disableCull();
+
+        pPoseStack.pushPose();
+
+
+        Matrix4f matrix = pPoseStack.last().pose();
+
+        // Reset any item/entity rotation (neutralize pose stack)
+        pPoseStack.last().pose().identity();
+        pPoseStack.last().normal().identity();
+
+        // Make it face the camera only
+        pPoseStack.mulPose(Minecraft.getInstance().getEntityRenderDispatcher().cameraOrientation());
+
+
 
 
         float Opacity = 0.95f * 255;

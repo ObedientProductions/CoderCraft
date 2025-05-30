@@ -9,5 +9,18 @@
     "sounds": [
       "avaritia:gaping_void"
     ]
+  },
+  "quack": {
+    "sounds": [
+      "avaritia:quack"
+    ]
+  },
+  "dnb_musicdisc": {
+    "sounds": [
+      {
+        "name": "avaritia:dnb_musicdisc",
+        "stream": true
+      }
+    ]
   }
 }
