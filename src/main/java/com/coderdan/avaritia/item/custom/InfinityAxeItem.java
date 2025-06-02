@@ -94,6 +94,11 @@ public class InfinityAxeItem extends AxeItem {
         String translated = Component.translatable(this.getDescriptionId()).getString();
         return Component.literal("§c" + translated);
     }
+
+    @Override
+    public boolean isFoil(ItemStack pStack) {
+        return false;
+    }
 }
 
 

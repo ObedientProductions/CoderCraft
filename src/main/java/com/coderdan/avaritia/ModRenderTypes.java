@@ -31,9 +31,9 @@ public class ModRenderTypes {
     public static ShaderInstance infinityVoidSolidShader;
     public static ShaderInstance infinityVoidWings;
 
-    public static RenderType babyShader(ResourceLocation txt, ResourceLocation txtmask) {
+    public static RenderType babyShader(ResourceLocation txt) {
 
-        return CustomRenderTypes.babyTranslucent(txt, txtmask);
+        return CustomRenderTypes.babyTranslucent(txt);
     }
 
     public static RenderType infinityVoidShader(ResourceLocation txt) {
@@ -58,6 +58,11 @@ public class ModRenderTypes {
     public static RenderType infinityVoidWings(ResourceLocation txt) {
         return CustomRenderTypes.infinity_void_wings(txt);
     }
+
+    public static RenderType cutoutGlow(ResourceLocation txt) {
+        return CustomRenderTypes.glowCutout(txt);
+    }
+
 
 
 
@@ -269,13 +274,12 @@ public class ModRenderTypes {
 
 
 
-        public static RenderType babyTranslucent(ResourceLocation baseTexture, ResourceLocation maskTexture) {
+        public static RenderType babyTranslucent(ResourceLocation baseTexture) {
             RenderType.CompositeState compositeState = RenderType.CompositeState.builder()
                     .setShaderState(BABY_SHADER_STATE)
 
                     .setTextureState(new MultiTextureStateShard.Builder()
                             .add(baseTexture, false, false)
-                            .add(maskTexture, false, false)
                             .build())
                     .setTransparencyState(TRANSLUCENT_TRANSPARENCY)
                     .setCullState(NO_CULL)
@@ -324,31 +328,48 @@ public class ModRenderTypes {
         public static RenderType infinity_void_solid(ResourceLocation baseTexture) {
             RenderType.CompositeState compositeState = RenderType.CompositeState.builder()
                     .setShaderState(INFINITY_VOID_SOLID_SHADER_STATE)
-
                     .setTextureState(new TextureStateShard(baseTexture, false, false))
-                    .setTransparencyState(new RenderStateShard.TransparencyStateShard("additive_transparent_transparency", () -> {
-                        RenderSystem.enableBlend();
-                        RenderSystem.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE);
-                    }, () -> {
-                        RenderSystem.disableBlend();
-                        RenderSystem.defaultBlendFunc();
-                    }))
-
+                    .setTransparencyState(TRANSLUCENT_TRANSPARENCY)
+                    .setDepthTestState(RenderStateShard.LEQUAL_DEPTH_TEST)
                     .setLightmapState(LIGHTMAP)
                     .setOverlayState(OVERLAY)
                     .createCompositeState(true);
 
-
             return RenderType.create(
                     "infinity_void_solid",
-                    DefaultVertexFormat.POSITION_TEX,
+                    DefaultVertexFormat.NEW_ENTITY,
                     VertexFormat.Mode.QUADS,
                     1536,
                     true,
-                    false,
+                    true,
                     compositeState
             );
         }
+
+
+        public static RenderType glowCutout(ResourceLocation texture) {
+            return RenderType.create(
+                    "glowing_cutout",
+                    DefaultVertexFormat.NEW_ENTITY,
+                    VertexFormat.Mode.QUADS,
+                    1536,
+                    false,
+                    true,
+                    RenderType.CompositeState.builder()
+                            .setShaderState(RenderType.RENDERTYPE_EYES_SHADER) // fullbright emissive
+                            .setTextureState(new RenderStateShard.TextureStateShard(texture, false, false))
+                            .setTransparencyState(RenderType.TRANSLUCENT_TRANSPARENCY) // allows semi-transparent pixels
+                            .setWriteMaskState(RenderType.COLOR_WRITE)
+                            .setLightmapState(RenderType.NO_LIGHTMAP) // disables ambient lighting
+                            .setOverlayState(RenderType.OVERLAY)
+                            .createCompositeState(false)
+            );
+        }
+
+
+
+
+
 
         public static RenderType infinity_void_fully_solid(ResourceLocation baseTexture) {
             RenderType.CompositeState compositeState = RenderType.CompositeState.builder()

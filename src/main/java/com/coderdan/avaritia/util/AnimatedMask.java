@@ -105,7 +105,9 @@ public class AnimatedMask {
             return image;
         }
 
-        int index = (int) ((System.currentTimeMillis() - startTime) / (50L * frameTime)) % frames.size();
+        long gameTicks = Minecraft.getInstance().level != null ? Minecraft.getInstance().level.getGameTime() : 0;
+        int index = (int) ((gameTicks / frameTime) % frames.size());
+
         int yOffset = frames.get(index) * 16;
 
         NativeImage frame = new NativeImage(image.getWidth(), 16, false);
@@ -114,6 +116,11 @@ public class AnimatedMask {
                 frame.setPixelRGBA(x, y, image.getPixelRGBA(x, y + yOffset));
             }
         }
+
+        int frameValue = frames.get(index);
+       // System.out.println("Index: " + index + ", Frame: " + frameValue + " (yOffset = " + (frameValue * 16) + ")");
+
+
         return frame;
     }
 
@@ -122,13 +129,17 @@ public class AnimatedMask {
         if (!isAnimated) return image;
 
         int totalFrames = image.getHeight() / height;
-        int index = (int) ((System.currentTimeMillis() - startTime) / (50L * frameTime)) % frames.size();
+        long gameTicks = Minecraft.getInstance().level != null ? Minecraft.getInstance().level.getGameTime() : 0;
+        int index = (int) ((gameTicks / frameTime) % frames.size());
+
 
         // Clamp frame index to valid bounds
 
         int frameIndex = Math.min(frames.get(index), totalFrames - 1);
 
-        System.out.println(index + " frame index");
+        int frameValue = frames.get(index);
+        //System.out.println("Index: " + index + ", Frame: " + frameValue + " (yOffset = " + (frameValue * 16) + ")");
+
 
         int yOffset = frameIndex * height;
 
@@ -148,7 +159,9 @@ public class AnimatedMask {
 
         int totalFrames = image.getHeight() / height;
         long adjustedTime = (long) ((System.currentTimeMillis() - startTime) * speed);
-        int index = (int) (adjustedTime / (50L * frameTime)) % frames.size();
+        long gameTicks = Minecraft.getInstance().level != null ? Minecraft.getInstance().level.getGameTime() : 0;
+        int index = (int) ((gameTicks / frameTime) % frames.size());
+
 
 
         // Clamp frame index to valid bounds

@@ -113,6 +113,11 @@ public class InfinityHoeItem extends HoeItem {
         return Component.literal("§c" + translated);
     }
 
+    @Override
+    public boolean isFoil(ItemStack pStack) {
+        return false;
+    }
+
 
 }
 

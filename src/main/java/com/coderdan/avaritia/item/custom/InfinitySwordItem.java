@@ -67,6 +67,10 @@ public class InfinitySwordItem extends SwordItem {
         return Component.literal("§c" + translated);
     }
 
+    @Override
+    public boolean isFoil(ItemStack pStack) {
+        return false;
+    }
 
 }
 

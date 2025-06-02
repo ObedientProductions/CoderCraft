@@ -56,27 +56,41 @@ public class InfinityArrowEntity extends AbstractArrow {
 
     int ticksElapsed = 0;
     int randomDiscardTime = -1;
+
+    private boolean spawnedByArrowRain = false;
+    private int arrowRainTimer = 0;
+    private int spawnedArrows = 0;
+    private final int totalRainArrows = 10;
+    private boolean shouldRain = false;
+
+
+
     @Override
     public void tick() {
         super.tick();
 
-        if (this.level().isClientSide && !this.inGround) {
-            for (int i = 0; i < 2; i++) {
-                this.level().addParticle(
-                        ParticleTypes.END_ROD, // or something else like ENCHANT, FLAME, etc
-                        this.getX() + (this.random.nextDouble() - 0.5) * 0.2,
-                        this.getY() + (this.random.nextDouble() - 0.5) * 0.2,
-                        this.getZ() + (this.random.nextDouble() - 0.5) * 0.2,
-                        0, 0, 0
-                );
 
-                this.level().addParticle(
-                        ParticleTypes.FIREWORK, // or something else like ENCHANT, FLAME, etc
-                        this.getX() + (this.random.nextDouble() - 0.5) * 0.2,
-                        this.getY() + (this.random.nextDouble() - 0.5) * 0.2,
-                        this.getZ() + (this.random.nextDouble() - 0.5) * 0.2,
-                        0, 0, 0
-                );
+        if (!this.level().isClientSide
+                && shouldRain
+                && inGround
+                && spawnedArrows < totalRainArrows
+                && this.level().canSeeSky(this.blockPosition())){
+
+            arrowRainTimer++;
+
+            if (arrowRainTimer % 2 == 0) {
+                InfinityArrowEntity extraArrow = new InfinityArrowEntity(this.level(), (LivingEntity) this.getOwner(), ModItems.INFINITY_ARROW.get());
+
+                extraArrow.setPos(this.getX(), this.getY() + 10.0, this.getZ());
+
+                double dx = (this.random.nextDouble() - 0.5) * 0.5;
+                double dz = (this.random.nextDouble() - 0.5) * 0.5;
+
+                extraArrow.shoot(dx, -1.0, dz, 2.5f, 5f);
+                extraArrow.setSpawnedByArrowRain(true); // child arrows never rain
+
+                this.level().addFreshEntity(extraArrow);
+                spawnedArrows++;
             }
         }
 
@@ -101,7 +115,7 @@ public class InfinityArrowEntity extends AbstractArrow {
         }
     }
 
-    private boolean spawnedByArrowRain = false;
+
 
     public void setSpawnedByArrowRain(boolean value) {
         this.spawnedByArrowRain = value;
@@ -110,21 +124,18 @@ public class InfinityArrowEntity extends AbstractArrow {
 
     @Override
     protected void onHit(HitResult result) {
-        super.onHit(result);
 
-        if (!this.level().isClientSide && !spawnedByArrowRain) {
-            for (int i = 0; i < 30; i++) {
-                InfinityArrowEntity extraArrow = new InfinityArrowEntity(this.level(), (LivingEntity) this.getOwner(), ModItems.INFINITY_ARROW.get());
-
-                extraArrow.setPos(this.getX() + (this.random.nextDouble() - 0.5) * 4.0,
-                        this.getY() + 10.0,
-                        this.getZ() + (this.random.nextDouble() - 0.5) * 4.0);
-                extraArrow.shoot(0, -1, 0, 2.5f, 0f);
-                extraArrow.setSpawnedByArrowRain(true); // prevent infinite rain
-
-                this.level().addFreshEntity(extraArrow);
+        if (!spawnedByArrowRain) {
+            this.shouldRain = true;
+            if (!this.level().isClientSide) {
+                this.arrowRainTimer = 0;
+                this.spawnedArrows = 0;
             }
         }
+
+
+
+        super.onHit(result);
 
     }
 

@@ -279,11 +279,15 @@ public class CompressorBlockEntity extends BlockEntity implements MenuProvider {
         }
 
 
+
+
         if (recipeOpt.isEmpty()) {
-            if (storedItemCount > 0) return; // Allow player to continue feeding if mid-progress
             lockedRecipe = null;
+            if (storedItemCount > 0) return;
+            lockedRecipeId = "";
             return;
         }
+
 
 
         CompressorRecipe currentRecipe = recipeOpt.get().value();
@@ -308,18 +312,23 @@ public class CompressorBlockEntity extends BlockEntity implements MenuProvider {
         }
 
         // If lockedRecipe exists but is different from current recipe, pause
-        if (lockedRecipe != currentRecipe) {
+        String currentId = recipeOpt.get().id().toString();
+        if (!currentId.equals(lockedRecipeId)) {
+            lockedRecipe = null; // unlock it
+            lockedRecipeId = "";
             return;
         }
 
 
-        // 🛡️ Output slot must be empty or matching the expected output
+
+        // Output slot must be empty or matching the expected output
         if (!output.isEmpty() && !ItemStack.isSameItem(output, expectedOutput)) {
             return; // Output is wrong -> pause, don't compress
         }
 
 
         cachedInputExample = lockedRecipe.inputItem().getItems()[0].copy();
+
         cachedOutputExample = expectedOutput;
         setChanged();
 
@@ -431,4 +440,49 @@ public class CompressorBlockEntity extends BlockEntity implements MenuProvider {
     public void reviveCaps() {
         super.reviveCaps();
     }
+
+    //define our own for safety  so display slots are not exposed to other mods and vanilla things
+
+    private static class SidedHandler implements IItemHandler {
+        private final ItemStackHandler handler;
+        private final boolean isInput;
+
+        public SidedHandler(ItemStackHandler handler, boolean isInput) {
+            this.handler = handler;
+            this.isInput = isInput;
+        }
+
+        @Override
+        public int getSlots() {
+            return 1;
+        }
+
+        @Override
+        public @NotNull ItemStack getStackInSlot(int slot) {
+            return handler.getStackInSlot(isInput ? 0 : 1);
+        }
+
+        @Override
+        public @NotNull ItemStack insertItem(int slot, @NotNull ItemStack stack, boolean simulate) {
+            if (!isInput) return stack;
+            return handler.insertItem(0, stack, simulate);
+        }
+
+        @Override
+        public @NotNull ItemStack extractItem(int slot, int amount, boolean simulate) {
+            if (isInput) return ItemStack.EMPTY;
+            return handler.extractItem(1, amount, simulate);
+        }
+
+        @Override
+        public int getSlotLimit(int slot) {
+            return handler.getSlotLimit(isInput ? 0 : 1);
+        }
+
+        @Override
+        public boolean isItemValid(int slot, @NotNull ItemStack stack) {
+            return isInput;
+        }
+    }
+
 }

@@ -63,9 +63,9 @@ public class InfinityBowItem extends BowItem {
         if (!level.isClientSide) {
             // Always use your custom arrow
             InfinityArrowEntity arrow = new InfinityArrowEntity(level, player, ModItems.INFINITY_ARROW.get());
-            arrow.shootFromRotation(player, player.getXRot(), player.getYRot(), 0.0F, power * 3.0F, 1.0F);
-            arrow.setBaseDamage(10.0D);
-            arrow.setCritArrow(true);
+            arrow.shootFromRotation(player, player.getXRot(), player.getYRot(), 0.0F, power * 3.0F, 0.0F);
+            arrow.setBaseDamage(Integer.MAX_VALUE);
+            arrow.setCritArrow(false);
 
             level.addFreshEntity(arrow);
         }
@@ -74,7 +74,7 @@ public class InfinityBowItem extends BowItem {
                 SoundEvents.ARROW_SHOOT, SoundSource.PLAYERS, 1.0F,
                 1.0F / (level.random.nextFloat() * 0.4F + 1.2F));
 
-        player.getCooldowns().addCooldown(this, 1);
+        player.getCooldowns().addCooldown(this, 2);
 
     }
 
@@ -102,6 +102,11 @@ public class InfinityBowItem extends BowItem {
 
         String translated = Component.translatable(this.getDescriptionId()).getString();
         return Component.literal("§c" + translated);
+    }
+
+    @Override
+    public boolean isFoil(ItemStack pStack) {
+        return false;
     }
 
 

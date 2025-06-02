@@ -112,6 +112,11 @@ public class InfinityShovelItem extends ShovelItem {
         String translated = Component.translatable(this.getDescriptionId()).getString();
         return Component.literal("§c" + translated);
     }
+
+    @Override
+    public boolean isFoil(ItemStack pStack) {
+        return false;
+    }
 }
 
 

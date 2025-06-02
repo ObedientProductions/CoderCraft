@@ -6,6 +6,6 @@
   "result": {
     "id": "avaritia:netherite_singularity"
   },
-  "required": 32,
+  "required": 64,
   "processDuration": 3
 }
