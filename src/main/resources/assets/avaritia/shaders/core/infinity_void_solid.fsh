@@ -11,6 +11,14 @@ uniform float CameraPitch;
 uniform float BackgroundAlpha;
 uniform float PixelAlpha;
 
+uniform float StarColorR;
+uniform float StarColorG;
+uniform float StarColorB;
+
+uniform float BackgroundColorR;
+uniform float BackgroundColorG;
+uniform float BackgroundColorB;
+
 in vec4 texProj;
 in vec4 vertexColor;
 out vec4 fragColor;
@@ -40,6 +48,8 @@ float smoothHash(float x) {
     return sin(x);
 }
 
+
+
 void main() {
     float yawScale = 0.25;
     float pitchScale = 0.25;
@@ -54,10 +64,11 @@ void main() {
 
     float pulse = mod(GameTime * 20.0, 400.0) / 400.0;
     vec3 background = vec3(
-    0.1,
-    sin(pulse * 6.2831) * 0.075 + 0.225,
-    cos(pulse * 6.2831) * 0.05 + 0.3
+    BackgroundColorR,
+    sin(pulse * 6.2831) * 0.075 + BackgroundColorG,
+    cos(pulse * 6.2831) * 0.05 + BackgroundColorB
     );
+
 
 
     vec3 result = background;
@@ -70,13 +81,13 @@ void main() {
     int layers = 16;
     for (int i = 0; i < layers; i++) {
         int mult = 16 - i;
-        int j = i + 7;
-        float rand1 = (j * j * 4321.0 + j * 8.0) * 2.0;
-        int k = j + 1;
-        float rand2 = (k * k * k * 239.0 + k * 37.0) * 3.6;
-        float rand3 = rand1 * 347.4 + rand2 * 63.4;
 
-        float angle = mod(rand3, 6.2831);
+        float base = float(i);
+        float randR = hash(base * 12.123);
+        float randG = hash(base * 45.456);
+        float randB = hash(base * 78.789);
+
+        float angle = mod(randB, 6.2831);
 
         vec2 offset = vec2(
         smoothHash(float(i) * 12.1 + GameTime * 4.0),
@@ -92,12 +103,21 @@ void main() {
         vec3 tex = texture(Sampler0, uv).rgb;
 
         float a = tex.r * (0.5 + (1.0 / mult));
-        float r = mod(rand1, 29.0) / 29.0 * 0.3 + 0.4;
-        float g = mod(rand2, 35.0) / 35.0 * 0.4 + 0.6;
-        float b = mod(rand1, 17.0) / 17.0 * 0.3 + 0.7;
 
-        result += vec3(r, g, b) * a;
-        bloom += vec3(r, g, b) * (a * 0.2);
+        vec3 randomColor = vec3(
+        randR * 0.1 + 0.9,
+        randG * 0.1 + 0.9,
+        randB * 0.1 + 0.9
+        );
+
+
+        vec3 StarColor = vec3(StarColorR, StarColorG, StarColorB);
+        vec3 color = randomColor * StarColor;
+
+
+        result += color * a;
+        bloom += color * (a * 0.2);
+
     }
 
     result = clamp(result, 0.0, 1.0);

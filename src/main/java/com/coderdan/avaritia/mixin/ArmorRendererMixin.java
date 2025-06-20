@@ -3,11 +3,13 @@ package com.coderdan.avaritia.mixin;
 import com.coderdan.avaritia.Avaritia;
 import com.coderdan.avaritia.ModRenderTypes;
 import com.coderdan.avaritia.events.ForgeClientEvents;
+import com.coderdan.avaritia.item.ModDataComponentTypes;
 import com.coderdan.avaritia.item.armor.ArmorModelLayers;
 import com.coderdan.avaritia.item.armor.ModInfinityArmorModel;
 import com.coderdan.avaritia.item.custom.ModInfinityArmorItem;
 import com.coderdan.avaritia.util.AnimatedMask;
 import com.mojang.blaze3d.platform.NativeImage;
+import com.mojang.blaze3d.shaders.Uniform;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -25,6 +27,7 @@ import net.minecraft.client.renderer.entity.layers.HumanoidArmorLayer;
 import net.minecraft.client.renderer.entity.layers.RenderLayer;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -32,6 +35,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.armortrim.ArmorTrim;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Matrix4f;
 import org.spongepowered.asm.mixin.Mixin;
@@ -53,7 +57,8 @@ public abstract class ArmorRendererMixin <T extends LivingEntity, M extends Huma
 
     private static ResourceLocation WINGTXT = ResourceLocation.fromNamespaceAndPath(Avaritia.MOD_ID, "textures/models/armor/infinity_armor_wing.png");
     private static ResourceLocation WINGTXTGLOW = ResourceLocation.fromNamespaceAndPath(Avaritia.MOD_ID, "textures/models/armor/infinity_armor_wingglow.png");
-    private static ResourceLocation WINGTXT_TRIMMED = ResourceLocation.fromNamespaceAndPath(Avaritia.MOD_ID, "textures/models/armor/infinity_armor_wing.png");
+    private static ResourceLocation WINGTXTGLOW_TRIMMED = ResourceLocation.fromNamespaceAndPath(Avaritia.MOD_ID, "textures/models/armor/infinity_armor_wingglow_trimmed.png");
+    private static ResourceLocation WINGTXT_TRIMMED = ResourceLocation.fromNamespaceAndPath(Avaritia.MOD_ID, "textures/models/armor/infinity_armor_wing_trimmed.png");
     private static ResourceLocation WINGTXT_MASK = ResourceLocation.fromNamespaceAndPath(Avaritia.MOD_ID, "textures/models/armor/infinity_armor_mask_wings.png");
 
     private static ResourceLocation VOIDTXT = ResourceLocation.fromNamespaceAndPath(Avaritia.MOD_ID, "textures/models/armor/infinity_armor_mask.png");
@@ -112,6 +117,43 @@ public abstract class ArmorRendererMixin <T extends LivingEntity, M extends Huma
         return helm && chest && legs && feet;
     }
 
+    boolean hasHeavenTrim(ItemStack result)
+    {
+        if (result.getItem() instanceof ArmorItem) {
+            ArmorTrim trim = result.get(DataComponents.TRIM);
+            if (trim != null && trim.pattern().isBound() && trim.material().isBound()) {
+                String patternId = trim.pattern().getRegisteredName();
+                String materialId = trim.material().get().ingredient().getRegisteredName();
+
+                return patternId.equals("avaritia:heavens_mark") && materialId.equals("avaritia:infinity_ingot");
+            }
+            else
+            {
+                return false;
+            }
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    void updateUniformsHeaven()
+    {
+        if (ModRenderTypes.infinityVoidSolidShader != null) {
+            ShaderInstance shader = ModRenderTypes.infinityVoidSolidShader;
+
+            Objects.requireNonNull(shader.getUniform("StarColorR"), "Missing Uniform 'StarColorR'!").set(1.0f);
+            Objects.requireNonNull(shader.getUniform("StarColorG"), "Missing Uniform 'StarColorG'!").set(0.9f);
+            Objects.requireNonNull(shader.getUniform("StarColorB"), "Missing Uniform 'StarColorB'!").set(0.6f);
+
+            Objects.requireNonNull(shader.getUniform("BackgroundColorR"), "Missing Uniform 'BackgroundColorR'!").set(0.5f);
+            Objects.requireNonNull(shader.getUniform("BackgroundColorG"), "Missing Uniform 'BackgroundColorG'!").set(0.42f);
+            Objects.requireNonNull(shader.getUniform("BackgroundColorB"), "Missing Uniform 'BackgroundColorB'!").set(0.3f);
+        }
+    }
+
+
     private static void copyPose(ModelPart from, ModelPart to) {
         to.copyFrom(from);
     }
@@ -125,26 +167,34 @@ public abstract class ArmorRendererMixin <T extends LivingEntity, M extends Huma
     private void onRender(PoseStack pPoseStack, MultiBufferSource pBufferSource, T pLivingEntity, EquipmentSlot pSlot, int pPackedLight, A pModel, CallbackInfo ci) throws IOException {
 
 
+        ItemStack headStack = pLivingEntity.getItemBySlot(EquipmentSlot.HEAD);
         ItemStack chestStack = pLivingEntity.getItemBySlot(EquipmentSlot.CHEST);
+        ItemStack legStack = pLivingEntity.getItemBySlot(EquipmentSlot.LEGS);
+        ItemStack bootsStack = pLivingEntity.getItemBySlot(EquipmentSlot.FEET);
+
         MultiBufferSource.BufferSource bufferSource = Minecraft.getInstance().renderBuffers().bufferSource();
-
-
-        if(hasFullInfinityArmor(pLivingEntity))
-        {
-            //render base armor shader effects
-            updateShaderUniformsArmor(0.2f, pPackedLight);
-            renderArmorShaderBase(pModel, pPoseStack, pPackedLight);
-        }
 
         if (pSlot == EquipmentSlot.CHEST && (chestStack.getItem() instanceof ModInfinityArmorItem)) {
 
-            renderArmorEffects(pPoseStack, pModel, pBufferSource, pPackedLight);
 
             if ((pLivingEntity instanceof Player player))
             {
-                if (hasInfinityArmor((T) player)) {
+                if (hasFullInfinityArmor((T) player)) {
                     if (player.getAbilities().flying || player.isFallFlying()) {
+
+
+                        if(hasHeavenTrim(chestStack))
+                        {
+                            updateUniformsHeaven();
+                        }
+                        else
+                        {
+                            updateShaderUniformsArmor(0.2f, pPackedLight);
+                        }
+
                         renderWings(pPoseStack, pModel, bufferSource, EquipmentSlot.CHEST, player, bufferSource::endBatch);
+
+
                     }
 
                 }
@@ -152,10 +202,37 @@ public abstract class ArmorRendererMixin <T extends LivingEntity, M extends Huma
             }
 
 
+            float trimmedTransparency;
+
+            if(hasHeavenTrim(chestStack))
+            {
+                updateUniformsHeaven();
+                updateShaderTransparency(1f);
+                trimmedTransparency = 1f;
+            }
+            else
+            {
+                updateShaderUniformsArmor(1f, pPackedLight);
+                trimmedTransparency = 0.7f;
+
+            }
+
+
+            renderArmorEffects(pPoseStack, pModel, pBufferSource, pPackedLight, trimmedTransparency);
+
+
+            if(hasHeavenTrim(chestStack))
+            {
+                updateUniformsHeaven();
+            }
+
+
 
         }
         else if(pSlot == EquipmentSlot.HEAD && pLivingEntity.getItemBySlot(EquipmentSlot.HEAD).getItem() instanceof ModInfinityArmorItem)
         {
+
+
             ModelPart head = pModel.head;
             ModelPart body = pModel.body;
             ModelPart leftLeg = pModel.leftLeg;
@@ -192,7 +269,7 @@ public abstract class ArmorRendererMixin <T extends LivingEntity, M extends Huma
 
 
 
-            RenderType emptyRenderType = RenderType.armorCutoutNoCull(EMPTY_COLORTXT);
+            RenderType emptyRenderType = RenderType.beaconBeam(EMPTY_COLORTXT, false);
             RenderType voidRenderType =ModRenderTypes.infinityVoidTrueSolid(VOIDSTARSTXT);
 
             //more render stuff vv
@@ -201,14 +278,97 @@ public abstract class ArmorRendererMixin <T extends LivingEntity, M extends Huma
 
             VertexConsumer vc = pBufferSource.getBuffer(renderType);
 
-
             if((hasFullInfinityArmor((T) pLivingEntity))) {
+
+                float[][] PULSE_COLORS = {
+                        // Rising (10)
+                        {0.50f, 0.42f, 0.30f},
+                        {0.55f, 0.46f, 0.32f},
+                        {0.60f, 0.50f, 0.34f},
+                        {0.65f, 0.54f, 0.36f},
+                        {0.70f, 0.58f, 0.38f},
+                        {0.75f, 0.62f, 0.40f},
+                        {0.80f, 0.66f, 0.42f},
+                        {0.85f, 0.70f, 0.45f},
+                        {0.90f, 0.74f, 0.48f},
+                        {0.95f, 0.78f, 0.51f},
+
+                        // Smoother transition into bright yellow (5)
+                        {0.96f, 0.82f, 0.58f},
+                        {0.97f, 0.87f, 0.65f},
+                        {0.98f, 0.92f, 0.73f},
+                        {0.99f, 0.96f, 0.80f},
+                        {253 / 255f, 255 / 255f, 216 / 255f}, // ~0.99, 1.0, 0.85
+
+                        // Hold peak (20)
+                        {253 / 255f, 255 / 255f, 216 / 255f},
+                        {253 / 255f, 255 / 255f, 216 / 255f},
+                        {253 / 255f, 255 / 255f, 216 / 255f},
+                        {253 / 255f, 255 / 255f, 216 / 255f},
+                        {253 / 255f, 255 / 255f, 216 / 255f},
+                        {253 / 255f, 255 / 255f, 216 / 255f},
+                        {253 / 255f, 255 / 255f, 216 / 255f},
+                        {253 / 255f, 255 / 255f, 216 / 255f},
+                        {253 / 255f, 255 / 255f, 216 / 255f},
+                        {253 / 255f, 255 / 255f, 216 / 255f},
+                        {253 / 255f, 255 / 255f, 216 / 255f},
+                        {253 / 255f, 255 / 255f, 216 / 255f},
+                        {253 / 255f, 255 / 255f, 216 / 255f},
+                        {253 / 255f, 255 / 255f, 216 / 255f},
+                        {253 / 255f, 255 / 255f, 216 / 255f},
+                        {253 / 255f, 255 / 255f, 216 / 255f},
+                        {253 / 255f, 255 / 255f, 216 / 255f},
+                        {253 / 255f, 255 / 255f, 216 / 255f},
+                        {253 / 255f, 255 / 255f, 216 / 255f},
+                        {253 / 255f, 255 / 255f, 216 / 255f},
+
+                        // Smooth fade out (5)
+                        {0.99f, 0.96f, 0.80f},
+                        {0.98f, 0.92f, 0.73f},
+                        {0.97f, 0.87f, 0.65f},
+                        {0.96f, 0.82f, 0.58f},
+                        {0.95f, 0.78f, 0.51f},
+
+                        // Falling (10)
+                        {0.90f, 0.74f, 0.48f},
+                        {0.85f, 0.70f, 0.45f},
+                        {0.80f, 0.66f, 0.42f},
+                        {0.75f, 0.62f, 0.40f},
+                        {0.70f, 0.58f, 0.38f},
+                        {0.65f, 0.54f, 0.36f},
+                        {0.60f, 0.50f, 0.34f},
+                        {0.55f, 0.46f, 0.32f},
+                        {0.50f, 0.42f, 0.30f}
+                };
+
+
+
+
+
+
+
+
+
+
+                float[] finalColors;
+
+                if (hasHeavenTrim(headStack)) {
+                    int frameCount = PULSE_COLORS.length;
+
+                    // Cycle with sine
+                    float cycle = (float) Math.sin(ticks * 0.025f) * 0.5f + 0.5f; // range 0-1
+                    int index = Math.round(cycle * (frameCount - 1));
+                    finalColors = PULSE_COLORS[index];
+                } else {
+                    finalColors = color;
+                }
+
                 // Render LEFT eye
                 pPoseStack.pushPose();
 
                 head.translateAndRotate(pPoseStack); // attach to body
                 pPoseStack.translate(loffset.x, loffset.y, loffset.z); // right side
-                renderColoredReversedWingQuad(pPoseStack, vc, lsize, color[0], color[1], color[2]);
+                renderColoredReversedWingQuad(pPoseStack, vc, lsize, finalColors[0], finalColors[1], finalColors[2]);
                 pPoseStack.popPose();
 
                 // Render RIGHT eye
@@ -216,7 +376,7 @@ public abstract class ArmorRendererMixin <T extends LivingEntity, M extends Huma
 
                 head.translateAndRotate(pPoseStack); // attach to body
                 pPoseStack.translate(roffset.x, roffset.y, roffset.z); // right side
-                renderColoredReversedWingQuad(pPoseStack, vc, rsize, color[0], color[1], color[2]);
+                renderColoredReversedWingQuad(pPoseStack, vc, rsize, finalColors[0], finalColors[1], finalColors[2]);
                 pPoseStack.popPose();
             }
             else
@@ -240,40 +400,71 @@ public abstract class ArmorRendererMixin <T extends LivingEntity, M extends Huma
 
             VertexConsumer Maskvc = bufferSource.getBuffer(ModRenderTypes.infinityVoidSolidShader(VOIDSTARSTXT));
 
-            updateShaderUniforms(1f, pPackedLight);
+            updateShaderTransparency(1f);
+            float pixelTransparency;
+            if(hasHeavenTrim(headStack))
+            {
+                updateUniformsHeaven();
+                pixelTransparency = 1f;
+            }
+            else
+            {
+                updateShaderUniformsArmor(1f, pPackedLight);
+                pixelTransparency = 0.3f;
+            }
 
             // Head
             pPoseStack.pushPose();
             head.translateAndRotate(pPoseStack);
             Vec3 headRightOffset = new Vec3(-0.1172f, -0.0937f, -0.3141f);
-            renderFaceStripReversed(pPoseStack, Maskvc, 0.0389f, 0.0391f, 2, headRightOffset, 34, 22, 4, 7, 64, 64, 0.3f);
+            renderFaceStripReversed(pPoseStack, Maskvc, 0.0389f, 0.0391f, 2, headRightOffset, 34, 22, 4, 7, 64, 64, pixelTransparency);
             pPoseStack.popPose();
+
+
+            if(!hasHeavenTrim(headStack))
+            {
+                pixelTransparency = 0.65f;
+            }
 
 
             pPoseStack.pushPose();
             head.translateAndRotate(pPoseStack);
             Vec3 headRightlowerOffset = new Vec3(-0.1172f, -0.0937f + 0.0782f, -0.3141f);
-            renderFaceStripReversed(pPoseStack, Maskvc, 0.0389f, 0.0391f, 2, headRightlowerOffset, 34, 22, 4, 7, 64, 64, 0.65f);
+            renderFaceStripReversed(pPoseStack, Maskvc, 0.0389f, 0.0391f, 2, headRightlowerOffset, 34, 22, 4, 7, 64, 64, pixelTransparency);
             pPoseStack.popPose();
+
+            if(!hasHeavenTrim(headStack))
+            {
+                pixelTransparency = 0.3f;
+            }
 
 
             pPoseStack.pushPose();
             head.translateAndRotate(pPoseStack);
             Vec3 headLeftOffset = new Vec3(-0.1172f + (0.0782f * 3), -0.0937f, -0.3141f);
-            renderFaceStripReversed(pPoseStack, Maskvc, 0.0389f, 0.0391f, 2, headLeftOffset, 34, 22, 4, 7, 64, 64, 0.3f);
+            renderFaceStripReversed(pPoseStack, Maskvc, 0.0389f, 0.0391f, 2, headLeftOffset, 34, 22, 4, 7, 64, 64, pixelTransparency);
             pPoseStack.popPose();
+
+            if(!hasHeavenTrim(headStack))
+            {
+                pixelTransparency = 0.65f;
+            }
 
 
             pPoseStack.pushPose();
             head.translateAndRotate(pPoseStack);
             Vec3 headLeftlowerOffset = new Vec3(-0.1172f  + (0.0782f * 3), -0.0937f + 0.0782f, -0.3141f);
-            renderFaceStripReversed(pPoseStack, Maskvc, 0.0389f, 0.0391f, 2, headLeftlowerOffset, 34, 22, 4, 7, 64, 64, 0.65f);
+            renderFaceStripReversed(pPoseStack, Maskvc, 0.0389f, 0.0391f, 2, headLeftlowerOffset, 34, 22, 4, 7, 64, 64, pixelTransparency);
             pPoseStack.popPose();
 
             bufferSource.endBatch();
 
+
         } else if(pSlot == EquipmentSlot.LEGS && pLivingEntity.getItemBySlot(EquipmentSlot.LEGS).getItem() instanceof ModInfinityArmorItem)
         {
+
+
+
             ModelPart head = pModel.head;
             ModelPart body = pModel.body;
             ModelPart leftLeg = pModel.leftLeg;
@@ -284,19 +475,57 @@ public abstract class ArmorRendererMixin <T extends LivingEntity, M extends Huma
             Vec3 legOffset = new Vec3(0f, 0.1724f, -0.159);
 
             VertexConsumer vc = pBufferSource.getBuffer(ModRenderTypes.infinityVoidSolidShader(VOIDSTARSTXT));
-            updateShaderUniforms(1f, pPackedLight); // for legs
+
+            float trimmedTransparency;
+
+            if(hasHeavenTrim(legStack))
+            {
+                updateUniformsHeaven();
+                updateShaderTransparency(1f);
+                trimmedTransparency = 1f;
+            }
+            else
+            {
+                updateShaderUniformsArmor(1f, pPackedLight);
+                trimmedTransparency = 0.7f;
+
+            }
 
             pPoseStack.pushPose();
             leftLeg.translateAndRotate(pPoseStack);
-            renderQuadStripReversed(pPoseStack, vc, 0.078f, 0.1350f, 1, legOffset, 34, 22, 4, 7, 64, 64, 0.65f);
+            renderQuadStripReversed(pPoseStack, vc, 0.078f, 0.1350f, 1, legOffset, 34, 22, 4, 7, 64, 64, trimmedTransparency);
             pPoseStack.popPose();
 
             pPoseStack.pushPose();
             rightLeg.translateAndRotate(pPoseStack);
-            renderQuadStripReversed(pPoseStack, vc, 0.078f, 0.1350f, 1, legOffset, 34, 22, 4, 7, 64, 64, 0.65f);
+            renderQuadStripReversed(pPoseStack, vc, 0.078f, 0.1350f, 1, legOffset, 34, 22, 4, 7, 64, 64, trimmedTransparency);
             pPoseStack.popPose();
 
+        }
+        else if(pSlot == EquipmentSlot.FEET && pLivingEntity.getItemBySlot(EquipmentSlot.FEET).getItem() instanceof ModInfinityArmorItem)
+        {
+            if(hasHeavenTrim(bootsStack))
+            {
+                updateUniformsHeaven();
+            }
+        }
 
+
+
+
+        if(hasFullInfinityArmor(pLivingEntity))
+        {
+            //render base armor shader effects
+            renderArmorShaderBase(pModel, pPoseStack, pPackedLight);
+
+            if(hasHeavenTrim(headStack) && hasHeavenTrim(chestStack) && hasHeavenTrim(legStack) && hasHeavenTrim(bootsStack))
+            {
+                updateUniformsHeaven();
+            }
+            else
+            {
+                updateShaderUniformsArmor(0.2f, pPackedLight);
+            }
         }
 
     }
@@ -351,6 +580,24 @@ public abstract class ArmorRendererMixin <T extends LivingEntity, M extends Huma
             Objects.requireNonNull(shader.getUniform("frameCount")).set((int) frameCount);
             Objects.requireNonNull(shader.getUniform("ZoomScale")).set((float) shaderZoom);
             Objects.requireNonNull(shader.getUniform("PixelAlpha")).set((float) PixelValue);
+
+
+            Uniform starColorRUniform = Objects.requireNonNull(shader.getUniform("StarColorR"), "Missing Uniform 'StarColorR'!");
+            Uniform starColorGUniform = Objects.requireNonNull(shader.getUniform("StarColorG"), "Missing Uniform 'StarColorG'!");
+            Uniform starColorBUniform = Objects.requireNonNull(shader.getUniform("StarColorB"), "Missing Uniform 'StarColorB'!");
+
+            starColorRUniform.set(0.7f);
+            starColorGUniform.set(1.0f);
+            starColorBUniform.set(1.0f);
+
+            Uniform BackgroundColorRUniform = Objects.requireNonNull(shader.getUniform("BackgroundColorR"), "Missing Uniform 'BackgroundColorR'!");
+            Uniform BackgroundColorGUniform = Objects.requireNonNull(shader.getUniform("BackgroundColorG"), "Missing Uniform 'BackgroundColorG'!");
+            Uniform BackgroundColorBUniform = Objects.requireNonNull(shader.getUniform("BackgroundColorB"), "Missing Uniform 'BackgroundColorB'!");
+
+
+            BackgroundColorRUniform.set(0.1f);
+            BackgroundColorGUniform.set(0.225f);
+            BackgroundColorBUniform.set(0.3f);
         }
     }
 
@@ -410,6 +657,15 @@ public abstract class ArmorRendererMixin <T extends LivingEntity, M extends Huma
         }
     }
 
+    void updateShaderTransparency(float t)
+    {
+
+        if (ModRenderTypes.infinityVoidSolidShader != null) {
+            ShaderInstance shader = ModRenderTypes.infinityVoidSolidShader;
+            Objects.requireNonNull(shader.getUniform("PixelAlpha")).set((float) t);
+        }
+    }
+
 
     void renderArmorShaderBase(A pModel, PoseStack pPoseStack, int pPackedLight)
     {
@@ -445,7 +701,14 @@ public abstract class ArmorRendererMixin <T extends LivingEntity, M extends Huma
 
 
     void renderWings(PoseStack poseStack, A model, MultiBufferSource bufferSource, EquipmentSlot slot, LivingEntity player, @Nullable Runnable flush) throws IOException {
-        if (ModRenderTypes.babyShader(WINGTXT) == null) return;
+
+        Boolean trimmed = hasHeavenTrim(player.getItemBySlot(EquipmentSlot.CHEST));
+
+        ResourceLocation WING_TEXTURE = trimmed ? WINGTXT_TRIMMED : WINGTXT;
+        ResourceLocation WING_TEXTURE_GLOW = trimmed ? WINGTXTGLOW_TRIMMED : WINGTXTGLOW;
+
+
+        if (ModRenderTypes.babyShader(WING_TEXTURE) == null) return;
 
         time += 0.05f;
         Objects.requireNonNull(ModRenderTypes.babyShader.getUniform("time")).set(time);
@@ -471,7 +734,7 @@ public abstract class ArmorRendererMixin <T extends LivingEntity, M extends Huma
 
 
         // PASS 1
-        VertexConsumer vcWingLeft = bufferSource.getBuffer(ModRenderTypes.babyShader(WINGTXT));
+        VertexConsumer vcWingLeft = bufferSource.getBuffer(ModRenderTypes.babyShader(WING_TEXTURE));
         poseStack.pushPose();
         body.translateAndRotate(poseStack);
         poseStack.translate(-wingOffset, yWingOffset, zWingOffset);
@@ -481,7 +744,7 @@ public abstract class ArmorRendererMixin <T extends LivingEntity, M extends Huma
 
         flush.run();
 
-        VertexConsumer vcWingLeftPulse =  bufferSource.getBuffer(RenderType.entityTranslucentEmissive(WINGTXTGLOW));
+        VertexConsumer vcWingLeftPulse =  bufferSource.getBuffer(RenderType.entityTranslucentEmissive(WING_TEXTURE_GLOW));
         poseStack.pushPose();
         body.translateAndRotate(poseStack);
         poseStack.translate(-wingOffset, yWingOffset, zWingOffset);
@@ -516,7 +779,7 @@ public abstract class ArmorRendererMixin <T extends LivingEntity, M extends Huma
         // === RIGHT WING ===
 
         // PASS 1
-        VertexConsumer vcWingRight = bufferSource.getBuffer(ModRenderTypes.babyShader(WINGTXT));
+        VertexConsumer vcWingRight = bufferSource.getBuffer(ModRenderTypes.babyShader(WING_TEXTURE));
         poseStack.pushPose();
         body.translateAndRotate(poseStack);
         poseStack.translate(wingOffset, yWingOffset, zWingOffset);
@@ -527,7 +790,7 @@ public abstract class ArmorRendererMixin <T extends LivingEntity, M extends Huma
 
         flush.run();
 
-        VertexConsumer vcWingRightPulse =  bufferSource.getBuffer(RenderType.entityTranslucentEmissive(WINGTXTGLOW));
+        VertexConsumer vcWingRightPulse =  bufferSource.getBuffer(RenderType.entityTranslucentEmissive(WING_TEXTURE_GLOW));
         poseStack.pushPose();
         body.translateAndRotate(poseStack);
         poseStack.translate(wingOffset, yWingOffset, zWingOffset);
@@ -568,7 +831,7 @@ public abstract class ArmorRendererMixin <T extends LivingEntity, M extends Huma
 
 
 
-    void renderArmorEffects(PoseStack pPoseStack, A pModel, MultiBufferSource pBufferSource, int light)
+    void renderArmorEffects(PoseStack pPoseStack, A pModel, MultiBufferSource pBufferSource, int light, float trimmedTransparency)
     {
         VertexConsumer vc = pBufferSource.getBuffer(ModRenderTypes.infinityVoidSolidShader(VOIDSTARSTXT));
 
@@ -591,20 +854,20 @@ public abstract class ArmorRendererMixin <T extends LivingEntity, M extends Huma
         float dsize = 0.0362f;
         Vec3 doffset = new Vec3(0.1170f, 0.1204f, 0.189f);
 
-        renderQuadStripTransparent(pPoseStack, vc, dsize, 7, doffset, 34, 22, 4, 7, 64, 64, 0.75f);
+        renderQuadStripTransparent(pPoseStack, vc, dsize, 7, doffset, 34, 22, 4, 7, 64, 64, trimmedTransparency);
         float spacing = dsize * 2.14f * 3.0f;
         Vec3 nextOffset = doffset.add(-spacing, 0.0f, 0.0f);
-        renderQuadStripTransparent(pPoseStack, vc, dsize, 7, nextOffset, 34, 22, 4, 7, 64, 64, 0.75f);
+        renderQuadStripTransparent(pPoseStack, vc, dsize, 7, nextOffset, 34, 22, 4, 7, 64, 64, trimmedTransparency);
 
         Vec3 centerOffset = new Vec3(0.0000, 0.2294, -0.1890);
-        renderQuadStripReversedTransparent(pPoseStack, vc, 0.08f, 0.1450f, 1, centerOffset, 34, 22, 4, 7, 64, 64, 0.65f);
+        renderQuadStripReversedTransparent(pPoseStack, vc, 0.08f, 0.1450f, 1, centerOffset, 34, 22, 4, 7, 64, 64, trimmedTransparency);
 
         // Left Arm
         pPoseStack.pushPose();
         leftArm.translateAndRotate(pPoseStack);
         pPoseStack.mulPose(Axis.YP.rotationDegrees(90));
         Vec3 leftArmOffset = new Vec3(0.0000, -0.1146, 0.2510);
-        renderQuadStrip(pPoseStack, vc, 0.0930f, 0.1450f, 1, leftArmOffset, 34, 22, 4, 7, 64, 64, 0.65f);
+        renderQuadStrip(pPoseStack, vc, 0.0930f, 0.1450f, 1, leftArmOffset, 34, 22, 4, 7, 64, 64, trimmedTransparency);
         pPoseStack.popPose();
 
         // Right Arm
@@ -612,7 +875,7 @@ public abstract class ArmorRendererMixin <T extends LivingEntity, M extends Huma
         rightArm.translateAndRotate(pPoseStack);
         pPoseStack.mulPose(Axis.YP.rotationDegrees(90));
         Vec3 rightArmOffset = new Vec3(0.0000, -0.1146, -0.2510);
-        renderQuadStripReversed(pPoseStack, vc, 0.0930f, 0.1450f, 1, rightArmOffset, 34, 22, 4, 7, 64, 64, 0.65f);
+        renderQuadStripReversed(pPoseStack, vc, 0.0930f, 0.1450f, 1, rightArmOffset, 34, 22, 4, 7, 64, 64, trimmedTransparency);
         pPoseStack.popPose();
 
 

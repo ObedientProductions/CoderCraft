@@ -7,12 +7,18 @@
   },
   "gaping_void": {
     "sounds": [
-      "avaritia:gaping_void"
+      {
+        "name": "avaritia:gaping_void",
+        "stream": true
+      }
     ]
   },
   "quack": {
     "sounds": [
-      "avaritia:quack"
+      {
+        "name": "avaritia:quack",
+        "stream": true
+      }
     ]
   },
   "dnb_musicdisc": {

@@ -16,6 +16,7 @@ import net.minecraftforge.client.event.RegisterShadersEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import org.joml.Matrix4f;
+import org.joml.Vector3f;
 
 import java.io.IOException;
 import java.util.Objects;
@@ -91,6 +92,7 @@ public class ModRenderTypes {
                 CustomRenderTypes.infinityVoidSolidShader = shader;
                 ModRenderTypes.infinityVoidSolidShader = shader;
                 setDefaultUniformsInfinityVoid(shader);
+
 
                 System.out.println("Infinity void solid shader registered!");
             });
@@ -356,7 +358,7 @@ public class ModRenderTypes {
                     false,
                     true,
                     RenderType.CompositeState.builder()
-                            .setShaderState(RenderType.RENDERTYPE_EYES_SHADER) // fullbright emissive
+                            .setShaderState(RenderType.RENDERTYPE_EYES_SHADER)
                             .setTextureState(new RenderStateShard.TextureStateShard(texture, false, false))
                             .setTransparencyState(RenderType.TRANSLUCENT_TRANSPARENCY) // allows semi-transparent pixels
                             .setWriteMaskState(RenderType.COLOR_WRITE)

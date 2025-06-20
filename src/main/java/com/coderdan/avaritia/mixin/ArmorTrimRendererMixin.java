@@ -1,6 +1,8 @@
 package com.coderdan.avaritia.mixin;
 
 import com.coderdan.avaritia.Avaritia;
+import com.coderdan.avaritia.ModRenderTypes;
+import com.mojang.blaze3d.shaders.Uniform;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.Minecraft;
@@ -8,6 +10,7 @@ import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.Model;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.ShaderInstance;
 import net.minecraft.client.renderer.Sheets;
 import net.minecraft.client.renderer.entity.layers.HumanoidArmorLayer;
 import net.minecraft.client.renderer.entity.layers.RenderLayer;
@@ -30,6 +33,8 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import java.util.Objects;
+
 @Mixin(HumanoidArmorLayer.class)
 public class ArmorTrimRendererMixin<T extends LivingEntity, M extends HumanoidModel<T>, A extends HumanoidModel<T>> {
 
@@ -41,31 +46,24 @@ public class ArmorTrimRendererMixin<T extends LivingEntity, M extends HumanoidMo
             PoseStack poseStack, MultiBufferSource buffer, T entity, EquipmentSlot slot, int light, A model, CallbackInfo ci
     ) {
         ItemStack stack = entity.getItemBySlot(slot);
-        if (!(stack.getItem() instanceof ArmorItem)) return;
+        if (stack.getItem() instanceof ArmorItem armorItem) {
+            ArmorTrim trim = stack.get(DataComponents.TRIM);
+            if (trim != null && trim.pattern().isBound()) {
+                String patternId = trim.pattern().getRegisteredName();
+                String materialId = trim.material().get().ingredient().getRegisteredName();
 
-        ArmorTrim trim = stack.get(DataComponents.TRIM);
-        if (trim == null || !trim.pattern().isBound()) return;
+                if (patternId.equals(patternIdName) && materialId.equals(materialIdName)) {
+                    int frame = getMcmetaFrame();
+                    ResourceLocation texture = (slot == EquipmentSlot.LEGS)
+                            ? ResourceLocation.fromNamespaceAndPath(Avaritia.MOD_ID, "textures/armor_trim_frames/heavens_mark_leggings" + frame + ".png")
+                            : ResourceLocation.fromNamespaceAndPath(Avaritia.MOD_ID, "textures/armor_trim_frames/heavens_mark" + frame + ".png");
 
-        String patternId = trim.pattern().getRegisteredName();
-        String materialId = trim.material().get().ingredient().getRegisteredName();
-
-        if (!patternId.equals(patternIdName)) return;
-
-        if (!materialId.equals(materialIdName)) return;
-
-        // Custom animated trim texture render
-        int frame = getMcmetaFrame();
-        ResourceLocation texture;
-        if (slot == EquipmentSlot.LEGS) {
-            texture = ResourceLocation.fromNamespaceAndPath(Avaritia.MOD_ID, "textures/armor_trim_frames/heavens_mark_leggings" + frame + ".png");
-        } else {
-            texture = ResourceLocation.fromNamespaceAndPath(Avaritia.MOD_ID, "textures/armor_trim_frames/heavens_mark" + frame + ".png");
+                    VertexConsumer vc = buffer.getBuffer(RenderType.armorCutoutNoCull(texture));
+                    Model animatedModel = ForgeHooksClient.getArmorModel(entity, stack, slot, model);
+                    animatedModel.renderToBuffer(poseStack, vc, light, OverlayTexture.NO_OVERLAY);
+                }
+            }
         }
-
-        VertexConsumer vc = buffer.getBuffer(RenderType.armorCutoutNoCull(texture));
-        Model animatedModel = ForgeHooksClient.getArmorModel(entity, stack, slot, model);
-        animatedModel.renderToBuffer(poseStack, vc, light, OverlayTexture.NO_OVERLAY);
-
     }
 
 

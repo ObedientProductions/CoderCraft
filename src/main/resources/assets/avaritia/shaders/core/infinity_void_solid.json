@@ -70,7 +70,44 @@
       "type": "float",
       "count": 1,
       "values": [1.0]
+    },
+    {
+      "name": "StarColorR",
+      "type": "float",
+      "count": 1,
+      "values": [0.7]
+    },
+    {
+      "name": "StarColorG",
+      "type": "float",
+      "count": 1,
+      "values": [1.0]
+    },
+    {
+      "name": "StarColorB",
+      "type": "float",
+      "count": 1,
+      "values": [1.0]
+    },
+    {
+      "name": "BackgroundColorR",
+      "type": "float",
+      "count": 1,
+      "values": [0.1]
+    },
+    {
+      "name": "BackgroundColorG",
+      "type": "float",
+      "count": 1,
+      "values": [0.225]
+    },
+    {
+      "name": "BackgroundColorB",
+      "type": "float",
+      "count": 1,
+      "values": [0.3]
     }
+
 
   ]
 }

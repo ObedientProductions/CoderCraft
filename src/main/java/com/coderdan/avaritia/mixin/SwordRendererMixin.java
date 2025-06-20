@@ -7,6 +7,7 @@ import com.coderdan.avaritia.item.ModItems;
 import com.coderdan.avaritia.item.custom.ModInfinityArmorItem;
 import com.coderdan.avaritia.util.AnimatedMask;
 import com.mojang.blaze3d.platform.NativeImage;
+import com.mojang.blaze3d.shaders.Uniform;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.Minecraft;
@@ -16,12 +17,15 @@ import net.minecraft.client.renderer.ShaderInstance;
 import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.armortrim.ArmorTrim;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.client.RenderTypeHelper;
 import net.minecraftforge.fml.common.Mod;
@@ -121,6 +125,24 @@ public abstract class SwordRendererMixin {
                 Objects.requireNonNull(shader.getUniform("currentFrame")).set((int) currentFrame);
                 Objects.requireNonNull(shader.getUniform("frameCount")).set((int) frameCount);
                 Objects.requireNonNull(shader.getUniform("PixelAlpha")).set((float) 1f);
+
+
+                Uniform starColorRUniform = Objects.requireNonNull(shader.getUniform("StarColorR"), "Missing Uniform 'StarColorR'!");
+                Uniform starColorGUniform = Objects.requireNonNull(shader.getUniform("StarColorG"), "Missing Uniform 'StarColorG'!");
+                Uniform starColorBUniform = Objects.requireNonNull(shader.getUniform("StarColorB"), "Missing Uniform 'StarColorB'!");
+
+                starColorRUniform.set(0.7f);
+                starColorGUniform.set(1.0f);
+                starColorBUniform.set(1.0f);
+
+                Uniform BackgroundColorRUniform = Objects.requireNonNull(shader.getUniform("BackgroundColorR"), "Missing Uniform 'BackgroundColorR'!");
+                Uniform BackgroundColorGUniform = Objects.requireNonNull(shader.getUniform("BackgroundColorG"), "Missing Uniform 'BackgroundColorG'!");
+                Uniform BackgroundColorBUniform = Objects.requireNonNull(shader.getUniform("BackgroundColorB"), "Missing Uniform 'BackgroundColorB'!");
+
+
+                BackgroundColorRUniform.set(0.1f);
+                BackgroundColorGUniform.set(0.225f);
+                BackgroundColorBUniform.set(0.3f);
 
 
                 //System.out.println("yaw " + yaw + " pitch " + pitch + " -pitch " + -pitch);
@@ -285,6 +307,24 @@ public abstract class SwordRendererMixin {
                 Objects.requireNonNull(shader.getUniform("currentFrame")).set((int) currentFrame);
                 Objects.requireNonNull(shader.getUniform("frameCount")).set((int) frameCount);
                 Objects.requireNonNull(shader.getUniform("PixelAlpha")).set((float) 1);
+
+
+                Uniform starColorRUniform = Objects.requireNonNull(shader.getUniform("StarColorR"), "Missing Uniform 'StarColorR'!");
+                Uniform starColorGUniform = Objects.requireNonNull(shader.getUniform("StarColorG"), "Missing Uniform 'StarColorG'!");
+                Uniform starColorBUniform = Objects.requireNonNull(shader.getUniform("StarColorB"), "Missing Uniform 'StarColorB'!");
+
+                starColorRUniform.set(0.7f);
+                starColorGUniform.set(1.0f);
+                starColorBUniform.set(1.0f);
+
+                Uniform BackgroundColorRUniform = Objects.requireNonNull(shader.getUniform("BackgroundColorR"), "Missing Uniform 'BackgroundColorR'!");
+                Uniform BackgroundColorGUniform = Objects.requireNonNull(shader.getUniform("BackgroundColorG"), "Missing Uniform 'BackgroundColorG'!");
+                Uniform BackgroundColorBUniform = Objects.requireNonNull(shader.getUniform("BackgroundColorB"), "Missing Uniform 'BackgroundColorB'!");
+
+
+                BackgroundColorRUniform.set(0.1f);
+                BackgroundColorGUniform.set(0.225f);
+                BackgroundColorBUniform.set(0.3f);
 
 
 
@@ -472,6 +512,37 @@ public abstract class SwordRendererMixin {
                 Objects.requireNonNull(shader.getUniform("PixelAlpha")).set((float) 1f);
 
 
+                if(!hasHeavenTrim(stack))
+                {
+                    Uniform starColorRUniform = Objects.requireNonNull(shader.getUniform("StarColorR"), "Missing Uniform 'StarColorR'!");
+                    Uniform starColorGUniform = Objects.requireNonNull(shader.getUniform("StarColorG"), "Missing Uniform 'StarColorG'!");
+                    Uniform starColorBUniform = Objects.requireNonNull(shader.getUniform("StarColorB"), "Missing Uniform 'StarColorB'!");
+
+                    starColorRUniform.set(0.7f);
+                    starColorGUniform.set(1.0f);
+                    starColorBUniform.set(1.0f);
+
+                    Uniform BackgroundColorRUniform = Objects.requireNonNull(shader.getUniform("BackgroundColorR"), "Missing Uniform 'BackgroundColorR'!");
+                    Uniform BackgroundColorGUniform = Objects.requireNonNull(shader.getUniform("BackgroundColorG"), "Missing Uniform 'BackgroundColorG'!");
+                    Uniform BackgroundColorBUniform = Objects.requireNonNull(shader.getUniform("BackgroundColorB"), "Missing Uniform 'BackgroundColorB'!");
+
+
+                    BackgroundColorRUniform.set(0.1f);
+                    BackgroundColorGUniform.set(0.225f);
+                    BackgroundColorBUniform.set(0.3f);
+                }
+                else
+                {
+                    Objects.requireNonNull(shader.getUniform("StarColorR"), "Missing Uniform 'StarColorR'!").set(1.0f);
+                    Objects.requireNonNull(shader.getUniform("StarColorG"), "Missing Uniform 'StarColorG'!").set(0.9f);
+                    Objects.requireNonNull(shader.getUniform("StarColorB"), "Missing Uniform 'StarColorB'!").set(0.6f);
+
+                    Objects.requireNonNull(shader.getUniform("BackgroundColorR"), "Missing Uniform 'BackgroundColorR'!").set(0.5f);
+                    Objects.requireNonNull(shader.getUniform("BackgroundColorG"), "Missing Uniform 'BackgroundColorG'!").set(0.42f);
+                    Objects.requireNonNull(shader.getUniform("BackgroundColorB"), "Missing Uniform 'BackgroundColorB'!").set(0.3f);
+                }
+
+
                 //System.out.println("yaw " + yaw + " pitch " + pitch + " -pitch " + -pitch);
 
             }
@@ -594,6 +665,28 @@ public abstract class SwordRendererMixin {
 
         }
     }
+
+    boolean hasHeavenTrim(ItemStack result)
+    {
+        if (result.getItem() instanceof ArmorItem) {
+            ArmorTrim trim = result.get(DataComponents.TRIM);
+            if (trim != null && trim.pattern().isBound() && trim.material().isBound()) {
+                String patternId = trim.pattern().getRegisteredName();
+                String materialId = trim.material().get().ingredient().getRegisteredName();
+
+                return patternId.equals("avaritia:heavens_mark") && materialId.equals("avaritia:infinity_ingot");
+            }
+            else
+            {
+                return false;
+            }
+        }
+        else
+        {
+            return false;
+        }
+    }
+
 
 }
 

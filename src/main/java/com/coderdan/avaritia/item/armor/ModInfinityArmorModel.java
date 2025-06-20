@@ -2,6 +2,7 @@ package com.coderdan.avaritia.item.armor;
 
 import com.coderdan.avaritia.Avaritia;
 import com.coderdan.avaritia.ModRenderTypes;
+import com.mojang.blaze3d.shaders.Uniform;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.Minecraft;
