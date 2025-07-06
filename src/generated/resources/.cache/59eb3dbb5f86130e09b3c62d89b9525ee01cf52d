@@ -1,0 +1,9 @@
+// 1.21.1	2025-05-22T17:53:07.5611981	Loot Tables
+75aa4ac816eaecd06535e32264597ec866416229 data/avaritia/loot_table/blocks/collector.json
+863162062da40d009e4e2ca4428acaadb264f0a5 data/avaritia/loot_table/blocks/compressed_crafting_table.json
+ed99b5673aa8c7c16d6337a82fb9b326797d2893 data/avaritia/loot_table/blocks/compressor.json
+a7999f8167e08189b0beb0be5ac9b7228316622e data/avaritia/loot_table/blocks/crystal_matrix.json
+29bc284b167f15c0107bb6036768e186931c2602 data/avaritia/loot_table/blocks/double_compressed_crafting_table.json
+e7d2fdd16286707fbd44bec310457e2eb48b6a5a data/avaritia/loot_table/blocks/extreme_crafting_table.json
+6eb14cad9745a9786e2eb78c32e2eac60ceaa66b data/avaritia/loot_table/blocks/infinity_block.json
+0b0b9e2724135a5cd1837034bf8c0fa65b4e1393 data/avaritia/loot_table/blocks/neutronium_block.json

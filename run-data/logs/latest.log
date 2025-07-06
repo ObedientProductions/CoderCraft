@@ -1,0 +1,29 @@
+[23May2025 00:51:49.313] [main/INFO] [cpw.mods.modlauncher.Launcher/MODLAUNCHER]: ModLauncher running: args [--launchTarget, forge_userdev_data, --assetIndex, 17, --assetsDir, C:\Users\danie\.gradle\caches\forge_gradle\assets, --gameDir, ., --mod, avaritia, --all, --output, C:\Users\danie\Desktop\projects\minecraft\1.21.1\CoderCraft\src\generated\resources, --existing, C:\Users\danie\Desktop\projects\minecraft\1.21.1\CoderCraft\src\main\resources, --mixin.config, mixins.avaritia.json]
+[23May2025 00:51:49.315] [main/INFO] [cpw.mods.modlauncher.Launcher/MODLAUNCHER]: JVM identified as Eclipse Adoptium OpenJDK 64-Bit Server VM 21.0.6+7-LTS
+[23May2025 00:51:49.316] [main/INFO] [cpw.mods.modlauncher.Launcher/MODLAUNCHER]: ModLauncher 10.2.4 starting: java version 21.0.6 by Eclipse Adoptium; OS Windows 11 arch amd64 version 10.0
+[23May2025 00:51:49.402] [main/INFO] [net.minecraftforge.fml.loading.ImmediateWindowHandler/]: ImmediateWindowProvider not loading because launch target is forge_userdev_data
+[23May2025 00:51:49.477] [main/INFO] [mixin/]: SpongePowered MIXIN Subsystem Version=0.8.7 Source=jar:file:///C:/Users/danie/.gradle/caches/modules-2/files-2.1/org.spongepowered/mixin/0.8.7/8ab114ac385e6dbdad5efafe28aba4df8120915f/mixin-0.8.7.jar!/ Service=ModLauncher Env=UNKNOWN
+[23May2025 00:51:50.203] [main/INFO] [net.minecraftforge.fml.loading.moddiscovery.JarInJarDependencyLocator/]: No dependencies to load found. Skipping!
+[23May2025 00:51:50.827] [main/INFO] [mixin/]: Compatibility level set to JAVA_17
+[23May2025 00:51:50.828] [main/ERROR] [mixin/]: Mixin config mixins.avaritia.json does not specify "minVersion" or "requiredFeatures" property
+[23May2025 00:51:50.831] [main/INFO] [cpw.mods.modlauncher.LaunchServiceHandler/MODLAUNCHER]: Launching target 'forge_userdev_data' with arguments [--gameDir, ., --assetsDir, C:\Users\danie\.gradle\caches\forge_gradle\assets, --assetIndex, 17, --mod, avaritia, --all, --output, C:\Users\danie\Desktop\projects\minecraft\1.21.1\CoderCraft\src\generated\resources, --existing, C:\Users\danie\Desktop\projects\minecraft\1.21.1\CoderCraft\src\main\resources]
+[23May2025 00:51:50.873] [main/INFO] [mixin/]: Attempting to load Fernflower decompiler (Threaded mode)
+[23May2025 00:51:50.874] [main/INFO] [mixin/]: Fernflower could not be loaded, exported classes will not be decompiled. NoClassDefFoundError: org/jetbrains/java/decompiler/main/extern/IResultSaver
+[23May2025 00:51:50.884] [main/WARN] [mixin/]: Reference map 'mystic.mixin-refmap.json' for mixins.avaritia.json could not be read. If this is a development environment you can ignore this message
+[23May2025 00:51:50.963] [main/WARN] [mixin/]: Mixin environment was unable to detect the current side, sided mixins will not be applied
+[23May2025 00:51:55.003] [modloading-worker-0/INFO] [net.minecraftforge.common.ForgeMod/FORGEMOD]: Forge mod loading, version 52.1.0, for MC 1.21.1 with MCP 20240808.132146
+[23May2025 00:51:55.003] [modloading-worker-0/INFO] [net.minecraftforge.common.MinecraftForge/FORGE]: MinecraftForge v52.1.0 Initialized
+[23May2025 00:51:55.030] [modloading-worker-0/INFO] [net.minecraftforge.common.ForgeMod/FORGEMOD]: Opening jdk.naming.dns/com.sun.jndi.dns to java.naming
+[23May2025 00:51:55.196] [modloading-worker-0/INFO] [mezz.jei.library.load.PluginCaller/]: Sending ConfigManager...
+[23May2025 00:51:55.200] [modloading-worker-0/INFO] [mezz.jei.library.load.PluginCaller/]: Sending ConfigManager took 2.477 ms
+[23May2025 00:51:55.304] [main/INFO] [net.minecraftforge.data.loading.DatagenModLoader/]: Initializing Data Gatherer for mods [avaritia]
+[23May2025 00:51:55.357] [main/WARN] [net.minecraft.server.packs.VanillaPackResourcesBuilder/]: Assets URL 'union:/C:/Users/danie/.gradle/caches/forge_gradle/minecraft_user_repo/net/minecraftforge/forge/1.21.1-52.1.0_mapped_parchment_2024.11.17-1.21.1/forge-1.21.1-52.1.0_mapped_parchment_2024.11.17-1.21.1-recomp.jar%230!/assets/.mcassetsroot' uses unexpected schema
+[23May2025 00:51:55.357] [main/WARN] [net.minecraft.server.packs.VanillaPackResourcesBuilder/]: Assets URL 'union:/C:/Users/danie/.gradle/caches/forge_gradle/minecraft_user_repo/net/minecraftforge/forge/1.21.1-52.1.0_mapped_parchment_2024.11.17-1.21.1/forge-1.21.1-52.1.0_mapped_parchment_2024.11.17-1.21.1-recomp.jar%230!/data/.mcassetsroot' uses unexpected schema
+[23May2025 00:51:55.531] [main/INFO] [net.minecraft.data.DataGenerator/]: Starting provider: Loot Tables
+[23May2025 00:51:55.780] [main/INFO] [net.minecraft.data.DataGenerator/]: Loot Tables finished after 248 ms
+[23May2025 00:51:55.780] [main/INFO] [net.minecraft.data.DataGenerator/]: Starting provider: Registries
+[23May2025 00:51:55.947] [main/INFO] [net.minecraft.data.DataGenerator/]: Registries finished after 166 ms
+[23May2025 00:51:55.947] [main/INFO] [net.minecraft.data.DataGenerator/]: Starting provider: Recipes
+[23May2025 00:51:55.961] [main/INFO] [net.minecraft.data.DataGenerator/]: Recipes finished after 13 ms
+[23May2025 00:51:55.961] [main/INFO] [net.minecraft.data.DataGenerator/]: All providers took: 431 ms
+[23May2025 00:51:55.963] [main/INFO] [net.minecraft.data.HashCache/]: Caching: total files: 12, old count: 12, new count: 13, removed stale: 0, written: 0

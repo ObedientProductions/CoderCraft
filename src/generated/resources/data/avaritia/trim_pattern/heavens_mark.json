@@ -1,0 +1,8 @@
+{
+  "asset_id": "avaritia:heavens_mark",
+  "decal": false,
+  "description": {
+    "translate": "trim_pattern.avaritia.heavens_mark"
+  },
+  "template_item": "avaritia:heavensmark_armor_trim_smithing_template"
+}
