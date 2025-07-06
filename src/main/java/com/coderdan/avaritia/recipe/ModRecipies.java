@@ -31,6 +31,16 @@ public class ModRecipies {
         }
     });
 
+    public static final RegistryObject<RecipeSerializer<ExtremeShapelessRecipe>> EXTREMECRAFTING_SHAPELESS_SERIALIZER = SERIALIZERS.register("extreme_shapeless", ExtremeShapelessRecipe.Serializer::new);
+    public static final RegistryObject<RecipeType<ExtremeShapelessRecipe>> EXTREMECRAFTING_SHAPELESS_TYPE = TYPES.register("extreme_shapeless", () -> new RecipeType<ExtremeShapelessRecipe>(){
+
+        @Override
+        public String toString() {
+            return "extreme_shapeless";
+        }
+    });
+
+
 
     public static void register(IEventBus bus){
         SERIALIZERS.register(bus);

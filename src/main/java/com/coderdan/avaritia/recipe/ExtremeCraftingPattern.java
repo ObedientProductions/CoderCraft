@@ -2,6 +2,7 @@ package com.coderdan.avaritia.recipe;
 
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.core.NonNullList;
@@ -30,10 +31,67 @@ public class ExtremeCraftingPattern {
         this.ingredients = ingredients;
     }
 
+
+
     // Getters
     public int width() { return width; }
     public int height() { return height; }
     public NonNullList<Ingredient> ingredients() { return ingredients; }
+
+    /**
+     * Returns the pattern as a list of 9 strings, each 9 characters long.
+     * Each unique ingredient is assigned a single character symbol.
+     */
+    public List<String> toPatternList() {
+        Map<Ingredient, Character> reverseKey = generateReverseKey();
+        StringBuilder line = new StringBuilder();
+        List<String> pattern = new java.util.ArrayList<>();
+
+        for (int y = 0; y < height; y++) {
+            line.setLength(0);
+            for (int x = 0; x < width; x++) {
+                Ingredient ingredient = ingredients.get(y * width + x);
+                line.append(reverseKey.getOrDefault(ingredient, ' '));
+            }
+            pattern.add(line.toString());
+        }
+
+        return pattern;
+    }
+
+    /**
+     * Returns the key mapping used in toPatternList().
+     * Maps symbol strings ("A", "B", etc) to Ingredient objects.
+     */
+    public Map<String, Ingredient> toKeyMap() {
+        Map<Ingredient, Character> reverseKey = generateReverseKey();
+        return reverseKey.entrySet().stream()
+                .filter(e -> !e.getKey().isEmpty())
+                .collect(Collectors.toMap(
+                        e -> String.valueOf(e.getValue()), // symbol as string
+                        Map.Entry::getKey
+                ));
+    }
+
+    /**
+     * Builds a consistent symbol mapping for ingredients.
+     * Starts with 'A', 'B', ..., skips spaces for empty ingredients.
+     */
+    private Map<Ingredient, Character> generateReverseKey() {
+        Map<Ingredient, Character> map = new java.util.LinkedHashMap<>();
+        char current = 'A';
+
+        for (Ingredient ingredient : ingredients) {
+            if (ingredient.isEmpty()) continue;
+            if (!map.containsKey(ingredient)) {
+                map.put(ingredient, current++);
+                if (current == ' ') current++; // skip space character
+            }
+        }
+
+        return map;
+    }
+
 
     /**
      * StreamCodec handles sending and receiving this pattern over the network (server <-> client sync).
@@ -82,6 +140,22 @@ public class ExtremeCraftingPattern {
 
         return new ExtremeCraftingPattern(width, height, ingredients);
     }
+
+
+    public static ExtremeCraftingPattern fromItems(ItemStack[] items) {
+        if (items.length != 81)
+            throw new IllegalArgumentException("Expected 81 items for 9x9 pattern, got " + items.length);
+
+        NonNullList<Ingredient> ingredients = NonNullList.withSize(81, Ingredient.EMPTY);
+
+        for (int i = 0; i < 81; i++) {
+            ItemStack stack = items[i];
+            ingredients.set(i, stack.isEmpty() ? Ingredient.EMPTY : Ingredient.of(stack));
+        }
+
+        return new ExtremeCraftingPattern(9, 9, ingredients);
+    }
+
 
     /**
      * Reads a crafting pattern from the network.

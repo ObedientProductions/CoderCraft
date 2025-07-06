@@ -1,7 +1,7 @@
 {
   "type": "avaritia:compressor",
   "ingredient": {
-    "tag": "forge:storage_blocks/silver"
+    "tag": "c:storage_blocks/silver"
   },
   "result": {
     "id": "avaritia:silver_singularity"

@@ -1,12 +1,9 @@
-package com.coderdan.compact;
+package com.coderdan.compat;
 
 import com.coderdan.avaritia.Avaritia;
 import com.coderdan.avaritia.block.ModBlocks;
 import com.coderdan.avaritia.item.ModItems;
-import com.coderdan.avaritia.recipe.CollectorRecipeDisplay;
-import com.coderdan.avaritia.recipe.CompressorRecipe;
-import com.coderdan.avaritia.recipe.ExtremeCraftingRecipe;
-import com.coderdan.avaritia.recipe.ModRecipies;
+import com.coderdan.avaritia.recipe.*;
 import com.coderdan.avaritia.screen.ModMenuTypes;
 import com.coderdan.avaritia.screen.custom.CompressorMenu;
 import com.coderdan.avaritia.screen.custom.CompressorScreen;
@@ -16,10 +13,12 @@ import mezz.jei.api.IModPlugin;
 import mezz.jei.api.JeiPlugin;
 import mezz.jei.api.registration.*;
 import net.minecraft.client.Minecraft;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeManager;
 
@@ -39,18 +38,34 @@ public class JEIAvaritiaPlugin implements IModPlugin {
         registration.addRecipeCategories(new CollectorRecipeCatagory(registration.getJeiHelpers().getGuiHelper()));
     }
 
+
+
     @Override
     public void registerRecipes(IRecipeRegistration registration) {
         RecipeManager recipeManager = Minecraft.getInstance().level.getRecipeManager();
 
-        // Extreme Crafting recipes (assumed fine for now)
+        // Get shaped recipes
         List<ExtremeCraftingRecipe> extremeCraftingRecipes = recipeManager
                 .getAllRecipesFor(ModRecipies.EXTREMECRAFTING_TYPE.get())
                 .stream()
                 .map(RecipeHolder::value)
                 .toList();
 
-        registration.addRecipes(ExtremeRecipeCatagory.EXTREMECRAFTING_RECIPE_TYPE, extremeCraftingRecipes);
+        // Get shapeless recipes
+        List<ExtremeShapelessRecipe> extremeShapelessCraftingRecipes = recipeManager
+                .getAllRecipesFor(ModRecipies.EXTREMECRAFTING_SHAPELESS_TYPE.get())
+                .stream()
+                .map(RecipeHolder::value)
+                .toList();
+
+        // Combine them
+        List<Recipe<ExtremeCraftingRecipeInput>> allExtremeRecipes = new java.util.ArrayList<>();
+        allExtremeRecipes.addAll(extremeCraftingRecipes);
+        allExtremeRecipes.addAll(extremeShapelessCraftingRecipes);
+
+
+        // Register under one category
+        registration.addRecipes(ExtremeRecipeCatagory.EXTREMECRAFTING_RECIPE_TYPE, allExtremeRecipes);
 
         List<CompressorRecipe> compressorRecipes = recipeManager
                 .getAllRecipesFor(ModRecipies.COMPRESSOR_TYPE.get())
@@ -79,13 +94,24 @@ public class JEIAvaritiaPlugin implements IModPlugin {
 
         //Collector Recipe Register
         List<CollectorRecipeDisplay> displays = List.of(
-                new CollectorRecipeDisplay(new ItemStack(Items.NETHER_STAR), new ItemStack(ModItems.PILE_OF_NEUTRONS.get()))
+                new CollectorRecipeDisplay(new ItemStack(Items.AIR), new ItemStack(ModItems.PILE_OF_NEUTRONS.get()))
         );
 
         registration.addRecipes(CollectorRecipeCatagory.COLLECTION_RECIPE_TYPE, displays);
+
+        registration.addItemStackInfo(
+                new ItemStack(ModItems.HEAVENS_MARK_SMITHING_TEMPLATE.get()),
+                Component.literal("A long-lost armor trim said to be worn only by the gods. So rare, it’s believed only a handful ever existed."),
+                Component.literal("Legends whisper of a lone pirate who once claimed one in the End — and vanished without a trace.")
+        );
+
+
     }
 
-
+    @Override
+    public void registerModInfo(IModInfoRegistration modAliasRegistration) {
+        IModPlugin.super.registerModInfo(modAliasRegistration);
+    }
 
     @Override
     public void registerGuiHandlers(IGuiHandlerRegistration registration) {

@@ -1,6 +1,7 @@
 package com.coderdan.avaritia.item.custom;
 
 import net.minecraft.ChatFormatting;
+import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.flag.FeatureFlag;
@@ -16,12 +17,6 @@ public class HeavensMarkTemplateItem extends SmithingTemplateItem {
         super(pAppliesTo, pIngredients, pUpgradeDescription, pBaseSlotDescription, pAdditionsSlotDescription, pBaseSlotEmptyIcons, pAdditionalSlotEmptyIcons, pRequiredFeatures);
     }
 
-    @Override
-    public void appendHoverText(ItemStack pStack, TooltipContext pContext, List<Component> pTooltipComponents, TooltipFlag pTooltipFlag) {
-        super.appendHoverText(pStack, pContext, pTooltipComponents, pTooltipFlag);
-        pTooltipComponents.add(0, Component.literal(pStack.getDisplayName().getString()).withStyle(ChatFormatting.GOLD));
-    }
-
 
     @Override
     public Component getName(ItemStack pStack) {
@@ -29,4 +24,7 @@ public class HeavensMarkTemplateItem extends SmithingTemplateItem {
         String translated = Component.translatable(this.getDescriptionId()).getString();
         return Component.literal("§6" + translated);
     }
+
+
+
 }

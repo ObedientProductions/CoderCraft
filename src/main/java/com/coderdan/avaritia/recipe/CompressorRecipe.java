@@ -60,7 +60,11 @@ public record CompressorRecipe (Ingredient inputItem, ItemStack output, int requ
         return ModRecipies.COMPRESSOR_TYPE.get();
     }
 
+
+
     public static class Serializer implements RecipeSerializer<CompressorRecipe>{
+
+
 
         public static final MapCodec<CompressorRecipe> CODEC = RecordCodecBuilder.mapCodec(inst -> inst.group(
                 Ingredient.CODEC_NONEMPTY.fieldOf("ingredient").forGetter(CompressorRecipe::inputItem),

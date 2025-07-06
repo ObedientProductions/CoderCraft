@@ -1,10 +1,12 @@
-package com.coderdan.compact;
+package com.coderdan.compat;
 
 import com.coderdan.avaritia.Avaritia;
 import com.coderdan.avaritia.block.ModBlocks;
 import com.coderdan.avaritia.item.ModItems;
 import com.coderdan.avaritia.item.custom.InfinityPickaxeItem;
 import com.coderdan.avaritia.recipe.ExtremeCraftingRecipe;
+import com.coderdan.avaritia.recipe.ExtremeCraftingRecipeInput;
+import com.coderdan.avaritia.recipe.ExtremeShapelessRecipe;
 import mezz.jei.api.constants.VanillaTypes;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.gui.drawable.IDrawable;
@@ -19,16 +21,18 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.Enchantments;
 import org.jetbrains.annotations.Nullable;
 
-public class ExtremeRecipeCatagory implements IRecipeCategory<ExtremeCraftingRecipe> {
+public class ExtremeRecipeCatagory implements IRecipeCategory<Recipe<ExtremeCraftingRecipeInput>>  {
 
     public static final ResourceLocation UID = ResourceLocation.fromNamespaceAndPath(Avaritia.MOD_ID, "extreme_crafting");
     public static final ResourceLocation TEXTURE = ResourceLocation.fromNamespaceAndPath(Avaritia.MOD_ID, "textures/gui/extreme_crafting/extreme_jei.png");
 
-    public static RecipeType<ExtremeCraftingRecipe> EXTREMECRAFTING_RECIPE_TYPE = new RecipeType<>(UID, ExtremeCraftingRecipe.class);
+    public static final RecipeType<Recipe<ExtremeCraftingRecipeInput>> EXTREMECRAFTING_RECIPE_TYPE =
+            new RecipeType<>(UID, (Class<Recipe<ExtremeCraftingRecipeInput>>)(Class<?>)Recipe.class);
 
     private final IDrawable background;
     private final IDrawable icon;
@@ -39,7 +43,7 @@ public class ExtremeRecipeCatagory implements IRecipeCategory<ExtremeCraftingRec
     }
 
     @Override
-    public RecipeType<ExtremeCraftingRecipe> getRecipeType() {
+    public RecipeType<Recipe<ExtremeCraftingRecipeInput>> getRecipeType() {
         return EXTREMECRAFTING_RECIPE_TYPE;
     }
 
@@ -58,8 +62,9 @@ public class ExtremeRecipeCatagory implements IRecipeCategory<ExtremeCraftingRec
         return background;
     }
 
+
     @Override
-    public void setRecipe(IRecipeLayoutBuilder builder, ExtremeCraftingRecipe recipe, IFocusGroup focuses) {
+    public void setRecipe(IRecipeLayoutBuilder builder, Recipe<ExtremeCraftingRecipeInput> recipe, IFocusGroup focuses) {
         var ingredients = recipe.getIngredients();
 
         int slotSize = 18;
@@ -74,11 +79,22 @@ public class ExtremeRecipeCatagory implements IRecipeCategory<ExtremeCraftingRec
                 int y = startY + row * slotSize;
 
 
-                Ingredient ingredient = ingredients.get(index);
-                builder.addSlot(RecipeIngredientRole.INPUT, x, y)
-                        .addIngredients(ingredient);
+                if (index < ingredients.size()) {
+                    Ingredient ingredient = ingredients.get(index);
+                    builder.addSlot(RecipeIngredientRole.INPUT, x, y)
+                            .addIngredients(ingredient);
+                }
+                else {
+                    builder.addSlot(RecipeIngredientRole.INPUT, x, y)
+                            .addIngredients(Ingredient.EMPTY);
+                }
+
 
             }
+        }
+
+        if (recipe instanceof ExtremeShapelessRecipe) {
+            builder.setShapeless();
         }
 
         // Add output slot
@@ -102,6 +118,8 @@ public class ExtremeRecipeCatagory implements IRecipeCategory<ExtremeCraftingRec
         builder.addSlot(RecipeIngredientRole.OUTPUT, 168, 74)
                 .addItemStack(outputToDisplay);
 
+
     }
+
 
 }

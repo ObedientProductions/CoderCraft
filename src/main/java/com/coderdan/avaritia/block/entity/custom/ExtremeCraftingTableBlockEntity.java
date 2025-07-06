@@ -73,6 +73,18 @@ public class ExtremeCraftingTableBlockEntity extends BlockEntity implements Menu
     };
 
 
+    private ExtremeCraftingMenu menu;
+
+    public void setMenu(ExtremeCraftingMenu menu) {
+        this.menu = menu;
+    }
+
+    public ExtremeCraftingMenu getMenu() {
+        return menu;
+    }
+
+
+
     //to sync
 
     @Override
@@ -99,6 +111,10 @@ public class ExtremeCraftingTableBlockEntity extends BlockEntity implements Menu
 
 
     }
+
+
+
+
 
 
 

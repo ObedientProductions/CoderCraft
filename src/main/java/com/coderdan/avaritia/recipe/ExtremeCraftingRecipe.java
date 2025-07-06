@@ -86,6 +86,8 @@ public record ExtremeCraftingRecipe(
         return true; // Everything matched
     }
 
+
+
     /**
      * Creates the output item when crafting succeeds.
      *

@@ -15,11 +15,13 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.*;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraftforge.items.SlotItemHandler;
 
 import java.util.Optional;
 
@@ -42,6 +44,8 @@ public class ExtremeCraftingMenu extends AbstractContainerMenu {
 
         this.blockEntity = (ExtremeCraftingTableBlockEntity) blockEntity;
         this.level = pInv.player.level();
+        this.blockEntity.setMenu(this);
+
 
         addPlayerInventory(pInv, 31, 90);
         addPlayerHotbar(pInv, 31,90);
@@ -55,6 +59,8 @@ public class ExtremeCraftingMenu extends AbstractContainerMenu {
 
 
     }
+
+
 
 
 
@@ -86,8 +92,10 @@ public class ExtremeCraftingMenu extends AbstractContainerMenu {
             }
 
             ExtremeCraftingRecipeInput input = new ExtremeCraftingRecipeInput(inputs);
-            Optional<RecipeHolder<ExtremeCraftingRecipe>> recipeOpt = level.getRecipeManager()
-                    .getRecipeFor(ModRecipies.EXTREMECRAFTING_TYPE.get(), input, level);
+            Optional<RecipeHolder<? extends Recipe<ExtremeCraftingRecipeInput>>> recipeOpt = findExtremeRecipe(input);
+
+
+
 
             if (recipeOpt.isEmpty()) return ItemStack.EMPTY;
 
@@ -123,8 +131,8 @@ public class ExtremeCraftingMenu extends AbstractContainerMenu {
                 newInputs[i] = blockEntity.inventory.getStackInSlot(i);
             }
             ExtremeCraftingRecipeInput newInput = new ExtremeCraftingRecipeInput(newInputs);
-            Optional<RecipeHolder<ExtremeCraftingRecipe>> newRecipe = level.getRecipeManager()
-                    .getRecipeFor(ModRecipies.EXTREMECRAFTING_TYPE.get(), newInput, level);
+            Optional<RecipeHolder<? extends Recipe<ExtremeCraftingRecipeInput>>> newRecipe = findExtremeRecipe(input);
+
 
             if (newRecipe.isPresent()) {
                 ItemStack newResult = newRecipe.get().value().assemble(newInput, level.registryAccess());
@@ -165,6 +173,10 @@ public class ExtremeCraftingMenu extends AbstractContainerMenu {
             sourceSlot.setChanged();
         }
         sourceSlot.onTake(pPlayer, sourceStack);
+
+
+        this.broadcastChanges();
+
         return copyOfSourceStack;
     }
 
@@ -195,11 +207,12 @@ public class ExtremeCraftingMenu extends AbstractContainerMenu {
                 int index = row * 9 + col; // Calculate inventory slot index
                 int x = startX + col * slotSize;
                 int y = startY + row * slotSize;
-                this.addSlot(new ModCompressorInputSlot(this.blockEntity.inventory, index, x, y));
+                this.addSlot(new SlotItemHandler(this.blockEntity.inventory, index, x, y));
                 System.out.println("slot " + index + " generated");
             }
         }
     }
+
 
 
 
@@ -235,8 +248,8 @@ public class ExtremeCraftingMenu extends AbstractContainerMenu {
         }
         ExtremeCraftingRecipeInput input = new ExtremeCraftingRecipeInput(inputs);
 
-        Optional<RecipeHolder<ExtremeCraftingRecipe>> recipeOpt = level.getRecipeManager()
-                .getRecipeFor(ModRecipies.EXTREMECRAFTING_TYPE.get(), input, level);
+        Optional<RecipeHolder<? extends Recipe<ExtremeCraftingRecipeInput>>> recipeOpt = findExtremeRecipe(input);
+
 
         if (recipeOpt.isPresent()) {
             ItemStack expectedResult = recipeOpt.get().value().assemble(input, level.registryAccess());
@@ -255,23 +268,42 @@ public class ExtremeCraftingMenu extends AbstractContainerMenu {
                     if (!slotStack.isEmpty()) {
                         slotStack.shrink(1);
                         blockEntity.inventory.setStackInSlot(i, slotStack);
+                        blockEntity.setChanged();
+
+                        this.broadcastChanges();
                     }
                 }
             }
 
             blockEntity.inventory.setStackInSlot(81, expectedResult);
             wasCraftingLastTick = true;
+            blockEntity.setChanged();
 
         } else {
             if (!blockEntity.inventory.getStackInSlot(81).isEmpty()) {
                 blockEntity.inventory.setStackInSlot(81, ItemStack.EMPTY);
+                blockEntity.setChanged();
             }
             wasCraftingLastTick = false;
         }
+
+
+
+
     }
 
 
+    @SuppressWarnings("unchecked")
+    private Optional<RecipeHolder<? extends Recipe<ExtremeCraftingRecipeInput>>> findExtremeRecipe(ExtremeCraftingRecipeInput input) {
+        Optional<? extends RecipeHolder<? extends Recipe<ExtremeCraftingRecipeInput>>> opt =
+                (Optional) level.getRecipeManager().getRecipeFor(ModRecipies.EXTREMECRAFTING_TYPE.get(), input, level);
 
+        if (opt.isEmpty()) {
+            opt = (Optional) level.getRecipeManager().getRecipeFor(ModRecipies.EXTREMECRAFTING_SHAPELESS_TYPE.get(), input, level);
+        }
+
+        return (Optional<RecipeHolder<? extends Recipe<ExtremeCraftingRecipeInput>>>) opt;
+    }
 
 
 

@@ -2,6 +2,7 @@ package com.coderdan.avaritia.block.entity.custom;
 
 import ca.weblite.objc.Proxy;
 import com.coderdan.avaritia.Avaritia;
+import com.coderdan.avaritia.ModConfig;
 import com.coderdan.avaritia.entity.ModBlockEntities;
 import com.coderdan.avaritia.item.ModItems;
 import com.coderdan.avaritia.recipe.CompressorRecipe;
@@ -303,8 +304,13 @@ public class CompressorBlockEntity extends BlockEntity implements MenuProvider {
 
         ItemStack expectedOutput = lockedRecipe.output();
 
-        this.requiredAmount = lockedRecipe.requiredCount();
-        this.processDurration = lockedRecipe.processDurration();
+
+        int baseCount = lockedRecipe.requiredCount();
+        double multiplier = ModConfig.singularityDifficulty.get();
+        this.requiredAmount = (int)(baseCount * multiplier);
+
+
+        this.processDurration = ModConfig.ProcessingSpeed.get() ? lockedRecipe.processDurration() : 0;
 
         // If input does NOT match locked recipe ingredient, pause
         if (!lockedRecipe.inputItem().test(input)) {
