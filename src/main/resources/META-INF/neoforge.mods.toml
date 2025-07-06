@@ -1,0 +1,38 @@
+modLoader="javafml" #mandatory
+loaderVersion="${loader_version_range}" #mandatory
+license="${mod_license}"
+
+[[mods]] #mandatory
+modId="${mod_id}" #mandatory
+version="${mod_version}" #mandatory
+displayName="${mod_name}" #mandatory
+authors="${mod_authors}" #optional
+description='''${mod_description}'''
+logoFile="assets/avaritia/logo.png"
+
+# Uncomment if you want update checking
+# updateJSONURL="https://your.site/updates.json"
+
+# Uncomment and customize if you want to show a homepage or credits
+# displayURL="https://your.site"
+# credits="Original mod by SpitefulFox & TTFTCUTS, updated by Coder Dan"
+
+# Mixin support
+[[mixins]]
+config="${mod_id}.mixins.json"
+
+# NeoForge dependency
+[[dependencies.${mod_id}]]
+modId="neoforge"
+type="required"
+versionRange="${neo_version_range}"
+ordering="NONE"
+side="BOTH"
+
+# Minecraft dependency
+[[dependencies.${mod_id}]]
+modId="minecraft"
+type="required"
+versionRange="${minecraft_version_range}"
+ordering="NONE"
+side="BOTH"
